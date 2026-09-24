@@ -1,8 +1,12 @@
-name: Build Test APK (debug, internal)
+name: Build Test APK (debug/release, internal)
 
-# TEMPORARY internal workflow: builds an unsigned debug APK for a test tag
-# (testbuild-*) and pushes it to a ci-apk/<tag> branch so it can be fetched
-# for device testing. Not part of the official release process.
+# TEMPORARY internal workflow: builds a test APK for a test tag and pushes it
+# to a ci-apk/<tag> branch so it can be fetched for device testing.
+# - testbuild-*      -> debug APK (unsigned, larger)
+# - testbuild-rel-*  -> release APK (R8 minified, smaller) signed with an
+#                       EPHEMERAL test key generated in CI. NOT the official
+#                       release key. Never distribute as an official release.
+# Not part of the official release process.
 on:
   push:
     tags:
@@ -13,7 +17,7 @@ permissions:
 
 jobs:
   build:
-    name: Build debug APK
+    name: Build test APK
     runs-on: ubuntu-latest
     env:
       ANDROID_HOME: /usr/local/lib/android/sdk
@@ -45,7 +49,26 @@ jobs:
         run: chmod +x gradlew build.sh
 
       - name: Build debug APK
+        if: ${{ !startsWith(github.ref_name, 'testbuild-rel-') }}
         run: ./build.sh debug
+
+      - name: Generate ephemeral test keystore (release test builds only)
+        if: ${{ startsWith(github.ref_name, 'testbuild-rel-') }}
+        run: |
+          keytool -genkeypair -v \
+            -keystore noghte-release.keystore \
+            -alias noghte-test -keyalg RSA -keysize 2048 -validity 7 \
+            -storepass "testkey123" -keypass "testkey123" \
+            -dname "CN=Noghte Test Key, OU=Test, O=Noghte, C=IR"
+          ls -la noghte-release.keystore
+
+      - name: Build release APK (test-signed, minified)
+        if: ${{ startsWith(github.ref_name, 'testbuild-rel-') }}
+        env:
+          KEYSTORE_PASS: testkey123
+          KEY_ALIAS: noghte-test
+          KEY_PASS: testkey123
+        run: ./build.sh release
 
       - name: Publish APK to CI branch
         run: |
@@ -55,10 +78,20 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout --orphan "$BRANCH"
           git rm -rf . > /dev/null 2>&1 || true
+          rm -f noghte-release.keystore haio-release.keystore
           mkdir -p apk
-          cp app/build/outputs/apk/debug/app-debug.apk apk/noghte-debug.apk
-          /usr/lib/android-sdk/build-tools/34.0.0/aapt dump badging apk/noghte-debug.apk | grep package > apk/badging.txt || true
-          sha256sum apk/noghte-debug.apk > apk/sha256.txt
+          if [ -f app/build/outputs/apk/release/app-release.apk ]; then
+            SRC_APK=app/build/outputs/apk/release/app-release.apk
+            OUT_APK=apk/noghte-release-test.apk
+            echo "TEST-SIGNED release build (ephemeral CI key, NOT official). Do not distribute." > apk/TEST_KEY_NOTE.txt
+          else
+            SRC_APK=app/build/outputs/apk/debug/app-debug.apk
+            OUT_APK=apk/noghte-debug.apk
+          fi
+          cp "$SRC_APK" "$OUT_APK"
+          /usr/lib/android-sdk/build-tools/34.0.0/aapt dump badging "$OUT_APK" | grep package > apk/badging.txt || true
+          (cd apk && sha256sum "$(basename "$OUT_APK")") > apk/sha256.txt
+          /usr/lib/android-sdk/build-tools/34.0.0/apksigner verify --print-certs "$OUT_APK" > apk/certs.txt || true
           git add apk/
           git commit -m "test APK for ${TAG}"
           git push origin "$BRANCH" --force

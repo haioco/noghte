@@ -6,6 +6,10 @@ local.properties
 .DS_Store
 /app/build/
 
+# Signing keys — never commit (official key injected via CI secrets)
+*.keystore
+*.jks
+
 # Environment files with secrets — track only .env.example
 .env
 .env.*
