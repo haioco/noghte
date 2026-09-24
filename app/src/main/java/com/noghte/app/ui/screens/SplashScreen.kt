@@ -64,7 +64,7 @@ fun SplashScreen(onSplashFinished: () -> Unit) {
             modifier = Modifier.alpha(alpha.value)
         ) {
             Image(
-                painter = painterResource(id = R.drawable.noghte_logo_new),
+                painter = painterResource(id = R.drawable.noghte_logo),
                 contentDescription = "Noghte Logo",
                 modifier = Modifier
                     .size(140.dp)
