@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haio API Documentation - Anti Sanction & Shahkar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --danger: #ef4444;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --code-bg: #1e293b;
+            --success: #22c55e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            background: var(--surface);
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 4px;
+            height: 30px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        .subsection {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--surface-light);
+            border-radius: 12px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .subsection h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        .endpoint {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--code-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .method {
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .method-get { background: #22c55e; color: white; }
+        .method-post { background: #3b82f6; color: white; }
+        .method-put { background: #f59e0b; color: white; }
+        .method-delete { background: #ef4444; color: white; }
+
+        .endpoint-url {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            color: var(--text);
+            direction: ltr;
+            text-align: left;
+        }
+
+        .endpoint-description {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+
+        .code-block {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: var(--code-bg);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .code-block pre {
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--text);
+            direction: ltr;
+            text-align: left;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        .code-block .comment {
+            color: #6b7280;
+        }
+
+        .code-block .keyword {
+            color: #c084fc;
+        }
+
+        .code-block .string {
+            color: #86efac;
+        }
+
+        .code-block .number {
+            color: #fbbf24;
+        }
+
+        .params-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        .params-table th,
+        .params-table td {
+            padding: 0.8rem;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .params-table th {
+            background: var(--surface-light);
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .params-table td {
+            color: var(--text-muted);
+        }
+
+        .params-table .param-name {
+            font-family: 'Fira Code', monospace;
+            color: var(--primary);
+            direction: ltr;
+            text-align: left;
+        }
+
+        .params-table .param-required {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .params-table .param-optional {
+            color: var(--text-muted);
+        }
+
+        .info-box {
+            padding: 1rem;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info-box.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .info-box.success {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .info-box h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .info-box.warning h4 { color: var(--accent); }
+        .info-box.success h4 { color: var(--success); }
+
+        .flow-chart {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+            flex-wrap: wrap;
+        }
+
+        .flow-step {
+            padding: 0.8rem 1.2rem;
+            background: var(--surface-light);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .flow-step .step-num {
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .flow-step .step-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 0.3rem;
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .feature-card {
+            padding: 1.5rem;
+            background: var(--surface-light);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .feature-card .icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header h1 { font-size: 1.8rem; }
+            .section { padding: 1.5rem; }
+            .flow-chart { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1> Haio API Documentation</h1>
+            <p>راهنمای کامل پیاده‌سازی Anti Sanction و Shahkar در اپلیکیشن‌های ابری</p>
+        </div>
+
+        <!-- ═══════ SECTION 1: INTRODUCTION ═══════ -->
+        <div class="section">
+            <h2 class="section-title">مقدمه</h2>
+            <p style="margin-bottom: 1rem; color: var(--text-muted);">
+                این مستندات شامل راهنمای کامل پیاده‌سازی سرویس‌های <strong>Anti Sanction (ضد تحریم)</strong> و <strong>Shahkar (شاهکار)</strong> در پلتفرم Haio Cloud است.
+            </p>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🛡️</div>
+                    <h4>Anti Sanction</h4>
+                    <p>سرویس دور زدن تحریم‌ها و دسترسی به اینترنت بین‌الملل</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔐</div>
+                    <h4>Shahkar</h4>
+                    <p>سیستم احراز هویت ملی از طریق کد ملی و شماره موبایل</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">☁️</div>
+                    <h4>Cloud Integration</h4>
+                    <p>قابل پیاده‌سازی در سیستم‌های ابری و وب اپلیکیشن‌ها</p>
+                </div>
+            </div>
+
+            <div class="info-box">
+                <h4>نکته مهم</h4>
+                <p>برای استفاده از این API‌ها ابتدا باید در پلتفرم Haio ثبت‌نام کرده و اطلاعات احراز هویت خود را دریافت کنید.</p>
+            </div>
+        </div>
+
+        <!-- ═══════ SECTION 2: SHAHKAR ═══════ -->
+        <div class="section">
+            <h2 class="section-title">🔐 سیستم احراز هویت Shahkar (شاهکار)</h2>
+            
+            <div class="subsection">
+                <h3>توضیحات کلی</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">
+                    سیستم Shahkar یک سرویس احراز هویت ملی است که از طریق کد ملی و شماره موبایل کاربران را تایید می‌کند. این سیستم در پلتفرم Clouda برای احراز هویت کاربران استفاده می‌شود.
+                </p>
+                
+                <div class="flow-chart">
+                    <div class="flow-step">
+                        <div class="step-num">مرحله ۱</div>
+                        <div class="step-title">دریافت اطلاعات</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-num">مرحله ۲</div>
+                        <div class="step-title">ارسال کد پیامک</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-num">مرحله ۳</div>
+                        <div class="step-title">تایید کد OTP</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-num">مرحله ۴</div>
+                        <div class="step-title">احراز هویت موفق</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>API Endpoint‌های Shahkar</h3>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-url">/v1/user/verify/identity</span>
+                    </div>
+                    <div class="endpoint-description">
+                        ارسال کد تایید به شماره موبایل کاربر برای احراز هویت
+                    </div>
+                    
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>پارامتر</th>
+                                <th>نوع</th>
+                                <th>الزامی</th>
+                                <th>توضیحات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">token</td>
+                                <td>string</td>
+                                <td class="param-required">الزامی</td>
+                                <td>توکن احراز هویت کاربر</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="code-block">
+                        <pre><span class="comment">// نمونه کد Python</span>
+<span class="keyword">import</span> requests
+
+url = <span class="string">"https://api.haio.cloud/v1/user/verify/identity"</span>
+headers = {
+    <span class="string">"Authorization"</span>: <span class="string">"Bearer YOUR_TOKEN"</span>,
+    <span class="string">"Content-Type"</span>: <span class="string">"application/json"</span>
+}
+
+response = requests.post(url, headers=headers)
+print(response.json())</pre>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-get">GET</span>
+                        <span class="endpoint-url">/v1/user/verify/identity/resend</span>
+                    </div>
+                    <div class="endpoint-description">
+                        ارسال مجدد کد تایید به شماره موبایل کاربر
+                    </div>
+                    
+                    <div class="code-block">
+                        <pre><span class="comment">// نمونه کد Python</span>
+<span class="keyword">import</span> requests
+
+url = <span class="string">"https://api.haio.cloud/v1/user/verify/identity/resend"</span>
+headers = {
+    <span class="string">"Authorization"</span>: <span class="string">"Bearer YOUR_TOKEN"</span>
+}
+
+response = requests.get(url, headers=headers)
+print(response.json())</pre>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-url">/v1/user/getVerifyMobile</span>
+                    </div>
+                    <div class="endpoint-description">
+                        دریافت کد تایید برای شماره موبایل مشخص شده
+                    </div>
+                    
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>پارامتر</th>
+                                <th>نوع</th>
+                                <th>الزامی</th>
+                                <th>توضیحات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">mobile</td>
+                                <td>string</td>
+                                <td class="param-required">الزامی</td>
+                                <td>شماره موبایل کاربر (مثال: 09121234567)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="code-block">
+                        <pre><span class="comment">// نمونه کد JavaScript</span>
+<span class="keyword">const</span> response = <span class="keyword">await</span> fetch(<span class="string">'https://api.haio.cloud/v1/user/getVerifyMobile'</span>, {
+    method: <span class="string">'POST'</span>,
+    headers: {
+        <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>,
+        <span class="string">'Authorization'</span>: <span class="string">`Bearer ${token}`</span>
+    },
+    body: JSON.stringify({
+        mobile: <span class="string">'09121234567'</span>
+    })
+});
+
+<span class="keyword">const</span> data = <span class="keyword">await</span> response.json();</pre>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-url">/v1/user/verifyMobile</span>
+                    </div>
+                    <div class="endpoint-description">
+                        تایید کد ارسال شده به شماره موبایل
+                    </div>
+                    
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>پارامتر</th>
+                                <th>نوع</th>
+                                <th>الزامی</th>
+                                <th>توضیحات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">mobile</td>
+                                <td>string</td>
+                                <td class="param-required">الزامی</td>
+                                <td>شماره موبایل کاربر</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">token</td>
+                                <td>string</td>
+                                <td class="param-required">الزامی</td>
+                                <td>کد ۵ رقمی ارسال شده به موبایل</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="code-block">
+                        <pre><span class="comment">// نمونه کد Python</span>
+<span class="keyword">import</span> requests
+
+url = <span class="string">"https://api.haio.cloud/v1/user/verifyMobile"</span>
+data = {
+    <span class="string">"mobile"</span>: <span class="string">"09121234567"</span>,
+    <span class="string">"token"</span>: <span class="string">"12345"</span>
+}
+
+response = requests.post(url, json=data)
+<span class="keyword">if</span> response.status_code == <span class="number">200</span>:
+    print(<span class="string">"احراز هویت موفق!"</span>)
+<span class="keyword">else</span>:
+    print(<span class="string">"خطا در احراز هویت"</span>)</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-box success">
+                <h4>نکته اجرایی</h4>
+                <p>پس از موفقیت‌آمیز بودن احراز هویت، توکن دسترسی کاربر صادر می‌شود که برای استفاده از سایر API‌ها مورد نیاز است.</p>
+            </div>
+        </div>
+
+        <!-- ═══════ SECTION 3: ANTI SANCTION ═══════ -->
+        <div class="section">
+            <h2 class="section-title">🛡️ سرویس Anti Sanction (ضد تحریم)</h2>
+            
+            <div class="subsection">
+                <h3>توضیحات کلی</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">
+                    سرویس Anti Sanction یک سرویس دور زدن تحریم‌ها و دسترسی به اینترنت بین‌الملل است. این سرویس از پروتکل‌های امن مانند Trojan و V2Ray استفاده می‌کند و در قالب اشتراک‌های مختلف ارائه می‌شود.
+                </p>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="icon">🌐</div>
+                        <h4>دسترسی جهانی</h4>
+                        <p>شکستن محدودیت‌های جغرافیایی</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">🔒</div>
+                        <h4>امنیت بالا</h4>
+                        <p>رمزنگاری پیشرفته ترافیک</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">⚡</div>
+                        <h4>سرعت بالا</h4>
+                        <p>سرورهای بهینه در نقاط مختلف</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="icon">📱</div>
+                        <h4>چند پلتفرم</h4>
+                        <p>پشتیبانی از تمام سیستم‌عامل‌ها</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>API Endpoint‌های کاربری</h3>
+                
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-get">GET</span>
+                        <span class="endpoint-url">/v1/anti/sanction/packages</span>
+                    </div>
+                    <div class="endpoint-description">
+                        دریافت لیست پکیج‌های موجود Anti Sanction
+                    </div>
+                    
+                    <div class="code-block">
+                        <pre><span class="comment">// نمونه کد Python</span>
+<span class="keyword">import</span> requests
+
+url = <span class="string">"https://api.haio.cloud/v1/anti/sanction/packages"</span>
+headers = {
+    <span class="string">"Authorization"</span>: <span class="string">"Bearer YOUR_TOKEN"</span>
+}
+
+response = requests.get(url, headers=headers)
+packages = response.json()
+
+<span class="keyword">for</span> package <span class="keyword">in</span> packages:
+    print(f<span class="string">"پکیج: {package['name']}"</span>)
+    print(f<span class="string">"قیمت: {package['price']}"</span>)
+    print(<span class="string">"---"</span>)</pre>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-post">POST</span>
+                        <span class="endpoint-url">/v1/anti/sanction</span>
+                    </div>
+                    <div class="endpoint-description">
+                        ایجاد اشتراک جدید Anti Sanction
+                    </div>
+                    
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>پارامتر</th>
+                                <th>نوع</th>
+                                <th>الزامی</th>
+                                <th>توضیحات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">title</td>
+                                <td>string</td>
+                                <td class="param-required">الزامی</td>
+                                <td>عنوان اشتراک</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">package_id</td>
+                                <td>integer</td>
+                                <td class="param-required">الزامی</td>
+                                <td>شناسه پکیج انتخابی</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="code-block">
+                        <pre><span class="comment">// نمونه کد JavaScript</span>
+<span class="keyword">const</span> response = <span class="keyword">await</span> fetch(<span class="string">'https://api.haio.cloud/v1/anti/sanction'</span>, {
+    method: <span class="string">'POST'</span>,
+    headers: {
+        <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>,
+        <span class="string">'Authorization'</span>: <span class="string">`Bearer ${token}`</span>
+    },
+    body: JSON.stringify({
+        title: <span class="string">'اشتراک ضد تحریم من'</span>,
+        package_id: <span class="number">2</span>
+    })
+});
+
+<span class="keyword">const</span> subscription = <span class="keyword">await</span> response.json();
+console.log(<span class="string">'اشتراک ایجاد شد:'</span>, subscription);</pre>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-get">GET</span>
+                        <span class="endpoint-url">/v1/anti/sanction</span>
+                    </div>
+                    <div class="endpoint-description">
+                        دریافت لیست اشتراک‌های فعال کاربر
+                    </div>
+                    
+                    <table class="params-table">
+                        <thead>
+                            <tr>
+                                <th>پارامتر</th>
+                                <th>نوع</th>
+                                <th>الزامی</th>
+                                <th>توضیحات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="param-name">filter</td>
+                                <td>string</td>
+                                <td class="param-optional">اختیاری</td>
+                                <td>فیلتر جستجو</td>
+                            </tr>
+                            <tr>
+                                <td class="param-name">page</td>
+                                <td>integer</td>
+                                <td class="param-optional">اختیاری</td>
+                                <td>شماره صفحه</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="code-block">
+                        <pre><span class="comment">// نمونه کد Python</span>
+<span class="keyword">import</span> requests
+
+url = <span class="string">"https://api.haio.cloud/v1/anti/sanction"</span>
+params = {
+    <span class="string">"page"</span>: <span class="number">1</span>,
+    <span class="string">"filter"</span>: <span class="string">"active"</span>
+}
+headers = {
+    <span class="string">"Authorization"</span>: <span class="string">"Bearer YOUR_TOKEN"</span>
+}
+
+response = requests.get(url, params=params, headers=headers)
+subscriptions = response.json()
+
+print(f<span class="string">"تعداد اشتراک‌ها: {len(subscriptions)}"</span>)</pre>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-get">GET</span>
+                        <span class="endpoint-url">/v1/anti/sanction/{id}</span>
+                    </div>
+                    <div class="endpoint-description">
+                        دریافت جزئیات یک اشتراک خاص
+                    </div>
+                    
+                    <div class="code-block">
+                        <pre><span class="comment">// نمونه کد JavaScript</span>
+<span class="keyword">const</span> subscriptionId = <span class="number">1</span>;
+<span class="keyword">const</span> response = <span class="keyword">await</span> fetch(
+    <span class="string">`https://api.haio.cloud/v1/anti/sanction/${subscriptionId}`</span>,
+    {
+        headers: {
+            <span class="string">'Authorization'</span>: <span class="string">`Bearer ${token}`</span>
+        }
+    }
+);
+
+<span class="keyword">const</span> details = <span class="keyword">await</span> response.json();
+console.log(<span class="string">'جزئیات اشتراک:'</span>, details);</pre>
+                    </div>
+                </div>
+
+                <div class="endpoint">
+                    <div class="endpoint-header">
+                        <span class="method method-put">PUT</span>
+                        <span class="endpoint-url">/v1/anti/sanction/{id}/renew</span>
+                    </div>
+                    <div class="endpoint-description">
+                        تمدید اشتراک Anti Sanction
+                    </div>
+                    
+                    <div class="code-block">
+                        <pre><span class="comment">// نمونه کد Python</span>
+<span class="keyword">import</span> requests
+
+subscription_id = <span class="number">1</span>
+url = <span class="string">f"https://api.haio.cloud/v1/anti/sanction/{subscription_id}/renew"</span>
+headers = {
+    <span class="string">"Authorization"</span>: <span class="string">"Bearer YOUR_TOKEN"</span>
+}
+
+response = requests.put(url, headers=headers)
+<span class="keyword">if</span> response.status_code == <span class="number">200</span>:
+    print(<span class="string">"اشتراک با موفقیت تمدید شد!"</span>)
+<span class="keyword">else</span>:
+    print(<span class="string">"خطا در تمدید اشتراک"</span>)</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ SECTION 4: INTEGRATION GUIDE ═══════ -->
+        <div class="section">
+            <h2 class="section-title">🔗 راهنمای پیاده‌سازی</h2>
+            
+            <div class="subsection">
+                <h3>مراحل پیاده‌سازی</h3>
+                
+                <div class="flow-chart">
+                    <div class="flow-step">
+                        <div class="step-num">مرحله ۱</div>
+                        <div class="step-title">ثبت‌نام در Haio</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-num">مرحله ۲</div>
+                        <div class="step-title">دریافت API Key</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-num">مرحله ۳</div>
+                        <div class="step-title">احراز هویت Shahkar</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-num">مرحله ۴</div>
+                        <div class="step-title">خرید اشتراک</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="step-num">مرحله ۵</div>
+                        <div class="step-title">دریافت کانفیگ</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>نمونه کد کامل Python</h3>
+                
+                <div class="code-block">
+                    <pre><span class="keyword">import</span> requests
+<span class="keyword">import</span> json
+
+<span class="keyword">class</span> HaioClient:
+    <span class="keyword">def</span> __init__(self, base_url, token):
+        self.base_url = base_url
+        self.headers = {
+            <span class="string">"Authorization"</span>: f<span class="string">"Bearer {token}"</span>,
+            <span class="string">"Content-Type"</span>: <span class="string">"application/json"</span>
+        }
+    
+    <span class="keyword">def</span> get_packages(self):
+        <span class="comment">"""دریافت پکیج‌های Anti Sanction"""</span>
+        url = f<span class="string">"{self.base_url}/v1/anti/sanction/packages"</span>
+        response = requests.get(url, headers=self.headers)
+        <span class="keyword">return</span> response.json()
+    
+    <span class="keyword">def</span> create_subscription(self, title, package_id):
+        <span class="comment">"""ایجاد اشتراک جدید"""</span>
+        url = f<span class="string">"{self.base_url}/v1/anti/sanction"</span>
+        data = {
+            <span class="string">"title"</span>: title,
+            <span class="string">"package_id"</span>: package_id
+        }
+        response = requests.post(url, json=data, headers=self.headers)
+        <span class="keyword">return</span> response.json()
+    
+    <span class="keyword">def</span> get_subscriptions(self):
+        <span class="comment">"""دریافت لیست اشتراک‌ها"""</span>
+        url = f<span class="string">"{self.base_url}/v1/anti/sanction"</span>
+        response = requests.get(url, headers=self.headers)
+        <span class="keyword">return</span> response.json()
+    
+    <span class="keyword">def</span> verify_mobile(self, mobile, code):
+        <span class="comment">"""تایید شماره موبایل"""</span>
+        url = f<span class="string">"{self.base_url}/v1/user/verifyMobile"</span>
+        data = {
+            <span class="string">"mobile"</span>: mobile,
+            <span class="string">"token"</span>: code
+        }
+        response = requests.post(url, json=data, headers=self.headers)
+        <span class="keyword">return</span> response.json()
+
+<span class="comment"># استفاده از کلاس</span>
+client = HaioClient(<span class="string">"https://api.haio.cloud"</span>, <span class="string">"YOUR_TOKEN"</span>)
+
+<span class="comment"># دریافت پکیج‌ها</span>
+packages = client.get_packages()
+print(<span class="string">"پکیج‌های موجود:"</span>, packages)
+
+<span class="comment"># ایجاد اشتراک</span>
+new_sub = client.create_subscription(<span class="string">"اشتراک من"</span>, <span class="number">1</span>)
+print(<span class="string">"اشتراک ایجاد شد:"</span>, new_sub)</pre>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>نمونه کد کامل JavaScript</h3>
+                
+                <div class="code-block">
+                    <pre><span class="keyword">class</span> HaioClient {
+    <span class="keyword">constructor</span>(baseUrl, token) {
+        <span class="keyword">this</span>.baseUrl = baseUrl;
+        <span class="keyword">this</span>.headers = {
+            <span class="string">'Authorization'</span>: <span class="string">`Bearer ${token}`</span>,
+            <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>
+        };
+    }
+    
+    <span class="keyword">async</span> getPackages() {
+        <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(
+            <span class="string">`${this.baseUrl}/v1/anti/sanction/packages`</span>,
+            { headers: <span class="keyword">this</span>.headers }
+        );
+        <span class="keyword">return</span> response.json();
+    }
+    
+    <span class="keyword">async</span> createSubscription(title, packageId) {
+        <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(
+            <span class="string">`${this.baseUrl}/v1/anti/sanction`</span>,
+            {
+                method: <span class="string">'POST'</span>,
+                headers: <span class="keyword">this</span>.headers,
+                body: JSON.stringify({ title, package_id: packageId })
+            }
+        );
+        <span class="keyword">return</span> response.json();
+    }
+    
+    <span class="keyword">async</span> getSubscriptions() {
+        <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(
+            <span class="string">`${this.baseUrl}/v1/anti/sanction`</span>,
+            { headers: <span class="keyword">this</span>.headers }
+        );
+        <span class="keyword">return</span> response.json();
+    }
+    
+    <span class="keyword">async</span> verifyMobile(mobile, code) {
+        <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(
+            <span class="string">`${this.baseUrl}/v1/user/verifyMobile`</span>,
+            {
+                method: <span class="string">'POST'</span>,
+                headers: <span class="keyword">this</span>.headers,
+                body: JSON.stringify({ mobile, token: code })
+            }
+        );
+        <span class="keyword">return</span> response.json();
+    }
+}
+
+<span class="comment">// استفاده از کلاس</span>
+<span class="keyword">const</span> client = <span class="keyword">new</span> HaioClient(<span class="string">'https://api.haio.cloud'</span>, <span class="string">'YOUR_TOKEN'</span>);
+
+<span class="comment">// دریافت پکیج‌ها</span>
+client.getPackages().then(packages => {
+    console.log(<span class="string">'پکیج‌های موجود:'</span>, packages);
+});
+
+<span class="comment">// ایجاد اشتراک</span>
+client.createSubscription(<span class="string">'اشتراک من'</span>, <span class="number">1</span>).then(sub => {
+    console.log(<span class="string">'اشتراک ایجاد شد:'</span>, sub);
+});</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ SECTION 5: EXAMPLES ═══════ -->
+        <div class="section">
+            <h2 class="section-title">📝 مثال‌های عملی</h2>
+            
+            <div class="subsection">
+                <h3>مثال ۱: احراز هویت کامل کاربر</h3>
+                
+                <div class="code-block">
+                    <pre><span class="comment">// مثال کامل احراز هویت کاربر با Shahkar</span>
+<span class="keyword">async function</span> authenticateUser(mobile, nationalCode) {
+    <span class="keyword">try</span> {
+        <span class="comment">// مرحله ۱: ارسال درخواست احراز هویت</span>
+        <span class="keyword">const</span> verifyResponse = <span class="keyword">await</span> fetch(<span class="string">'https://api.haio.cloud/v1/user/verify/identity'</span>, {
+            method: <span class="string">'POST'</span>,
+            headers: {
+                <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>,
+                <span class="string">'Authorization'</span>: <span class="string">`Bearer ${token}`</span>
+            },
+            body: JSON.stringify({ mobile, national_id: nationalCode })
+        });
+        
+        <span class="keyword">if</span> (!verifyResponse.ok) {
+            <span class="keyword">throw new</span> Error(<span class="string">'خطا در ارسال درخواست'</span>);
+        }
+        
+        <span class="comment">// مرحله ۲: دریافت کد OTP</span>
+        <span class="keyword">const</span> otpResponse = <span class="keyword">await</span> fetch(<span class="string">'https://api.haio.cloud/v1/user/getVerifyMobile'</span>, {
+            method: <span class="string">'POST'</span>,
+            headers: {
+                <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>,
+                <span class="string">'Authorization'</span>: <span class="string">`Bearer ${token}`</span>
+            },
+            body: JSON.stringify({ mobile })
+        });
+        
+        <span class="keyword">const</span> otpData = <span class="keyword">await</span> otpResponse.json();
+        console.log(<span class="string">'کد OTP ارسال شد'</span>);
+        
+        <span class="comment">// مرحله ۳: تایید کد (کاربر باید کد را وارد کند)</span>
+        <span class="keyword">const</span> userCode = prompt(<span class="string">'کد ۵ رقمی را وارد کنید:'</span>);
+        
+        <span class="keyword">const</span> confirmResponse = <span class="keyword">await</span> fetch(<span class="string">'https://api.haio.cloud/v1/user/verifyMobile'</span>, {
+            method: <span class="string">'POST'</span>,
+            headers: {
+                <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>,
+                <span class="string">'Authorization'</span>: <span class="string">`Bearer ${token}`</span>
+            },
+            body: JSON.stringify({ mobile, token: userCode })
+        });
+        
+        <span class="keyword">if</span> (confirmResponse.ok) {
+            console.log(<span class="string">'احراز هویت موفق!'</span>);
+            <span class="keyword">return true</span>;
+        } <span class="keyword">else</span> {
+            console.log(<span class="string">'خطا در احراز هویت'</span>);
+            <span class="keyword">return false</span>;
+        }
+        
+    } <span class="keyword">catch</span> (error) {
+        console.error(<span class="string">'خطا:'</span>, error);
+        <span class="keyword">return false</span>;
+    }
+}
+
+<span class="comment">// استفاده</span>
+authenticateUser(<span class="string">'09121234567'</span>, <span class="string">'1234567890'</span>);</pre>
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h3>مثال ۲: مدیریت اشتراک‌ها</h3>
+                
+                <div class="code-block">
+                    <pre><span class="comment">// مثال کامل مدیریت اشتراک‌های Anti Sanction</span>
+<span class="keyword">class</span> AntiSanctionManager {
+    <span class="keyword">constructor</span>(token) {
+        <span class="keyword">this</span>.token = token;
+        <span class="keyword">this</span>.baseUrl = <span class="string">'https://api.haio.cloud'</span>;
+    }
+    
+    <span class="keyword">async</span> getAllPackages() {
+        <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(
+            <span class="string">`${this.baseUrl}/v1/anti/sanction/packages`</span>,
+            {
+                headers: {
+                    <span class="string">'Authorization'</span>: <span class="string">`Bearer ${this.token}`</span>
+                }
+            }
+        );
+        <span class="keyword">return</span> response.json();
+    }
+    
+    <span class="keyword">async</span> createNewSubscription(title, packageId) {
+        <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(
+            <span class="string">`${this.baseUrl}/v1/anti/sanction`</span>,
+            {
+                method: <span class="string">'POST'</span>,
+                headers: {
+                    <span class="string">'Content-Type'</span>: <span class="string">'application/json'</span>,
+                    <span class="string">'Authorization'</span>: <span class="string">`Bearer ${this.token}`</span>
+                },
+                body: JSON.stringify({ title, package_id: packageId })
+            }
+        );
+        <span class="keyword">return</span> response.json();
+    }
+    
+    <span class="keyword">async</span> getUserSubscriptions() {
+        <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(
+            <span class="string">`${this.baseUrl}/v1/anti/sanction`</span>,
+            {
+                headers: {
+                    <span class="string">'Authorization'</span>: <span class="string">`Bearer ${this.token}`</span>
+                }
+            }
+        );
+        <span class="keyword">return</span> response.json();
+    }
+    
+    <span class="keyword">async</span> renewSubscription(subscriptionId) {
+        <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(
+            <span class="string">`${this.baseUrl}/v1/anti/sanction/${subscriptionId}/renew`</span>,
+            {
+                method: <span class="string">'PUT'</span>,
+                headers: {
+                    <span class="string">'Authorization'</span>: <span class="string">`Bearer ${this.token}`</span>
+                }
+            }
+        );
+        <span class="keyword">return</span> response.json();
+    }
+}
+
+<span class="comment">// استفاده از کلاس</span>
+<span class="keyword">const</span> manager = <span class="keyword">new</span> AntiSanctionManager(<span class="string">'YOUR_TOKEN'</span>);
+
+<span class="comment">// دریافت پکیج‌ها</span>
+manager.getAllPackages().then(packages => {
+    console.log(<span class="string">'پکیج‌ها:'</span>, packages);
+});
+
+<span class="comment">// ایجاد اشتراک جدید</span>
+manager.createNewSubscription(<span class="string">'اشتراک ویژه'</span>, <span class="number">2</span>).then(sub => {
+    console.log(<span class="string">'اشتراک ایجاد شد:'</span>, sub);
+});</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════ SECTION 6: TROUBLESHOOTING ═══════ -->
+        <div class="section">
+            <h2 class="section-title">🛠️ عیب‌یابی</h2>
+            
+            <div class="subsection">
+                <h3>خطاهای رایج و راه‌حل‌ها</h3>
+                
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>کد خطا</th>
+                            <th>توضیحات</th>
+                            <th>راه‌حل</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="param-name">401</td>
+                            <td>توکن نامعتبر</td>
+                            <td>توکن خود را بررسی کنید یا توکن جدید دریافت کنید</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">403</td>
+                            <td>عدم دسترسی</td>
+                            <td>سطوح دسترسی خود را بررسی کنید</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">404</td>
+                            <td>منبع یافت نشد</td>
+                            <td>آدرس URL و شناسه منبع را بررسی کنید</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">422</td>
+                            <td>خطا در داده‌ها</td>
+                            <td>پارامترهای ارسالی را بررسی کنید</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">429</td>
+                            <td>درخواست زیاد</td>
+                            <td>صبر کنید و مجدداً تلاش کنید</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">500</td>
+                            <td>خطای سرور</td>
+                            <td>با پشتیبانی تماس بگیرید</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-box warning">
+                <h4>نکات مهم</h4>
+                <ul style="margin-top: 0.5rem; padding-right: 1.5rem; color: var(--text-muted);">
+                    <li>همیشه از توکن‌های معتبر استفاده کنید</li>
+                    <li>توکن‌ها را در کد سخت‌کد نکنید</li>
+                    <li>از متغیرهای محیطی برای ذخیره توکن‌ها استفاده کنید</li>
+                    <li>درخواست‌ها را با backoff مدیریت کنید</li>
+                    <li>لاگ‌های خطا را ذخیره کنید</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ═══════ SECTION 7: API REFERENCE ═══════ -->
+        <div class="section">
+            <h2 class="section-title">📚 مرجع کامل API</h2>
+            
+            <div class="subsection">
+                <h3>Anti Sanction Endpoints</h3>
+                
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>روش</th>
+                            <th>آدرس</th>
+                            <th>توضیحات</th>
+                            <th>دسترسی</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="param-name">GET</td>
+                            <td>/v1/anti/sanction/packages</td>
+                            <td>دریافت پکیج‌ها</td>
+                            <td>کاربر</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">POST</td>
+                            <td>/v1/anti/sanction</td>
+                            <td>ایجاد اشتراک</td>
+                            <td>کاربر</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">GET</td>
+                            <td>/v1/anti/sanction</td>
+                            <td>لیست اشتراک‌ها</td>
+                            <td>کاربر</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">GET</td>
+                            <td>/v1/anti/sanction/{id}</td>
+                            <td>جزئیات اشتراک</td>
+                            <td>کاربر</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">PUT</td>
+                            <td>/v1/anti/sanction/{id}/renew</td>
+                            <td>تمدید اشتراک</td>
+                            <td>کاربر</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="subsection">
+                <h3>Shahkar Endpoints</h3>
+                
+                <table class="params-table">
+                    <thead>
+                        <tr>
+                            <th>روش</th>
+                            <th>آدرس</th>
+                            <th>توضیحات</th>
+                            <th>دسترسی</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="param-name">POST</td>
+                            <td>/v1/user/verify/identity</td>
+                            <td>ارسال کد تایید</td>
+                            <td>کاربر</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">GET</td>
+                            <td>/v1/user/verify/identity/resend</td>
+                            <td>ارسال مجدد کد تایید</td>
+                            <td>کاربر</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">POST</td>
+                            <td>/v1/user/getVerifyMobile</td>
+                            <td>دریافت کد OTP</td>
+                            <td>کاربر</td>
+                        </tr>
+                        <tr>
+                            <td class="param-name">POST</td>
+                            <td>/v1/user/verifyMobile</td>
+                            <td>تایید کد OTP</td>
+                            <td>کاربر</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 Haio Cloud - مستندات API</p>
+            <p>نسخه ۱.۰.۶ | آخرین به‌روزرسانی: سپتامبر ۲۰۲۶</p>
+        </div>
+    </div>
+</body>
+</html>

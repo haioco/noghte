@@ -1,0 +1,51 @@
+name: Build Android APK
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    env:
+      ANDROID_HOME: /usr/local/lib/android/sdk
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Setup Android SDK (build-tools 34.0.0, platform 34)
+        run: |
+          SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          if [ ! -f "$SDKMANAGER" ]; then SDKMANAGER="$ANDROID_HOME/tools/bin/sdkmanager"; fi
+          if [ -f "$SDKMANAGER" ]; then
+            yes | "$SDKMANAGER" "build-tools;34.0.0" "platforms;android-34" || true
+          fi
+          # Link SDK to the path expected by gradle.properties/build.sh
+          sudo rm -rf /usr/lib/android-sdk
+          sudo ln -sf /usr/local/lib/android/sdk /usr/lib/android-sdk
+          echo "SDK setup completed"
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+
+      - name: Grant Execute Permission to Gradlew
+        run: chmod +x gradlew build.sh
+
+      - name: Build with Gradle
+        run: ./build.sh release
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: app/build/outputs/apk/release/app-release.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

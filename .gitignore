@@ -1,0 +1,12 @@
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.DS_Store
+/app/build/
+
+# Environment files with secrets — track only .env.example
+.env
+.env.*
+!.env.example
