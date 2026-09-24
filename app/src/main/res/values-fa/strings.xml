@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">HaioBypass</string>
-    <string name="vpn_notification_channel">HaioBypass</string>
-    <string name="vpn_notification_title">HaioBypass فعال</string>
+    <string name="app_name">نقطه</string>
+    <string name="vpn_notification_channel">نقطه</string>
+    <string name="vpn_notification_title">نقطه فعال</string>
     <string name="vpn_notification_text">سرویس در حال اجراست. برای باز کردن ضربه بزنید.</string>
-    <string name="vpn_permission_needed">برای اجرای HaioBypass دسترسی لازم است.</string>
+    <string name="vpn_permission_needed">برای اجرای نقطه دسترسی لازم است.</string>
     <string name="connected">متصل</string>
     <string name="disconnected">قطع</string>
     <string name="connecting">در حال اتصال…</string>

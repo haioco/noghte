@@ -18,5 +18,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "HaioBypass"
+rootProject.name = "Noghte"
 include(":app")

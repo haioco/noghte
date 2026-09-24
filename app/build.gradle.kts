@@ -5,13 +5,13 @@ plugins {
 }
 
 android {
-    namespace = "com.haio.bypass"
+    namespace = "com.noghte.app"
     compileSdk = 34
 
     useLibrary("org.apache.http.legacy")
 
     defaultConfig {
-        applicationId = "com.haio.bypass"
+        applicationId = "com.noghte.app"
         minSdk = 26
         targetSdk = 34
         versionCode = 8
@@ -28,9 +28,13 @@ android {
 
     signingConfigs {
         create("release") {
-            storeFile = file("../haio-release.keystore")
+            // Rebrand: prefer noghte-release.keystore, fall back to the legacy
+            // haio-release.keystore so existing signing setups keep working.
+            val noghteKeystore = file("../noghte-release.keystore")
+            val legacyKeystore = file("../haio-release.keystore")
+            storeFile = if (noghteKeystore.exists()) noghteKeystore else legacyKeystore
             storePassword = System.getenv("KEYSTORE_PASS") ?: "haio2025secure"
-            keyAlias = System.getenv("KEY_ALIAS") ?: "haio-release"
+            keyAlias = System.getenv("KEY_ALIAS") ?: "noghte-release"
             keyPassword = System.getenv("KEY_PASS") ?: "haio2025secure"
         }
     }

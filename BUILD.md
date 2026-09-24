@@ -1,4 +1,4 @@
-# HaioBypass Android - Build Instructions
+# Noghte Android - Build Instructions
 
 ## Prerequisites
 

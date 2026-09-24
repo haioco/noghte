@@ -13,7 +13,7 @@
 
 # Keep API service interface methods with their generic signatures
 # Kotlin suspend functions need explicit signature preservation
--keep,allowobfuscation,allowshrinking class com.haio.bypass.network.api.HaioApiService {
+-keep,allowobfuscation,allowshrinking class com.noghte.app.network.api.NoghteApiService {
     <methods>;
 }
 
@@ -37,8 +37,8 @@
 }
 
 # Keep API models
--keep class com.haio.bypass.network.api.** { *; }
--keepclassmembers class com.haio.bypass.network.api.** { *; }
+-keep class com.noghte.app.network.api.** { *; }
+-keepclassmembers class com.noghte.app.network.api.** { *; }
 
 # Kotlinx serialization
 -keepattributes *Annotation*, InnerClasses
@@ -47,11 +47,11 @@
 -keepclasseswithmembers class kotlinx.serialization.json.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
--keep,includedescriptorclasses class com.haio.bypass.**$$serializer { *; }
--keepclassmembers class com.haio.bypass.** {
+-keep,includedescriptorclasses class com.noghte.app.**$$serializer { *; }
+-keepclassmembers class com.noghte.app.** {
     *** Companion;
 }
--keepclasseswithmembers class com.haio.bypass.** {
+-keepclasseswithmembers class com.noghte.app.** {
     kotlinx.serialization.KSerializer serializer(...);
 }
 
@@ -63,7 +63,7 @@
 -keep class okio.** { *; }
 
 # Keep raw resources
--keep class com.haio.bypass.R$raw { *; }
+-keep class com.noghte.app.R$raw { *; }
 
 # Kotlin reflection — needed for Retrofit type tokens
 -keep class kotlin.Metadata { *; }

@@ -19,7 +19,7 @@ export GRADLE_OPTS="${GRADLE_OPTS:--Xmx2048m -Dfile.encoding=UTF-8}"
 BUILD_TYPE="${1:-debug}"
 
 echo "========================================="
-echo " HaioBypass Android Build"
+echo " Noghte Android Build"
 echo " Build type: $BUILD_TYPE"
 echo " SDK: $ANDROID_HOME"
 echo "========================================="

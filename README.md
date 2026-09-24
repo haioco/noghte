@@ -1,6 +1,15 @@
-# HaioBypass Android
+# Noghte Android (نقطه)
 
-https://haio.ir/%D8%AA%D8%AD%D8%B1%DB%8C%D9%85-%D8%B4%DA%A9%D9%86/
-# Noghte-Backend
-# Noghte-Backend
-# Noghte-Backend
+Anti-sanctions VPN client for Android (Kotlin + Jetpack Compose).
+
+- Application ID: `com.noghte.app`
+- Min SDK 26, target/compile SDK 34
+
+## Build
+
+```bash
+./build.sh debug
+./build.sh release
+```
+
+See [BUILD.md](BUILD.md) for SDK setup.
