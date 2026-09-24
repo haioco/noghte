@@ -105,11 +105,11 @@ HaioBypass-android/
 │   ├── proguard-rules.pro            # R8 minification rules
 │   └── src/main/
 │       ├── AndroidManifest.xml
-│       ├── java/com/haio/bypass/
+│       ├── java/com/noghte/app/
 │       │   ├── config/               # Config persistence + Trojan URL parser
 │       │   ├── domain/               # Domain fetch, store, router
 │       │   ├── proxy/                # sing-box config, process manager
-│       │   ├── service/              # VPN service, notifications, boot
+│       │   ├── service/              # endpoint service, notifications, boot
 │       │   └── ui/                   # Compose UI screens + theme
 │       └── res/
 │           └── raw/

@@ -1,6 +1,7 @@
 # Noghte Android (نقطه)
 
-Anti-sanctions VPN client for Android (Kotlin + Jetpack Compose).
+SASE endpoint app for Android (Kotlin + Jetpack Compose): secure access with
+anti-sanction core (sanctioned-domain routing over an encrypted tunnel).
 
 - Application ID: `com.noghte.app`
 - Min SDK 26, target/compile SDK 34

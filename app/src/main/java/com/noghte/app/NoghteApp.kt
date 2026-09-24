@@ -24,10 +24,10 @@ class NoghteApp : Application() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 CHANNEL_ID,
-                "Noghte VPN",
+                "Noghte",
                 NotificationManager.IMPORTANCE_LOW
             ).apply {
-                description = "Persistent notification for Noghte VPN service"
+                description = "Ongoing notification for Noghte protection"
                 setShowBadge(false)
             }
             val manager = getSystemService(NotificationManager::class.java)
