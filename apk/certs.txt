@@ -1,0 +1,4 @@
+Signer #1 certificate DN: CN=Noghte Test Key, OU=Test, O=Noghte, C=IR
+Signer #1 certificate SHA-256 digest: e70834116a6dbb1a912165818362d39619f1e8deb93642c738613094ebe0fc7f
+Signer #1 certificate SHA-1 digest: 7b3065b7d3fc2e97e3e77ed78a73a57396de3ff2
+Signer #1 certificate MD5 digest: fbb1638fc22b9bda519ef0faef38706f
