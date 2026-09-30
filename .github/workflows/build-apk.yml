@@ -39,8 +39,11 @@ jobs:
       - name: Grant Execute Permission to Gradlew
         run: chmod +x gradlew build.sh
 
+      - name: Restore release keystore
+        run: echo "${{ secrets.RELEASE_KEYSTORE_BASE64 }}" | base64 -d > haio-release.keystore
+
       - name: Build with Gradle
-        run: ./build.sh release
+        run: KEY_ALIAS=haio-release ./build.sh release
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
