@@ -2,6 +2,7 @@ package com.noghte.app.network.api
 
 import com.noghte.app.NoghtePrefs
 import kotlinx.coroutines.runBlocking
+import okhttp3.CertificatePinner
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -33,8 +34,13 @@ object ApiClient {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    private val certificatePinner = CertificatePinner.Builder()
+        .add("haiobypass.haiocloud.com", "sha256/wJuF7rJ6WATPff0pYMdEQx42fAFOUIe527IMDpF5e5s=")
+        .build()
+
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
+            .certificatePinner(certificatePinner)
             .addInterceptor(authInterceptor)
             .addInterceptor(loggingInterceptor)
             .connectTimeout(15, TimeUnit.SECONDS)

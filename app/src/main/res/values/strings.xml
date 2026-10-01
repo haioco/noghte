@@ -2,8 +2,8 @@
 <resources>
     <string name="app_name">Noghte</string>
     <string name="vpn_notification_channel">Noghte</string>
-    <string name="vpn_notification_title">Noghte Active</string>
-    <string name="vpn_notification_text">Service is running. Tap to open.</string>
+    <string name="vpn_notification_title">Noghte SASE Active</string>
+    <string name="vpn_notification_text">SASE protection active. Tap to open.</string>
     <string name="vpn_permission_needed">Permission is required to start Noghte.</string>
     <string name="connected">Connected</string>
     <string name="disconnected">Disconnected</string>
@@ -11,7 +11,7 @@
     <string name="domains_active">%d domains active</string>
     <string name="no_domains">No domains loaded</string>
     <string name="domain_fetch_error">Failed to fetch domains</string>
-    <string name="trojan_url_hint">trojan://password@server:443?sni=server.com</string>
+    <string name="config_url_hint">config://password@server:443?sni=server.com</string>
     <string name="save">Save</string>
     <string name="refresh">Refresh</string>
     <string name="main">Main</string>

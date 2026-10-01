@@ -64,7 +64,7 @@ fun ConfigScreen(
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "تنظیمات تروجان",
+                    text = "تنظیمات اتصال",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onBackground
@@ -84,7 +84,7 @@ fun ConfigScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text(
-                        text = "آدرس تروجان",
+                        text = "آدرس کانفیگ",
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface
@@ -102,7 +102,7 @@ fun ConfigScreen(
                         modifier = Modifier.fillMaxWidth(),
                         placeholder = {
                             Text(
-                                "trojan://password@server:443?sni=server.com",
+                                "config://password@server:443?sni=server.com",
                                 fontSize = 13.sp
                             )
                         },
@@ -156,7 +156,7 @@ fun ConfigScreen(
                             onClick = {
                                 if (trojanUrl.isBlank()) {
                                     showError = true
-                                    errorMessage = "آدرس تروجان نمی\u200Cتواند خالی باشد"
+                                    errorMessage = "آدرس کانفیگ نمی\u200Cتواند خالی باشد"
                                     return@Button
                                 }
                                 val parsed = TrojanUrlParser.parse(trojanUrl)
@@ -172,7 +172,7 @@ fun ConfigScreen(
                                     onSave()
                                 } else {
                                     showError = true
-                                    errorMessage = "آدرس تروجان نامعتبر است. فرمت صحیح را بررسی کنید."
+                                    errorMessage = "آدرس کانفیگ نامعتبر است. فرمت صحیح را بررسی کنید."
                                     saved = false
                                 }
                             },

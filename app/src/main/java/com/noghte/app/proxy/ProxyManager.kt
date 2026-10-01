@@ -42,11 +42,14 @@ class ProxyManager(
 
             _statusMessage.value = "Starting xray..."
 
-            val socksPort = configManager.getConfig().socksPort
+            val appConfig = configManager.getConfig()
+            val socksPort = appConfig.socksPort
             val configJson = configGenerator.generateConfig(
                 socksPort = socksPort,
                 trojanConfig = trojanConfig,
-                bypassDomains = domainStore.getDomains()
+                bypassDomains = domainStore.getDomains(),
+                blockDomains = appConfig.saseBlockDomains,
+                dnsOverHttps = appConfig.saseDnsOverHttps
             )
 
             val xrayStarted = xrayManager.start(configJson)

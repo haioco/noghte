@@ -10,7 +10,13 @@ data class AppConfig(
     val socksPort: Int = 10808,
     val cachedDomains: List<String> = emptyList(),
     val lastFetchTime: Long = 0,
-    val autostart: Boolean = false
+    val autostart: Boolean = false,
+    val saseEnabled: Boolean = false,
+    val saseAllowedApps: List<String> = emptyList(),
+    val saseDisallowedApps: List<String> = emptyList(),
+    val saseBlockDomains: List<String> = emptyList(),
+    val saseDnsOverHttps: Boolean = false,
+    val saseKillSwitch: Boolean = false
 )
 
 data class SubscriptionInfo(

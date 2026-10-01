@@ -107,6 +107,73 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(12.dp))
 
             SettingsSection(
+                icon = Icons.Default.Security,
+                title = "SASE"
+            ) {
+                SettingsItem(
+                    title = "فعال‌سازی SASE",
+                    subtitle = "تقسیم ترافیک بر اساس اپلیکیشن و قوانین محلی",
+                    trailing = {
+                        Switch(
+                            checked = config.saseEnabled,
+                            onCheckedChange = { enabled ->
+                                configManager.updateConfig { it.copy(saseEnabled = enabled) }
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                checkedBorderColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 2.dp),
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
+                )
+                SettingsItem(
+                    title = "Kill Switch",
+                    subtitle = "مسدود کردن ترافیک در صورت قطع شدن VPN",
+                    trailing = {
+                        Switch(
+                            checked = config.saseKillSwitch,
+                            onCheckedChange = { enabled ->
+                                configManager.updateConfig { it.copy(saseKillSwitch = enabled) }
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                checkedBorderColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 2.dp),
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
+                )
+                SettingsItem(
+                    title = "DNS امن (DoH)",
+                    subtitle = "استفاده از DNS-over-HTTPS به‌جای DNS معمولی",
+                    trailing = {
+                        Switch(
+                            checked = config.saseDnsOverHttps,
+                            onCheckedChange = { enabled ->
+                                configManager.updateConfig { it.copy(saseDnsOverHttps = enabled) }
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                checkedBorderColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            SettingsSection(
                 icon = Icons.Default.Info,
                 title = "درباره"
             ) {
@@ -120,7 +187,7 @@ fun SettingsScreen(
                     modifier = Modifier.padding(vertical = 2.dp),
                     color = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
                 )
-                SettingsInfoRow("پروتکل", "Trojan", Icons.Default.Shield)
+                SettingsInfoRow("پروتکل", "SASE", Icons.Default.Shield)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -154,7 +221,7 @@ fun SettingsScreen(
                     Spacer(modifier = Modifier.height(4.dp))
 
                     Text(
-                        text = "با پاک کردن کانفیگ، تمام تنظیمات ذخیره\u200Cشده و کانفیگ تروجان حذف می\u200Cشود.",
+                        text = "با پاک کردن کانفیگ، تمام تنظیمات ذخیره\u200Cشده و کانفیگ اتصال حذف می\u200Cشود.",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
                         modifier = Modifier.padding(top = 4.dp)
@@ -207,7 +274,7 @@ fun SettingsScreen(
                     )
                 },
                 text = {
-                    Text("این کار تمام تنظیمات ذخیره\u200Cشده و کانفیگ تروجان را حذف می\u200Cکند. این عملیات قابل بازگشت نیست.")
+                    Text("این کار تمام تنظیمات ذخیره\u200Cشده و کانفیگ اتصال را حذف می\u200Cکند. این عملیات قابل بازگشت نیست.")
                 },
                 confirmButton = {
                     Button(

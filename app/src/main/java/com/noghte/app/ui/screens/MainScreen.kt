@@ -232,7 +232,7 @@ fun MainScreen(
                                 }
                                 Spacer(modifier = Modifier.width(10.dp))
                                 Text(
-                                    text = "تنظیمات تروجان",
+                                    text = "تنظیمات اتصال",
                                     fontSize = 15.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -279,7 +279,7 @@ fun MainScreen(
                                         )
                                         Spacer(modifier = Modifier.width(10.dp))
                                         Text(
-                                            text = "برای تنظیم تروجان ضربه بزنید",
+                                            text = "برای تنظیم اتصال ضربه بزنید",
                                             color = MaterialTheme.colorScheme.primary,
                                             fontSize = 14.sp,
                                             fontWeight = FontWeight.Medium

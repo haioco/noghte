@@ -15,9 +15,12 @@ class XrayConfigGenerator {
     fun generateConfig(
         socksPort: Int,
         trojanConfig: TrojanConfig,
-        bypassDomains: List<String>
+        bypassDomains: List<String>,
+        blockDomains: List<String> = emptyList(),
+        dnsOverHttps: Boolean = false
     ): String {
         val domainRules = bypassDomains.map { "domain:$it" }
+        val blockRules = blockDomains.map { "domain:$it" }
         val fakeIpPool = "198.18.0.0/15"
 
         val config = buildJsonObject {
@@ -116,6 +119,16 @@ class XrayConfigGenerator {
                             put("queryStrategy", JsonPrimitive("UseIPv4"))
                         })
                     }
+                    if (dnsOverHttps) {
+                        add(buildJsonObject {
+                            put("address", JsonPrimitive("https://dns.google/dns-query"))
+                            put("queryStrategy", JsonPrimitive("UseIPv4"))
+                        })
+                        add(buildJsonObject {
+                            put("address", JsonPrimitive("https://cloudflare-dns.com/dns-query"))
+                            put("queryStrategy", JsonPrimitive("UseIPv4"))
+                        })
+                    }
                     add(buildJsonObject {
                         put("address", JsonPrimitive("8.8.8.8"))
                         put("queryStrategy", JsonPrimitive("UseIPv4"))
@@ -157,7 +170,17 @@ class XrayConfigGenerator {
                             put("outboundTag", JsonPrimitive("proxy"))
                         })
                     }
-                    // 5) Everything else (non-bypass) goes direct.
+                    // 5) Blocklist domains -> blackhole (SWG-lite)
+                    if (blockRules.isNotEmpty()) {
+                        add(buildJsonObject {
+                            put("type", JsonPrimitive("field"))
+                            put("domain", buildJsonArray {
+                                blockRules.forEach { rule -> add(JsonPrimitive(rule)) }
+                            })
+                            put("outboundTag", JsonPrimitive("block"))
+                        })
+                    }
+                    // 6) Everything else (non-bypass) goes direct.
                     add(buildJsonObject {
                         put("type", JsonPrimitive("field"))
                         put("network", JsonPrimitive("tcp,udp"))

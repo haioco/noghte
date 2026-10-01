@@ -52,7 +52,7 @@ sealed class Screen(val route: String, val title: String) {
     data object Domains : Screen("domains", "دامنه‌ها")
     data object Store : Screen("store", "فروشگاه")
     data object Settings : Screen("settings", "تنظیمات")
-    data object Config : Screen("config", "تنظیمات تروجان")
+    data object Config : Screen("config", "تنظیمات اتصال")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -344,7 +344,7 @@ fun NoghteMainApp(
                             if (shouldStart) {
                                 if (ConfigManager(context).getConfig().trojanConfig == null) {
                                     scope.launch {
-                                        snackbarHostState.showSnackbar("ابتدا تروجان را تنظیم کنید")
+                                        snackbarHostState.showSnackbar("ابتدا اتصال را تنظیم کنید")
                                     }
                                     navController.navigate(Screen.Config.route)
                                 } else {

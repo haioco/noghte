@@ -45,7 +45,8 @@ class NoghteVpnService : VpnService() {
         val configManager = ConfigManager(applicationContext)
         val domainStore = DomainStore(applicationContext)
 
-        val trojanConfig = configManager.getConfig().trojanConfig
+        val config = configManager.getConfig()
+        val trojanConfig = config.trojanConfig
         if (trojanConfig == null) {
             Log.e(TAG, "No Trojan config, stopping")
             ProxyManager.resetState()
@@ -54,7 +55,12 @@ class NoghteVpnService : VpnService() {
             return START_NOT_STICKY
         }
 
-        vpnInterface = establishVpnInterface()
+        vpnInterface = establishVpnInterface(
+            saseEnabled = config.saseEnabled,
+            saseAllowedApps = config.saseAllowedApps,
+            saseDisallowedApps = config.saseDisallowedApps,
+            saseKillSwitch = config.saseKillSwitch
+        )
         if (vpnInterface == null) {
             Log.e(TAG, "Failed to establish VPN interface, stopping")
             ProxyManager.resetState()
@@ -122,16 +128,41 @@ class NoghteVpnService : VpnService() {
         }
     }
 
-    private fun establishVpnInterface(): ParcelFileDescriptor? {
+    private fun establishVpnInterface(
+        saseEnabled: Boolean = false,
+        saseAllowedApps: List<String> = emptyList(),
+        saseDisallowedApps: List<String> = emptyList(),
+        saseKillSwitch: Boolean = false
+    ): ParcelFileDescriptor? {
         return try {
-            Builder()
+            val builder = Builder()
                 .setSession("Noghte")
                 .setMtu(1500)
                 .addAddress("172.19.0.1", 30)
                 .addRoute("0.0.0.0", 0)
                 .addDnsServer("8.8.8.8")
                 .addDisallowedApplication(packageName)
-                .establish()
+
+            if (saseEnabled) {
+                when {
+                    saseAllowedApps.isNotEmpty() -> {
+                        saseAllowedApps.forEach { pkg ->
+                            try { builder.addAllowedApplication(pkg) } catch (_: Exception) {}
+                        }
+                    }
+                    saseDisallowedApps.isNotEmpty() -> {
+                        saseDisallowedApps.forEach { pkg ->
+                            try { builder.addDisallowedApplication(pkg) } catch (_: Exception) {}
+                        }
+                    }
+                }
+            }
+
+            if (saseKillSwitch) {
+                builder.setBlocking(true)
+            }
+
+            builder.establish()
         } catch (e: Exception) {
             Log.e(TAG, "Failed to build VPN interface", e)
             null
