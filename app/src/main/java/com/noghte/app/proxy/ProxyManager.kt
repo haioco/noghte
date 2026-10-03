@@ -44,11 +44,17 @@ class ProxyManager(
 
             val appConfig = configManager.getConfig()
             val socksPort = appConfig.socksPort
+            val blockList = buildList {
+                addAll(appConfig.saseBlockDomains)
+                if (appConfig.saseEnabled && appConfig.saseBlockAds) {
+                    addAll(loadBundledBlocklist())
+                }
+            }.distinct()
             val configJson = configGenerator.generateConfig(
                 socksPort = socksPort,
                 trojanConfig = trojanConfig,
                 bypassDomains = domainStore.getDomains(),
-                blockDomains = appConfig.saseBlockDomains,
+                blockDomains = blockList,
                 dnsOverHttps = appConfig.saseDnsOverHttps
             )
 
@@ -127,6 +133,20 @@ class ProxyManager(
         scope.cancel()
     }
 
+    /** Bundled seed blocklist (ads/trackers) shipped in assets; parsed lazily. */
+    private fun loadBundledBlocklist(): List<String> {
+        return try {
+            context.assets.open("blocklist_ads.txt").bufferedReader().useLines { lines ->
+                lines.map { it.trim().lowercase() }
+                    .filter { it.isNotEmpty() && !it.startsWith("#") && it.contains(".") }
+                    .toList()
+            }
+        } catch (e: Exception) {
+            Log.e("ProxyManager", "Failed to load bundled blocklist", e)
+            emptyList()
+        }
+    }
+
     enum class ProxyState {
         DISCONNECTED,
         CONNECTING,
@@ -147,6 +167,11 @@ class ProxyManager(
         fun resetState() {
             _proxyState.value = ProxyState.DISCONNECTED
             _statusMessage.value = "Disconnected"
+        }
+
+        /** Kill switch engaged: interface stays up but all traffic is dropped. */
+        fun statusMessageBlocked() {
+            _statusMessage.value = "Blocked — kill switch"
         }
     }
 }

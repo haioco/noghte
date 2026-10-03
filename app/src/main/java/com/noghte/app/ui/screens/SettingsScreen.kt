@@ -29,6 +29,7 @@ fun SettingsScreen(
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         val config by configManager.config.collectAsState()
         var showClearDialog by remember { mutableStateOf(false) }
+        var showAppPicker by remember { mutableStateOf(false) }
 
         Column(
             modifier = Modifier
@@ -118,6 +119,64 @@ fun SettingsScreen(
                             checked = config.saseEnabled,
                             onCheckedChange = { enabled ->
                                 configManager.updateConfig { it.copy(saseEnabled = enabled) }
+                            },
+                            colors = SwitchDefaults.colors(
+                                checkedThumbColor = MaterialTheme.colorScheme.primary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                checkedBorderColor = MaterialTheme.colorScheme.primary
+                            )
+                        )
+                    }
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 2.dp),
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
+                )
+                SettingsItem(
+                    title = "Split Tunnel (بر اساس اپ)",
+                    subtitle = when {
+                        config.sasePerAppMode == "off" -> "همه اپ‌ها از VPN عبور می‌کنند"
+                        config.sasePerAppMode == "allow" -> "فقط ${config.saseSelectedApps.size} اپ انتخاب‌شده از VPN عبور می‌کنند"
+                        else -> "${config.saseSelectedApps.size} اپ انتخاب‌شده از VPN کنار گذاشته می‌شوند"
+                    },
+                    trailing = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            TextButton(onClick = {
+                                configManager.updateConfig {
+                                    it.copy(sasePerAppMode = when (it.sasePerAppMode) {
+                                        "off" -> "deny"
+                                        "deny" -> "allow"
+                                        else -> "off"
+                                    })
+                                }
+                            }) {
+                                Text(
+                                    when (config.sasePerAppMode) {
+                                        "deny" -> "استثنا"
+                                        "allow" -> "فقط"
+                                        else -> "خاموش"
+                                    },
+                                    fontSize = 12.sp
+                                )
+                            }
+                            TextButton(onClick = { showAppPicker = true }) {
+                                Text("انتخاب", fontSize = 12.sp)
+                            }
+                        }
+                    }
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(vertical = 2.dp),
+                    color = MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
+                )
+                SettingsItem(
+                    title = "مسدودسازی تبلیغات و ردیاب‌ها",
+                    subtitle = "لیست داخلی دامنه‌های تبلیغاتی روی Xray (blackhole)",
+                    trailing = {
+                        Switch(
+                            checked = config.saseBlockAds,
+                            onCheckedChange = { enabled ->
+                                configManager.updateConfig { it.copy(saseBlockAds = enabled) }
                             },
                             colors = SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.primary,
@@ -254,6 +313,23 @@ fun SettingsScreen(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
+        }
+
+        if (showAppPicker) {
+            com.noghte.app.ui.components.AppPickerDialog(
+                selectedPackages = config.saseSelectedApps.toSet(),
+                onDismiss = { showAppPicker = false },
+                onConfirm = { pkgs ->
+                    configManager.updateConfig {
+                        it.copy(
+                            saseSelectedApps = pkgs.toList(),
+                            // Auto-enable deny mode if user picks apps but mode is off
+                            sasePerAppMode = if (it.sasePerAppMode == "off" && pkgs.isNotEmpty()) "deny" else it.sasePerAppMode
+                        )
+                    }
+                    showAppPicker = false
+                }
+            )
         }
 
         if (showClearDialog) {

@@ -14,9 +14,17 @@ class DomainFetcher {
     constructor()
     constructor(@Suppress("UNUSED_PARAMETER") context: Context)
 
+    // Pin only haiocloud hosts we control. raw.githubusercontent.com is a
+    // public mirror we do not operate — pinning it would break on GitHub's
+    // own certificate rotation; fail-closed only for our own infra.
     private val certificatePinner = CertificatePinner.Builder()
-        .add("tools.haiocloud.com", "sha256/wJuF7rJ6WATPff0pYMdEQx42fAFOUIe527IMDpF5e5s=")
-        .add("raw.githubusercontent.com", "sha256/AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=")
+        // current leaf (rotates ~every 60-90 days)
+        .add("tools.haiocloud.com", "sha256/YXxUe75ka0ejzx1hmUAw1a6dTt0cr/WGZmAzlwOjke4=")
+        // LE intermediate YR2 (SPKI) + ISRG Root YR (cross-signed)
+        .add("tools.haiocloud.com", "sha256/nWN7PSep5XDQdge5zK24CnCRXHr3KvzhKEGxsdqCX9E=")
+        .add("tools.haiocloud.com", "sha256/fk6IOKit1ild5647BH06ujSIq5XbCgqlbYl6ANhhi88=")
+        // ISRG Root X2 ECDSA root (covers both YE*/YR* chains)
+        .add("tools.haiocloud.com", "sha256/diGVwiVYbubAI3RW4hB9xU8e/CH2GnkuvVFZE8zmgzI=")
         .build()
 
     private val client = OkHttpClient.Builder()

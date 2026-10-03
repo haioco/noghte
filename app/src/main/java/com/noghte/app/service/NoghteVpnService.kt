@@ -21,6 +21,7 @@ class NoghteVpnService : VpnService() {
     private var startJob: Job? = null
     private var isStopping = false
     private var isRunning = false
+    private var killSwitchEnabled = false
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // The service is started with startForegroundService(), so the system
@@ -55,11 +56,11 @@ class NoghteVpnService : VpnService() {
             return START_NOT_STICKY
         }
 
+        killSwitchEnabled = config.saseEnabled && config.saseKillSwitch
+
         vpnInterface = establishVpnInterface(
-            saseEnabled = config.saseEnabled,
-            saseAllowedApps = config.saseAllowedApps,
-            saseDisallowedApps = config.saseDisallowedApps,
-            saseKillSwitch = config.saseKillSwitch
+            perAppMode = if (config.saseEnabled) config.sasePerAppMode else "off",
+            selectedApps = config.saseSelectedApps
         )
         if (vpnInterface == null) {
             Log.e(TAG, "Failed to establish VPN interface, stopping")
@@ -85,17 +86,13 @@ class NoghteVpnService : VpnService() {
                 proxyManager?.start(vpnFd, trojanConfig)
             } catch (e: ProxyManager.ProxyStartException) {
                 Log.e(TAG, "Proxy failed to start: ${e.message}")
-                stopVpn()
-                stopForegroundCompat()
-                stopSelf()
+                handleProxyFailure()
             } catch (t: Throwable) {
                 // Catch Throwable, not just Exception: missing API classes surface
                 // as NoClassDefFoundError on older Android versions and must not
                 // crash the app.
                 Log.e(TAG, "Unexpected error starting proxy", t)
-                stopVpn()
-                stopForegroundCompat()
-                stopSelf()
+                handleProxyFailure()
             }
         }
 
@@ -129,10 +126,8 @@ class NoghteVpnService : VpnService() {
     }
 
     private fun establishVpnInterface(
-        saseEnabled: Boolean = false,
-        saseAllowedApps: List<String> = emptyList(),
-        saseDisallowedApps: List<String> = emptyList(),
-        saseKillSwitch: Boolean = false
+        perAppMode: String = "off",
+        selectedApps: List<String> = emptyList()
     ): ParcelFileDescriptor? {
         return try {
             val builder = Builder()
@@ -143,23 +138,16 @@ class NoghteVpnService : VpnService() {
                 .addDnsServer("8.8.8.8")
                 .addDisallowedApplication(packageName)
 
-            if (saseEnabled) {
-                when {
-                    saseAllowedApps.isNotEmpty() -> {
-                        saseAllowedApps.forEach { pkg ->
-                            try { builder.addAllowedApplication(pkg) } catch (_: Exception) {}
-                        }
+            // Per-app split tunneling (ZTNA-lite): allowlist or denylist mode.
+            if (selectedApps.isNotEmpty()) {
+                when (perAppMode) {
+                    "allow" -> selectedApps.forEach { pkg ->
+                        try { builder.addAllowedApplication(pkg) } catch (_: Exception) {}
                     }
-                    saseDisallowedApps.isNotEmpty() -> {
-                        saseDisallowedApps.forEach { pkg ->
-                            try { builder.addDisallowedApplication(pkg) } catch (_: Exception) {}
-                        }
+                    "deny" -> selectedApps.forEach { pkg ->
+                        try { builder.addDisallowedApplication(pkg) } catch (_: Exception) {}
                     }
                 }
-            }
-
-            if (saseKillSwitch) {
-                builder.setBlocking(true)
             }
 
             builder.establish()
@@ -167,6 +155,25 @@ class NoghteVpnService : VpnService() {
             Log.e(TAG, "Failed to build VPN interface", e)
             null
         }
+    }
+
+    /**
+     * Kill switch semantics: when enabled, a proxy failure must NOT tear down the
+     * TUN interface (that would silently leak traffic to direct). Instead keep the
+     * interface up with no proxy running — every routed packet drops (blackhole).
+     * A user-initiated stop (ACTION_STOP) or system revoke always wins and tears
+     * down normally.
+     */
+    private fun handleProxyFailure() {
+        ProxyManager.resetState()
+        if (killSwitchEnabled) {
+            Log.w(TAG, "Kill switch active: keeping TUN up, blackholing traffic")
+            ProxyManager.statusMessageBlocked()
+            return
+        }
+        stopVpn()
+        stopForegroundCompat()
+        stopSelf()
     }
 
     private fun stopVpn() {

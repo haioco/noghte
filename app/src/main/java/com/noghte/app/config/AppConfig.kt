@@ -12,9 +12,11 @@ data class AppConfig(
     val lastFetchTime: Long = 0,
     val autostart: Boolean = false,
     val saseEnabled: Boolean = false,
-    val saseAllowedApps: List<String> = emptyList(),
-    val saseDisallowedApps: List<String> = emptyList(),
+    // "off" | "allow" (only selected apps use VPN) | "deny" (selected apps bypass VPN)
+    val sasePerAppMode: String = "off",
+    val saseSelectedApps: List<String> = emptyList(),
     val saseBlockDomains: List<String> = emptyList(),
+    val saseBlockAds: Boolean = false,
     val saseDnsOverHttps: Boolean = false,
     val saseKillSwitch: Boolean = false
 )

@@ -34,8 +34,16 @@ object ApiClient {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
+    // Pin Let's Encrypt intermediates + ISRG roots so LE's ~90-day leaf
+    // rotation never breaks the app. Leaf pin kept for current cert.
     private val certificatePinner = CertificatePinner.Builder()
+        // current leaf (BE-aware: expires with next LE renewal)
         .add("haiobypass.haiocloud.com", "sha256/wJuF7rJ6WATPff0pYMdEQx42fAFOUIe527IMDpF5e5s=")
+        // LE intermediate YE2 (SPKI)
+        .add("haiobypass.haiocloud.com", "sha256/s/tdAOmUzd8syaTuqfgGvFcn6DzA5Cmb+Vby1ST+U3Y=")
+        // ISRG Root YE (cross-signed) + ISRG Root X2 (ECDSA root)
+        .add("haiobypass.haiocloud.com", "sha256/sCkq5UWXjg+7mKu9lMhhYF5bGLsy7VI/UNW3tccdR7w=")
+        .add("haiobypass.haiocloud.com", "sha256/diGVwiVYbubAI3RW4hB9xU8e/CH2GnkuvVFZE8zmgzI=")
         .build()
 
     private val okHttpClient: OkHttpClient by lazy {

@@ -94,30 +94,6 @@ class NoghtePrefs(context: Context) {
         prefs.edit().putBoolean(KEY_FREE_ACTIVATED, true).apply()
     }
 
-    var saseEnabled: Boolean
-        get() = prefs.getBoolean(KEY_SASE_ENABLED, false)
-        set(value) = prefs.edit().putBoolean(KEY_SASE_ENABLED, value).apply()
-
-    var saseAllowedApps: Set<String>
-        get() = prefs.getStringSet(KEY_SASE_ALLOWED_APPS, emptySet()) ?: emptySet()
-        set(value) = prefs.edit().putStringSet(KEY_SASE_ALLOWED_APPS, value).apply()
-
-    var saseDisallowedApps: Set<String>
-        get() = prefs.getStringSet(KEY_SASE_DISALLOWED_APPS, emptySet()) ?: emptySet()
-        set(value) = prefs.edit().putStringSet(KEY_SASE_DISALLOWED_APPS, value).apply()
-
-    var saseBlockDomains: Set<String>
-        get() = prefs.getStringSet(KEY_SASE_BLOCK_DOMAINS, emptySet()) ?: emptySet()
-        set(value) = prefs.edit().putStringSet(KEY_SASE_BLOCK_DOMAINS, value).apply()
-
-    var saseDnsOverHttps: Boolean
-        get() = prefs.getBoolean(KEY_SASE_DOH, false)
-        set(value) = prefs.edit().putBoolean(KEY_SASE_DOH, value).apply()
-
-    var saseKillSwitch: Boolean
-        get() = prefs.getBoolean(KEY_SASE_KILL_SWITCH, false)
-        set(value) = prefs.edit().putBoolean(KEY_SASE_KILL_SWITCH, value).apply()
-
     fun clearAll() {
         prefs.edit().clear().apply()
     }
@@ -167,11 +143,5 @@ class NoghtePrefs(context: Context) {
         private const val KEY_SUB_EXPIRY = "subscription_expiry"
         private const val KEY_PENDING_PLAN_SLUG = "pending_plan_slug"
         private const val KEY_PENDING_PAYMENT_ID = "pending_payment_id"
-        private const val KEY_SASE_ENABLED = "sase_enabled"
-        private const val KEY_SASE_ALLOWED_APPS = "sase_allowed_apps"
-        private const val KEY_SASE_DISALLOWED_APPS = "sase_disallowed_apps"
-        private const val KEY_SASE_BLOCK_DOMAINS = "sase_block_domains"
-        private const val KEY_SASE_DOH = "sase_dns_over_https"
-        private const val KEY_SASE_KILL_SWITCH = "sase_kill_switch"
     }
 }
