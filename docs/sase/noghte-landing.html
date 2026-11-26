@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نقطه | Cloud Access Point — SASE با رمزنگاری پساکوانتومی</title>
+<meta name="description" content="نقطه: اولین Cloud Access Point ایران با رمزنگاری پساکوانتومی. امنیت صفر-اعتماد، فایروال ابری، و محافظت در برابر تهدیدات کوانتومی.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg: #06090f;
+    --bg2: #0c1220;
+    --card: #111827;
+    --card-border: #1e293b;
+    --text: #f1f5f9;
+    --text-dim: #94a3b8;
+    --text-muted: #64748b;
+    --accent: #06b6d4;
+    --accent2: #8b5cf6;
+    --accent3: #f59e0b;
+    --gradient: linear-gradient(135deg, #06b6d4, #8b5cf6);
+    --gradient2: linear-gradient(135deg, #8b5cf6, #ec4899);
+    --gradient3: linear-gradient(135deg, #06b6d4, #10b981);
+    --green: #10b981;
+    --red: #ef4444;
+    --glow: 0 0 40px rgba(6,182,212,0.15);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.9;
+    overflow-x: hidden;
+  }
+
+  /* ===== NAVBAR ===== */
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 16px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(20px);
+    background: rgba(6,9,15,0.8);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.3s;
+  }
+  .navbar.scrolled {
+    padding: 10px 40px;
+    background: rgba(6,9,15,0.95);
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+  .nav-logo .logo-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--gradient);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 900;
+    color: #fff;
+    position: relative;
+  }
+  .nav-logo .logo-icon::after {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: 12px;
+    background: var(--gradient);
+    opacity: 0.3;
+    filter: blur(8px);
+    z-index: -1;
+  }
+  .nav-logo span {
+    font-size: 20px;
+    font-weight: 800;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-cta {
+    background: var(--gradient);
+    color: #fff !important;
+    padding: 8px 22px;
+    border-radius: 8px;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .nav-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(6,182,212,0.3);
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 40px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(6,182,212,0.12), transparent 60%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -300px;
+    right: -200px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(139,92,246,0.08), transparent 60%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 860px; }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.2);
+    color: var(--accent);
+    padding: 6px 18px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 28px;
+  }
+  .hero-badge .dot {
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  .hero h1 {
+    font-size: 72px;
+    font-weight: 900;
+    line-height: 1.15;
+    margin-bottom: 8px;
+    letter-spacing: -1px;
+  }
+  .hero h1 .gradient {
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero .subtitle {
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    line-height: 1.8;
+  }
+  .hero .en-name {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+  .hero-cta {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 36px;
+  }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-primary {
+    background: var(--gradient);
+    color: #fff;
+    box-shadow: 0 4px 24px rgba(6,182,212,0.25);
+  }
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 32px rgba(6,182,212,0.35);
+  }
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--card-border);
+  }
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(6,182,212,0.05);
+  }
+
+  /* Stats */
+  .hero-stats {
+    display: flex;
+    gap: 48px;
+    justify-content: center;
+    margin-top: 56px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .stat { text-align: center; }
+  .stat .num {
+    font-size: 32px;
+    font-weight: 900;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .stat .label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+  /* ===== GRID / UTILITIES ===== */
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 100px 0; }
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+  .section-label .line { width: 24px; height: 2px; background: var(--accent); border-radius: 1px; }
+  .section-title {
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 1.3;
+    margin-bottom: 16px;
+  }
+  .section-desc {
+    font-size: 17px;
+    color: var(--text-dim);
+    max-width: 640px;
+    line-height: 2;
+  }
+  .text-center { text-align: center; }
+  .mx-auto { margin-left: auto; margin-right: auto; }
+
+  /* Grid cards */
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 48px;
+  }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 48px;
+  }
+
+  /* Feature cards */
+  .feat-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 28px;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .feat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 2px;
+    background: var(--gradient);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .feat-card:hover {
+    border-color: rgba(6,182,212,0.2);
+    transform: translateY(-4px);
+    box-shadow: var(--glow);
+  }
+  .feat-card:hover::before { opacity: 1; }
+  .feat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .feat-icon.cyan { background: rgba(6,182,212,0.1); color: var(--accent); }
+  .feat-icon.purple { background: rgba(139,92,246,0.1); color: var(--accent2); }
+  .feat-icon.amber { background: rgba(245,158,11,0.1); color: var(--accent3); }
+  .feat-icon.green { background: rgba(16,185,129,0.1); color: var(--green); }
+  .feat-card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .feat-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.9;
+  }
+
+  /* ===== ARCHITECTURE ===== */
+  .arch-section { background: var(--bg2); }
+  .arch-diagram {
+    background: #0a0e17;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-top: 48px;
+    overflow-x: auto;
+  }
+  .arch-diagram pre {
+    font-family: 'Consolas', 'Courier New', monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #6ee7b7;
+    direction: ltr;
+    text-align: left;
+    white-space: pre;
+  }
+  .arch-diagram .layer-label {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .arch-diagram .highlight { color: #fbbf24; }
+  .arch-diagram .dim { color: #475569; }
+
+  /* ===== PQC SECTION ===== */
+  .pqc-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    margin-top: 48px;
+  }
+  .pqc-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pqc-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 3px;
+    background: var(--gradient2);
+  }
+  .pqc-card .algo-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent2);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .pqc-card h3 {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+  .pqc-card .fips {
+    display: inline-block;
+    background: rgba(245,158,11,0.1);
+    color: var(--accent3);
+    padding: 2px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .pqc-card p {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.9;
+  }
+
+  /* ===== STEPS ===== */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 48px;
+    position: relative;
+  }
+  .steps::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    right: 60px;
+    left: 60px;
+    height: 2px;
+    background: linear-gradient(to left, var(--accent), var(--accent2));
+    opacity: 0.3;
+  }
+  .step {
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+  .step-num {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--gradient);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 900;
+    margin: 0 auto 18px;
+    box-shadow: 0 0 24px rgba(6,182,212,0.2);
+  }
+  .step h4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .step p {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+
+  /* ===== COMPARISON TABLE ===== */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 40px;
+    background: var(--card);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--card-border);
+  }
+  .compare-table th {
+    background: var(--bg2);
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+    border-bottom: 1px solid var(--card-border);
+  }
+  .compare-table td {
+    padding: 14px 20px;
+    font-size: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table .yes { color: var(--green); font-weight: 700; }
+  .compare-table .no { color: var(--text-muted); }
+  .compare-table .partial { color: var(--accent3); font-weight: 600; }
+
+  /* ===== PRICING ===== */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 48px;
+  }
+  .price-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 32px;
+    position: relative;
+    transition: all 0.3s;
+  }
+  .price-card.featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 40px rgba(6,182,212,0.1);
+  }
+  .price-card.featured::before {
+    content: 'محبوب‌ترین';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gradient);
+    color: #fff;
+    padding: 4px 18px;
+    border-radius: 0 0 10px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .price-card h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .price-card .desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .price-card .price {
+    font-size: 36px;
+    font-weight: 900;
+    margin-bottom: 4px;
+  }
+  .price-card .price span { font-size: 15px; font-weight: 400; color: var(--text-dim); }
+  .price-card .period {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+  .price-card ul {
+    list-style: none;
+    margin-bottom: 28px;
+  }
+  .price-card li {
+    padding: 8px 0;
+    font-size: 13.5px;
+    color: var(--text-dim);
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .price-card li::before {
+    content: '✓';
+    color: var(--green);
+    font-weight: 700;
+    font-size: 14px;
+    min-width: 18px;
+  }
+  .price-card .btn { width: 100%; justify-content: center; }
+
+  /* ===== CTA ===== */
+  .cta-section {
+    text-align: center;
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at center, rgba(6,182,212,0.08), transparent 60%);
+  }
+  .cta-section h2 {
+    font-size: 44px;
+    font-weight: 900;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .cta-section p {
+    font-size: 18px;
+    color: var(--text-dim);
+    max-width: 560px;
+    margin: 0 auto 36px;
+    position: relative;
+  }
+
+  /* ===== FOOTER ===== */
+  .footer {
+    border-top: 1px solid var(--card-border);
+    padding: 48px 0 32px;
+    text-align: center;
+  }
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr repeat(3, 1fr);
+    gap: 40px;
+    text-align: right;
+    margin-bottom: 40px;
+  }
+  .footer-brand .logo {
+    font-size: 24px;
+    font-weight: 900;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 12px;
+  }
+  .footer-brand p { font-size: 13px; color: var(--text-muted); line-height: 2; }
+  .footer-col h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  .footer-col a {
+    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    padding: 4px 0;
+    transition: color 0.2s;
+  }
+  .footer-col a:hover { color: var(--accent); }
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.05);
+    padding-top: 20px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 900px) {
+    .hero h1 { font-size: 44px; }
+    .hero .subtitle { font-size: 17px; }
+    .hero-stats { gap: 24px; flex-wrap: wrap; }
+    .grid-3, .grid-2, .pqc-grid, .pricing-grid { grid-template-columns: 1fr; }
+    .steps { grid-template-columns: repeat(2, 1fr); }
+    .steps::before { display: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .navbar { padding: 12px 20px; }
+    .nav-links { display: none; }
+    .section-title { font-size: 28px; }
+    .hero { padding: 100px 20px 60px; }
+    section { padding: 60px 0; }
+  }
+
+  /* Animations */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a href="#" class="nav-logo">
+    <div class="logo-icon">ن</div>
+    <span>نقطه</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">قابلیت‌ها</a></li>
+    <li><a href="#architecture">معماری</a></li>
+    <li><a href="#pqc">رمزنگاری پساکوانتومی</a></li>
+    <li><a href="#pricing">قیمت‌گذاری</a></li>
+    <li><a href="#cta" class="nav-cta">شروع رایگان</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      نسخه ۱.۰ — به‌زودی منتشر می‌شود
+    </div>
+    <h1>
+      <span class="gradient">نقطه</span>
+    </h1>
+    <div class="en-name">Cloud Access Point — SASE + Post-Quantum Cryptography</div>
+    <p class="subtitle">
+      اولین Cloud Access Point ایران با رمزنگاری پساکوانتومی.<br>
+      امنیت صفر-اعتماد، فایروال ابری، و محافظت در برابر تهدیدات فردا.
+    </p>
+    <div class="hero-cta">
+      <a href="#cta" class="btn btn-primary">درخواست دسترسی زودهنگام</a>
+      <a href="#architecture" class="btn btn-outline">مشاهده معماری →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="num">ML-KEM-768</div>
+        <div class="label">رمزنگاری کلید-توافق</div>
+      </div>
+      <div class="stat">
+        <div class="num">۹۹.۹۹٪</div>
+        <div class="label">آپتایم تضمینی</div>
+      </div>
+      <div class="stat">
+        <div class="num">&lt; ۲۰ms</div>
+        <div class="label">تاخیر لبه شبکه</div>
+      </div>
+      <div class="stat">
+        <div class="num">FIPS 203-207</div>
+        <div class="label">استاندارد NIST</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-label mx-auto"><span class="line"></span>قابلیت‌ها<span class="line"></span></div>
+      <h2 class="section-title">امنیتی که فراتر از امروز فکر می‌کند</h2>
+      <p class="section-desc mx-auto">
+        نقطه ترکیبی از شش لایه امنیتی SASE با رمزنگاری پساکوانتومی است که در برابر
+        هم تهدیدات امروز و هم حملات کوانتومی فردا محافظت می‌کند.
+      </p>
+    </div>
+
+    <div class="grid-3">
+      <div class="feat-card fade-up">
+        <div class="feat-icon cyan">🛡️</div>
+        <h3>ZTNA — دسترسی صفر-اعتماد</h3>
+        <p>احراز هویت چندمرحله‌ای، MFA، Device Trust و Policy Engine مبتنی بر هویت. هر درخواست مستقل از تاریخچه بررسی می‌شود.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon purple">🔥</div>
+        <h3>FWaaS — فایروال ابری</h3>
+        <p>فایروال نسل هفتم (L7) مبتنی بر eBPF و nftables. کنترل پورت، پروتکل و محتوا در لبه شبکه ابری.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon amber">🌐</div>
+        <h3>SWG — دروازه امن وب</h3>
+        <p>فیلتر URL، بازرسی HTTPS، شناسایی بدافزار و طبقه‌بندی محتوا. محافظت در برابر تهدیدات وب در زمان واقعی.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon green">☁️</div>
+        <h3>CASB — کنترل ابری</h3>
+        <p>نمایش و کنترل سرویس‌های SaaS، شناسایی Shadow IT و اجرای سیاست‌های امنیتی روی تمام اپلیکیشن‌های ابری.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon cyan">🔒</div>
+        <h3>DLP — جلوگیری از نشت داده</h3>
+        <p>کشف و طبقه‌بندی اطلاعات حساس (PII)، مانیتورینگ جریان داده و بلوک خودکار خروج اطلاعات.</p>
+      </div>
+      <div class="feat-card fade-up">
+        <div class="feat-icon purple">⚡</div>
+        <h3>SD-WAN — شبکه تطبیقی</h3>
+        <p>مسیریابی هوشمند ترافیک، بهینه‌سازی WAN و تونل‌زنی WireGuard/PQC هیبریدی با تاخیر کمتر از ۲۰ میلی‌ثانیه.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="architecture" class="arch-section">
+  <div class="container">
+    <div class="section-label"><span class="line"></span>معماری</div>
+    <h2 class="section_title" style="font-size:40px;font-weight:900;margin-bottom:16px">سه لایه امنیتی نقطه</h2>
+    <p class="section-desc">
+      معماری نقطه از سه لایه مجزا تشکیل شده: کنترل‌پلن ابری، لبه امنیتی و زیرساخت شبکه.
+    </p>
+
+    <div class="arch-diagram">
+<pre>
+<span class="dim">╔══════════════════════════════════════════════════════════════════════════╗</span>
+<span class="dim">║</span>                    <span class="layer-label">☁️  CLOUD CONTROL PLANE</span>                            <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">┌──────────────┐</span>  <span class="dim">┌──────────────┐</span>  <span class="dim">┌──────────────────────┐</span>  <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">│</span>  <span class="highlight">Identity & Auth</span>  <span class="dim">│</span>  <span class="dim">│</span>  <span class="highlight">Policy Engine</span>     <span class="dim">│</span>  <span class="dim">│</span>  <span class="highlight">Centralized Mgmt</span>       <span class="dim">│</span>  <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">│</span>  Keycloak + MFA    <span class="dim">│</span>  <span class="dim">│</span>  OPA (Policy-as-Code) <span class="dim">│</span>  <span class="dim">│</span>  Dashboard + Grafana     <span class="dim">│</span>  <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">│</span>  SAML / OIDC       <span class="dim">│</span>  <span class="dim">│</span>  RBAC + ABAC           <span class="dim">│</span>  <span class="dim">│</span>  Real-time Analytics     <span class="dim">│</span>  <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">└──────────────────┘</span>  <span class="dim">└──────────────────────┘</span>  <span class="dim">└──────────────────────┘</span>  <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">┌────────────────────────────────────────────────────────────────┐</span>  <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">│</span>  <span class="highlight">Certificate Authority</span> — HashiCorp Vault + ML-KEM/ML-DSA (PQC)  <span class="dim">│</span>  <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">└────────────────────────────────────────────────────────────────┘</span>  <span class="dim">║</span>
+<span class="dim">╚══════════════════════════════════════════════════════════════════════════╝</span>
+                              <span class="dim">║</span>
+                              <span class="dim">║</span>
+<span class="dim">╔══════════════════════════════════════════════════════════════════════════╗</span>
+<span class="dim">║</span>                    <span class="layer-label">🛡️  SECURITY EDGE (SSE)</span>                             <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">┌──────────┐</span>  <span class="dim">┌──────────┐</span>  <span class="dim">┌──────────┐</span>  <span class="dim">┌──────────┐</span>         <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">│</span>  <span class="highlight">FWaaS</span>     <span class="dim">│</span>  <span class="dim">│</span>  <span class="highlight">SWG</span>      <span class="dim">│</span>  <span class="dim">│</span>  <span class="highlight">CASB</span>     <span class="dim">│</span>  <span class="dim">│</span>  <span class="highlight">ZTNA</span>     <span class="dim">│</span>         <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">│</span>  eBPF/nft <span class="dim">│</span>  <span class="dim">│</span>  Squid+ICAP<span class="dim">│</span>  <span class="dim">│</span>  SaaS Ctrl<span class="dim">│</span>  <span class="dim">│</span>  Gateway  <span class="dim">│</span>         <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">└──────────┘</span>  <span class="dim">└──────────┘</span>  <span class="dim">└──────────┘</span>  <span class="dim">└──────────┘</span>         <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">┌──────────────────────────────────────────────────────────────┐</span>  <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">│</span>              <span class="highlight">SD-WAN / Tunneling Layer</span>                       <span class="dim">│</span>  <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">│</span>         <span class="highlight">WireGuard + PQC Hybrid (ML-KEM-768)</span>              <span class="dim">│</span>  <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">└──────────────────────────────────────────────────────────────┘</span>  <span class="dim">║</span>
+<span class="dim">╚══════════════════════════════════════════════════════════════════════════╝</span>
+                              <span class="dim">║</span>
+                              <span class="dim">║</span>
+<span class="dim">╔══════════════════════════════════════════════════════════════════════════╗</span>
+<span class="dim">║</span>                 <span class="layer-label">📱 ENDPOINT (Android / Desktop)</span>                        <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">┌──────────────┐</span>  <span class="dim">┌──────────────┐</span>  <span class="dim">┌──────────────────┐</span>       <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">│</span>  User Mgmt     <span class="dim">│</span>  <span class="dim">│</span>  Billing      <span class="dim">│</span>  <span class="dim">│</span>  Traffic Sync     <span class="dim">│</span>       <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">│</span>  RBAC/SAML     <span class="dim">│</span>  <span class="dim">│</span>  Crypto Pay  <span class="dim">│</span>  <span class="dim">│</span>  Celery Async     <span class="dim">│</span>       <span class="dim">║</span>
+<span class="dim">║</span>  <span class="dim">└──────────────┘</span>  <span class="dim">└──────────────┘</span>  <span class="dim">└──────────────────┘</span>       <span class="dim">║</span>
+<span class="dim">╚══════════════════════════════════════════════════════════════════════════╝</span>
+</pre>
+    </div>
+  </div>
+</section>
+
+<!-- PQC -->
+<section id="pqc">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-label mx-auto"><span class="line"></span>رمزنگاری پساکوانتومی<span class="line"></span></div>
+      <h2 class="section-title">آماده برای عصر کوانتومی</h2>
+      <p class="section-desc mx-auto">
+        الگوریتم‌های رمزنگاری نقطه بر اساس استانداردهای NIST (FIPS 203-207) هستند
+        و در برابر حملات کامپیوترهای کوانتومی آینده مقاوم‌اند.
+      </p>
+    </div>
+
+    <div class="pqc-grid">
+      <div class="pqc-card fade-up">
+        <div class="algo-name">Key Encapsulation</div>
+        <h3>ML-KEM-768 (Kyber)</h3>
+        <span class="fips">FIPS 203</span>
+        <p>توافق کلید کوانتومی‌امن برای تونل‌زنی. جایگزین X25519 در مبادله کلید اولیه TLS و WireGuard.</p>
+      </div>
+      <div class="pqc-card fade-up">
+        <div class="algo-name">Digital Signature</div>
+        <h3>ML-DSA-65 (Dilithium)</h3>
+        <span class="fips">FIPS 204</span>
+        <p>امضای دیجیتال پساکوانتومی برای احراز هویت گواهی‌ها و تأیید یکپارچگی پیام‌ها.</p>
+      </div>
+      <div class="pqc-card fade-up">
+        <div class="algo-name">Hash-Based Signature</div>
+        <h3>SLH-DSA (SPHINCS+)</h3>
+        <span class="fips">FIPS 205</span>
+        <p>امضای مبتنی بر هش — بالاترین سطح اطمینان برای امضاهای طولانی‌مدت و گواهی‌های ریشه.</p>
+      </div>
+      <div class="pqc-card fade-up">
+        <div class="algo-name">Symmetric Encryption</div>
+        <h3>AES-256-GCM (Quantum-Safe)</h3>
+        <span class="fips">FIPS 140-3</span>
+        <p>رمزگذاری متقارن ۲۵۶ بیتی — از نظر تئوری در برابر حملات کوانتومی Grover مقاوم است.</p>
+      </div>
+    </div>
+
+    <div style="background:rgba(6,182,212,0.05);border:1px solid rgba(6,182,212,0.15);border-radius:12px;padding:20px 24px;margin-top:32px;font-size:14px;color:var(--text-dim);line-height:2">
+      <strong style="color:var(--accent)">رویکرد Hybrid:</strong>
+      نقطه از رویکرد هیبریدی استفاده می‌کند — الگوریتم‌های کلاسیک (X25519, Ed25519) همزمان با الگوریتم‌های PQC اجرا می‌شوند.
+      این تضمین می‌کند که حتی اگر الگوریتم PQC آسیب‌پذیری ناشناخته‌ای داشته باشد، لایه کلاسیک همچنان محافظت فراهم کند.
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section style="background:var(--bg2)">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-label mx-auto"><span class="line"></span>نحوه عملکرد<span class="line"></span></div>
+      <h2 class="section-title">از نصب تا محافظت در ۴ مرحله</h2>
+    </div>
+    <div class="steps">
+      <div class="step fade-up">
+        <div class="step-num">۱</div>
+        <h4>نصب و ثبت‌نام</h4>
+        <p>اپلیکیشن نقطه را نصب کنید و با ایمیل یا SSO ثبت‌نام کنید.</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">۲</div>
+        <h4>احراز هویت</h4>
+        <p>MFA دومرحله‌ای + Device Trust: دستگاه شما با Play Integrity تأیید می‌شود.</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">۳</div>
+        <h4>اتصال امن</h4>
+        <p>تونل WireGuard/PQC هیبریدی با ML-KEM-768 برقرار می‌شود. تمام ترافیک رمزنگاری می‌شود.</p>
+      </div>
+      <div class="step fade-up">
+        <div class="step-num">۴</div>
+        <h4>محافظت مداوم</h4>
+        <p>لبه امنیتی نقطه ترافیک را مانیتور کرده و در برابر تهدیدات محافظت می‌کند.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section>
+  <div class="container">
+    <div class="text-center">
+      <div class="section-label mx-auto"><span class="line"></span>مقایسه<span class="line"></span></div>
+      <h2 class="section-title">نقطه در مقایسه با رقبا</h2>
+    </div>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>قابلیت</th>
+          <th>نقطه</th>
+          <th>Zscaler</th>
+          <th>Cloudflare One</th>
+          <th>Netskope</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>رمزنگاری پساکوانتومی (PQC)</td>
+          <td class="yes">✓ ML-KEM + ML-DSA</td>
+          <td class="partial">پشتیبانی نسبی</td>
+          <td class="partial">فقط TLS 1.3</td>
+          <td class="no">✗</td>
+        </tr>
+        <tr>
+          <td>رویکرد Hybrid (کلاسیک + PQC)</td>
+          <td class="yes">✓</td>
+          <td class="no">✗</td>
+          <td class="no">✗</td>
+          <td class="no">✗</td>
+        </tr>
+        <tr>
+          <td>ZTNA + Device Trust</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+        </tr>
+        <tr>
+          <td>SWG + URL Filtering</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+        </tr>
+        <tr>
+          <td>FWaaS (L7 Firewall)</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="partial">فقط Basic</td>
+          <td class="yes">✓</td>
+        </tr>
+        <tr>
+          <td>CASB + Shadow IT</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="partial">پشتیبانی نسبی</td>
+          <td class="yes">✓</td>
+        </tr>
+        <tr>
+          <td>DLP</td>
+          <td class="yes">✓</td>
+          <td class="yes">✓</td>
+          <td class="partial">فقط Basic</td>
+          <td class="yes">✓</td>
+        </tr>
+        <tr>
+          <td>قیمت‌گذاری</td>
+          <td class="yes">از ۹۹ هزار تومان</td>
+          <td class="no">Enterprise Only</td>
+          <td class="partial">-plugins</td>
+          <td class="no">Enterprise Only</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" style="background:var(--bg2)">
+  <div class="container">
+    <div class="text-center">
+      <div class="section-label mx-auto"><span class="line"></span>قیمت‌گذاری<span class="line"></span></div>
+      <h2 class="section-title">plan مناسب کسب‌وکار شما</h2>
+      <p class="section-desc mx-auto">
+        از استفاده شخصی تا سازمان‌های بزرگ — نقطه plan مناسب شما را دارد.
+      </p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="price-card fade-up">
+        <h3>شخصی</h3>
+        <p class="desc">برای استفاده فردی و حفظ حریم خصوصی</p>
+        <div class="price">رایگان</div>
+        <p class="period">برای همیشه</p>
+        <ul>
+          <li>تونل WireGuard/PQC هیبریدی</li>
+          <li>۱۰ گیگابایت ترافیک ماهانه</li>
+          <li>ZTNA پایه</li>
+          <li>DNS Sinkhole (tracker blocking)</li>
+          <li>بدون تبلیغات</li>
+        </ul>
+        <a href="#cta" class="btn btn-outline">شروع رایگان</a>
+      </div>
+
+      <div class="price-card featured fade-up">
+        <h3>حرفه‌ای</h3>
+        <p class="desc">برای فریلنسرها و کسب‌وکارهای کوچک</p>
+        <div class="price">۹۹ <span>هزار تومان/ماه</span></div>
+        <p class="period">یا ۸۹۹ هزار تومان سالانه</p>
+        <ul>
+          <li>ترافیک نامحدود</li>
+          <li>SWG + فیلتر URL</li>
+          <li>FWaaS پایه</li>
+          <li>۳ دستگاه همزمان</li>
+          <li>پشتیبانی اولویت‌دار</li>
+          <li>گزارش‌گیری ماهانه</li>
+        </ul>
+        <a href="#cta" class="btn btn-primary">خرید اشتراک</a>
+      </div>
+
+      <div class="price-card fade-up">
+        <h3>سازمانی</h3>
+        <p class="desc">برای سازمان‌ها و تیم‌های بزرگ</p>
+        <div class="price">سفارشی</div>
+        <p class="period">تماس با فروش</p>
+        <ul>
+          <li>تمام قابلیت‌های حرفه‌ای</li>
+          <li>CASB + DLP</li>
+          <li>SIEM Integration</li>
+          <li>تعداد نامحدود کاربر</li>
+          <li>SAML/OIDC SSO</li>
+          <li>SLA ۹۹.۹۹٪ آپتایم</li>
+          <li>مشاوره امنیتی اختصاصی</li>
+        </ul>
+        <a href="#cta" class="btn btn-outline">تماس با فروش</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta" class="cta-section">
+  <div class="container" style="position:relative;z-index:1">
+    <h2>آماده محافظت از آینده هستید؟</h2>
+    <p>
+      همین الان دسترسی زودهنگام نقطه را دریافت کنید و اولین نفری باشید
+      که رمزنگاری پساکوانتومی را در ایران تجربه می‌کند.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="#" class="btn btn-primary" style="font-size:17px;padding:16px 40px">
+        درخواست دسترسی زودهنگام →
+      </a>
+      <a href="#" class="btn btn-outline" style="font-size:17px;padding:16px 40px">
+        دموی آنلاین
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">نقطه</div>
+        <p>اولین Cloud Access Point ایران با رمزنگاری پساکوانتومی.<br>امنیت فردا، امروز.</p>
+      </div>
+      <div class="footer-col">
+        <h4>محصول</h4>
+        <a href="#">امکانات</a>
+        <a href="#">قیمت‌گذاری</a>
+        <a href="#">معماری</a>
+        <a href="#">مستندات</a>
+      </div>
+      <div class="footer-col">
+        <h4>امنیت</h4>
+        <a href="#">رمزنگاری PQC</a>
+        <a href="#">استانداردهای NIST</a>
+        <a href="#">FIPS 140-3</a>
+        <a href="#">گزارش امنیتی</a>
+      </div>
+      <div class="footer-col">
+        <h4>شرکت</h4>
+        <a href="#">درباره ما</a>
+        <a href="#">بلاگ</a>
+        <a href="#">تماس</a>
+        <a href="#">فرصت‌های شغلی</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © ۱۴۰۵ نقطه — Cloud Access Point. تمامی حقوق محفوظ است.
+    </div>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll effect
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Fade-up animation on scroll
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+
+</body>
+</html>

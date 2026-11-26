@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نقطه پساکوانتومی | کتابچه راهنمای طراحی و ارزیابی</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14213D;--ink-soft:#5A6478;--paper:#F4F5F0;--paper-raise:#EAECE5;
+  --gold:#AF7F2A;--gold-light:#FFF8E7;--teal:#00897B;--teal-dark:#00695C;--teal-light:#E0F2F1;
+  --violet:#7F52FF;--violet-light:#F1ECFF;--blue:#0B3D5C;--blue-light:#EBF4FA;
+  --red:#C44D68;--red-light:#FFF0F3;--green:#2E7D32;--green-light:#E8F5E9;
+  --line:#DDD9CC;--white:#FDFCF9;
+}
+[data-theme="dark"]{
+  --ink:#E2E8F0;--ink-soft:#94A3B8;--paper:#0F172A;--paper-raise:#1E293B;
+  --gold:#D4A843;--gold-light:#1a1500;--teal:#4DB6AC;--teal-dark:#26A69A;--teal-light:#0c2d2a;
+  --violet:#A58BFF;--violet-light:#1d1638;--blue:#5B9BD5;--blue-light:#0c2a4a;
+  --red:#F0829C;--red-light:#3a1520;--green:#81C784;--green-light:#0f2a12;
+  --line:#334155;--white:#1E293B;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--paper);color:var(--ink);font-family:'Vazirmatn',Tahoma,sans-serif;font-size:15px;line-height:1.9;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s}
+a{color:inherit;text-decoration:none}
+code,.mono{font-family:ui-monospace,Menlo,Consolas,monospace;direction:ltr;unicode-bidi:embed}
+code{font-size:.8rem;background:var(--paper-raise);padding:1px 6px;border-radius:4px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+
+/* NAV */
+.nav{position:sticky;top:0;z-index:50;background:rgba(244,245,240,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);height:60px}
+[data-theme="dark"] .nav{background:rgba(15,23,42,.95)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:100%}
+.nav-brand{font-weight:800;font-size:.92rem;display:flex;align-items:center;gap:8px}
+.nav-brand .dot{width:9px;height:9px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--violet))}
+.nav-links{display:flex;gap:2px;align-items:center}
+.nav-links a{padding:6px 9px;border-radius:7px;font-size:.78rem;color:var(--ink-soft);font-weight:500;white-space:nowrap;transition:all .2s}
+.nav-links a:hover{background:var(--teal-light);color:var(--teal)}
+.theme-btn{background:none;border:1px solid var(--line);width:32px;height:32px;border-radius:7px;cursor:pointer;color:var(--ink);display:grid;place-items:center;margin-right:4px}
+.theme-btn svg{width:15px;height:15px}
+.nav-toggle{display:none;background:none;border:none;cursor:pointer;width:34px;height:34px;color:var(--ink)}
+.nav-toggle svg{width:20px;height:20px}
+@media(max-width:980px){
+  .nav-links{position:fixed;top:60px;right:0;left:0;background:var(--paper);flex-direction:column;align-items:stretch;padding:8px 0;border-bottom:1px solid var(--line);transform:translateY(-130%);transition:transform .3s;box-shadow:0 6px 20px rgba(0,0,0,.1)}
+  .nav-links.open{transform:translateY(0)}
+  .nav-links a{padding:11px 20px;border-radius:0;border-bottom:1px solid var(--line)}
+  .theme-btn{margin:10px auto}
+  .nav-toggle{display:grid;place-items:center}
+}
+
+/* HERO */
+.hero{padding:54px 0 44px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--paper),var(--paper-raise));position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 25% 40%,rgba(0,137,123,.09),transparent 60%),radial-gradient(ellipse at 75% 30%,rgba(127,82,255,.08),transparent 55%);pointer-events:none}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.15fr .85fr;gap:36px;align-items:center}
+.badge-top{display:inline-flex;gap:6px;align-items:center;background:var(--violet-light);color:var(--violet);padding:5px 13px;border-radius:100px;font-size:.74rem;font-weight:600;margin-bottom:14px}
+.hero h1{font-size:2.15rem;font-weight:800;line-height:1.35;margin-bottom:8px}
+.hero .role{color:var(--ink-soft);font-size:.92rem;margin-bottom:14px}
+.hero .lead{font-size:.88rem;line-height:2;max-width:56ch;border-right:3px solid var(--teal);padding-right:12px;margin-bottom:22px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:8px;font-size:.86rem;font-weight:600;border:2px solid transparent;transition:all .2s;cursor:pointer;font-family:inherit}
+.btn-solid{background:var(--teal);color:#fff;border-color:var(--teal)}
+.btn-solid:hover{background:var(--teal-dark);transform:translateY(-2px)}
+.btn-line{background:transparent;color:var(--teal);border-color:var(--teal)}
+.btn-line:hover{background:var(--teal);color:#fff}
+.hero-cta{display:flex;gap:10px;flex-wrap:wrap}
+.hero-stats{display:flex;gap:2rem;margin-top:24px;flex-wrap:wrap}
+.hero-stat .num{font-size:1.75rem;font-weight:800;color:var(--teal);line-height:1.2}
+.hero-stat .label{font-size:.72rem;color:var(--ink-soft)}
+.hero-book{width:210px;height:280px;margin:auto;border-radius:12px;background:linear-gradient(145deg,var(--teal-dark),var(--violet));box-shadow:0 14px 40px rgba(0,105,92,.3);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;color:#fff;position:relative;overflow:hidden}
+.hero-book::before{content:"";position:absolute;top:-40px;left:-40px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero-book .b-icon{font-size:2.8rem;margin-bottom:10px}
+.hero-book .b-title{font-size:1.15rem;font-weight:800;line-height:1.6}
+.hero-book .b-sub{font-size:.7rem;opacity:.85;margin-top:6px;direction:ltr}
+.hero-book .b-ed{font-size:.68rem;opacity:.7;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,.25)}
+@media(max-width:780px){.hero-grid{grid-template-columns:1fr;text-align:center}.hero-visual{order:-1}.hero .lead{margin-inline:auto;border-right:none;border-bottom:3px solid var(--teal);padding:0 0 10px}.hero-cta,.hero-stats{justify-content:center}.hero h1{font-size:1.6rem}.hero-book{width:170px;height:225px}}
+
+/* STATS BAR */
+.stats-bar{background:linear-gradient(135deg,var(--teal-dark),var(--violet));color:#fff;padding:24px 0}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center}
+.stat-num{font-size:1.5rem;font-weight:800;line-height:1.3}
+.stat-label{font-size:.75rem;opacity:.9}
+@media(max-width:640px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+
+/* SECTIONS */
+section{padding:50px 0}
+section.alt{background:var(--paper-raise)}
+.sec-head{margin-bottom:26px}
+.rule{width:36px;height:3px;background:linear-gradient(90deg,var(--teal),var(--violet));border-radius:2px;margin-bottom:11px}
+.sec-head h2{font-size:1.32rem;font-weight:800;margin-bottom:6px}
+.sec-head p{color:var(--ink-soft);font-size:.87rem;max-width:70ch}
+.two{display:grid;grid-template-columns:1.25fr 1fr;gap:30px;align-items:start}
+@media(max-width:820px){.two{grid-template-columns:1fr}}
+.prose p{font-size:.9rem;color:var(--ink-soft);margin-bottom:12px;line-height:1.95;max-width:66ch}
+.prose strong{color:var(--ink)}
+.card{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:18px;transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--teal)}
+.card h3{font-size:.95rem;font-weight:700;margin-bottom:6px}
+.card p{font-size:.83rem;color:var(--ink-soft);line-height:1.85}
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.num-big{font-size:2.2rem;font-weight:900;color:var(--teal);opacity:.3;line-height:1;margin-bottom:6px}
+.ex{background:var(--paper-raise);border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:.76rem;color:var(--ink-soft);direction:ltr;text-align:left;font-family:ui-monospace,Menlo,Consolas,monospace;margin-top:10px;white-space:pre-wrap;line-height:1.7}
+.note-box{background:var(--gold-light);border:1px solid rgba(175,127,42,.3);border-radius:10px;padding:14px 16px;font-size:.85rem;line-height:1.95;margin-top:18px}
+.note-box strong{color:var(--gold)}
+.tip-list{display:flex;flex-direction:column;gap:10px}
+.tip{display:flex;gap:12px;background:var(--white);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.tip .ic{width:36px;height:36px;min-width:36px;border-radius:8px;display:grid;place-items:center;background:var(--teal-light);font-size:1.05rem}
+.tip h4{font-size:.87rem;margin-bottom:2px}
+.tip p{font-size:.79rem;color:var(--ink-soft);line-height:1.75}
+
+/* TABLE */
+.tw{overflow-x:auto;border-radius:12px;border:1px solid var(--line);background:var(--white)}
+table.t{width:100%;border-collapse:collapse;min-width:860px}
+.t th{background:linear-gradient(135deg,var(--teal-dark),var(--violet));color:#fff;padding:11px 13px;text-align:right;font-size:.77rem;font-weight:700;white-space:nowrap}
+.t td{padding:10px 13px;border-bottom:1px solid var(--line);font-size:.82rem;color:var(--ink-soft);vertical-align:top}
+.t tr:last-child td{border-bottom:none}
+.t tr:hover td{background:rgba(0,137,123,.04)}
+.t td:first-child{font-weight:700;color:var(--ink)}
+.t td.ltr{direction:ltr;text-align:left;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.76rem}
+.pill{display:inline-block;font-size:.68rem;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap}
+.p-ok{background:var(--green-light);color:var(--green)}
+.p-warn{background:var(--gold-light);color:var(--gold)}
+.p-bad{background:var(--red-light);color:var(--red)}
+.p-info{background:var(--blue-light);color:var(--blue)}
+.p-pq{background:var(--violet-light);color:var(--violet)}
+.weight{font-weight:800;color:var(--gold)}
+
+/* DIAGRAMS */
+.diag{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.diag h3{font-size:.93rem;margin-bottom:4px}
+.diag > p{font-size:.79rem;color:var(--ink-soft);margin-bottom:10px}
+.diag svg{width:100%;height:auto;display:block}
+.sb{fill:var(--paper-raise);stroke:var(--line);stroke-width:1.2}
+.sb-t{fill:var(--teal-light);stroke:var(--teal);stroke-width:1.4}
+.sb-v{fill:var(--violet-light);stroke:var(--violet);stroke-width:1.4}
+.sb-g{fill:var(--gold-light);stroke:var(--gold);stroke-width:1.4}
+.sb-r{fill:var(--red-light);stroke:var(--red);stroke-width:1.4}
+.st{fill:var(--ink);font-family:Vazirmatn,Tahoma,sans-serif;font-size:13px;font-weight:700}
+.ss{fill:var(--ink-soft);font-family:Vazirmatn,Tahoma,sans-serif;font-size:10.5px}
+.sm{fill:var(--ink-soft);font-family:ui-monospace,Menlo,monospace;font-size:10px}
+.smv{fill:var(--violet);font-family:ui-monospace,Menlo,monospace;font-size:10px;font-weight:700}
+.sl{stroke:var(--teal);stroke-width:1.7;fill:none}
+.slv{stroke:var(--violet);stroke-width:1.7;fill:none;stroke-dasharray:6 4}
+.slg{stroke:var(--gold);stroke-width:1.7;fill:none;stroke-dasharray:3 3}
+.diag-legend{display:flex;gap:16px;flex-wrap:wrap;font-size:.75rem;color:var(--ink-soft);margin-top:8px}
+.diag-legend span::before{content:"";display:inline-block;width:18px;height:3px;margin-left:6px;vertical-align:middle;border-radius:2px}
+.lg1::before{background:var(--teal)}
+.lg2::before{background:var(--violet)}
+.lg3::before{background:var(--gold)}
+
+/* SIZE CHART */
+.chart-ctl{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.chip{padding:6px 14px;border-radius:100px;border:1px solid var(--line);background:var(--white);color:var(--ink-soft);font-family:inherit;font-size:.78rem;cursor:pointer;transition:all .2s}
+.chip.active,.chip:hover{border-color:var(--teal);background:var(--teal-light);color:var(--teal)}
+.bars{display:flex;flex-direction:column;gap:9px}
+.bar-row{display:grid;grid-template-columns:150px 1fr 90px;gap:10px;align-items:center;font-size:.78rem}
+.bar-row .nm{direction:ltr;text-align:left;font-family:ui-monospace,Menlo,monospace;font-size:.74rem;color:var(--ink)}
+.bar-track{background:var(--paper-raise);border-radius:6px;height:20px;overflow:hidden;direction:ltr}
+.bar-fill{height:100%;border-radius:6px;transition:width .5s ease}
+.bar-row .val{direction:ltr;text-align:left;font-family:ui-monospace,Menlo,monospace;font-size:.74rem;color:var(--ink-soft)}
+@media(max-width:560px){.bar-row{grid-template-columns:110px 1fr 70px}}
+
+/* MOSCA */
+.mosca{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center}
+@media(max-width:780px){.mosca{grid-template-columns:1fr}}
+.slider-row{margin-bottom:16px}
+.slider-row label{display:flex;justify-content:space-between;font-size:.84rem;font-weight:600;margin-bottom:4px}
+.slider-row label b{color:var(--teal)}
+.slider-row small{display:block;font-size:.74rem;color:var(--ink-soft);margin-top:2px}
+input[type=range]{width:100%;accent-color:var(--teal)}
+.mosca-out{text-align:center;padding:22px;border-radius:12px;border:2px solid var(--line)}
+.mosca-out .verdict{font-size:1.15rem;font-weight:800;margin:8px 0}
+.mosca-bar{display:flex;height:30px;border-radius:8px;overflow:hidden;margin:12px 0 6px;direction:ltr;background:var(--paper-raise);position:relative}
+.mosca-bar div{display:grid;place-items:center;font-size:.7rem;color:#fff;font-weight:700;transition:width .4s}
+.mosca-z{position:absolute;top:-4px;bottom:-4px;width:3px;background:var(--red);transition:left .4s}
+
+/* MOCKUP */
+.mock-wrap{display:grid;grid-template-columns:360px 1fr;gap:30px;align-items:start}
+@media(max-width:880px){.mock-wrap{grid-template-columns:1fr}.phone{margin:auto}}
+.phone{width:350px;background:#1a1a1a;border-radius:42px;padding:12px;box-shadow:0 20px 50px rgba(0,0,0,.28);position:relative}
+.phone::before{content:"";position:absolute;top:12px;left:50%;transform:translateX(-50%);width:110px;height:24px;background:#1a1a1a;border-radius:0 0 18px 18px;z-index:5}
+.screen{background:#fff;border-radius:31px;overflow:hidden;height:690px;display:flex;flex-direction:column;color:#212121;font-size:14px;line-height:1.7;position:relative}
+.sbar{background:#00897B;color:#fff;padding:12px 22px 6px;display:flex;justify-content:space-between;font-size:.72rem;font-weight:600}
+.abar{background:#00897B;color:#fff;padding:13px 18px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.abar h2{font-size:1.02rem;flex:1;font-weight:600}
+.abar .back{cursor:pointer;font-size:1.1rem}
+.pq-chip{font-size:.66rem;font-weight:700;padding:2px 8px;border-radius:12px;background:rgba(255,255,255,.2);color:#fff;white-space:nowrap}
+.cnt{flex:1;overflow-y:auto;padding:14px;background:#ECEFF1}
+.cnt::-webkit-scrollbar{width:3px}.cnt::-webkit-scrollbar-thumb{background:#ccc}
+.bnav{background:#fff;border-top:1px solid #E0E0E0;display:flex;justify-content:space-around;padding:8px 0 12px}
+.bn{display:flex;flex-direction:column;align-items:center;font-size:.66rem;color:#616161;cursor:pointer;padding:4px 10px;border-radius:10px;gap:2px}
+.bn .i{font-size:1.1rem}
+.bn.on{color:#00897B;background:#E0F2F1}
+.login{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;padding:30px 24px;background:linear-gradient(180deg,#fff,#E0F2F1);text-align:center}
+.logo{width:92px;height:92px;border-radius:24px;background:linear-gradient(135deg,#00897B,#7F52FF);display:grid;place-items:center;font-size:2.6rem;color:#fff;margin-bottom:16px;box-shadow:0 10px 25px rgba(0,137,123,.3)}
+.login h1{color:#00897B;font-size:1.8rem}
+.login .sub{color:#616161;font-size:.9rem;margin-bottom:26px}
+.lbtn{width:100%;background:#00897B;color:#fff;border:none;padding:14px;border-radius:12px;font-size:.95rem;font-weight:600;cursor:pointer;font-family:inherit}
+.hs-box{width:100%;margin-top:16px;background:#fff;border:1px solid #E0E0E0;border-radius:12px;padding:10px 12px;text-align:right;font-size:.74rem;color:#616161}
+.hs-box .row{display:flex;justify-content:space-between;gap:8px;padding:2px 0}
+.hs-box .row b{direction:ltr;font-family:ui-monospace,Menlo,monospace;font-weight:600;font-size:.7rem;color:#212121}
+.rc{background:#fff;border-radius:14px;padding:13px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-right:4px solid #00897B;cursor:pointer;transition:transform .15s}
+.rc:hover{transform:translateY(-2px)}
+.rc.blocked{border-right-color:#C62828;opacity:.85}
+.rc.weak{border-right-color:#F9A825}
+.rh{display:flex;gap:10px;align-items:center;margin-bottom:6px}
+.ri{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:1.1rem;background:#E3F2FD}
+.rt{flex:1}
+.rt h3{font-size:.9rem;line-height:1.4}
+.rt .ty{font-size:.7rem;color:#616161}
+.rf{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap}
+.mb{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.66rem;font-weight:700}
+.mb-pq{background:#EDE7FF;color:#5B34D6}
+.mb-hy{background:#E8F5E9;color:#2E7D32}
+.mb-cl{background:#FFF3E0;color:#E65100}
+.mb-no{background:#FFEBEE;color:#C62828}
+.abtn{background:#00897B;color:#fff;border:none;padding:5px 14px;border-radius:20px;font-size:.72rem;font-weight:600;cursor:pointer;font-family:inherit}
+.abtn:disabled{background:#BDBDBD;cursor:not-allowed}
+.dh{background:linear-gradient(135deg,#00897B,#00695C);color:#fff;padding:18px;border-radius:0 0 22px 22px;margin:-14px -14px 14px}
+.dh h1{font-size:1.15rem}
+.dh .ty{font-size:.78rem;opacity:.9}
+.ds{background:#fff;border-radius:12px;padding:13px;margin-bottom:10px;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.ds h3{font-size:.8rem;color:#616161;margin-bottom:6px}
+.kv{display:flex;justify-content:space-between;gap:8px;font-size:.76rem;padding:4px 0;border-bottom:1px dashed #eee}
+.kv:last-child{border-bottom:none}
+.kv span:first-child{color:#616161}
+.kv b{direction:ltr;font-family:ui-monospace,Menlo,monospace;font-size:.7rem;font-weight:600;text-align:left}
+.warn{background:#FFF8E1;border:1px solid #FFE082;border-radius:10px;padding:9px 11px;font-size:.74rem;color:#6D4C00;margin-bottom:10px}
+.err{background:#FFEBEE;border:1px solid #FFCDD2;border-radius:10px;padding:9px 11px;font-size:.74rem;color:#B71C1C;margin-bottom:10px}
+.big-btn{width:100%;background:#00897B;color:#fff;border:none;padding:13px;border-radius:12px;font-size:.92rem;font-weight:600;cursor:pointer;font-family:inherit}
+.big-btn:disabled{background:#BDBDBD}
+.li{background:#fff;border-radius:12px;padding:11px 12px;margin-bottom:8px;box-shadow:0 2px 6px rgba(0,0,0,.05);cursor:pointer}
+.li-top{display:flex;align-items:center;gap:9px}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.d-ok{background:#2E7D32}.d-no{background:#C62828}.d-w{background:#F9A825}
+.li .ac{font-size:.84rem;font-weight:600;flex:1}
+.li .tm{font-size:.68rem;color:#616161}
+.li .mt{font-size:.7rem;color:#616161;direction:ltr;text-align:left;font-family:ui-monospace,Menlo,monospace;margin-top:2px}
+.li .ext{display:none;margin-top:8px;border-top:1px dashed #E0E0E0;padding-top:6px}
+.li.open .ext{display:block}
+.inv-sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.inv-sum div{background:#fff;border-radius:10px;padding:8px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.05)}
+.inv-sum b{display:block;font-size:1.25rem}
+.inv-sum span{font-size:.66rem;color:#616161}
+.mock-side h3{font-size:1rem;margin-bottom:10px}
+.policy-ctl{display:flex;flex-direction:column;gap:8px;margin-bottom:18px}
+.policy-ctl button{text-align:right;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--white);color:var(--ink);cursor:pointer;font-family:inherit;font-size:.84rem;transition:all .2s}
+.policy-ctl button small{display:block;color:var(--ink-soft);font-size:.74rem;margin-top:2px}
+.policy-ctl button.active{border-color:var(--teal);background:var(--teal-light);box-shadow:0 0 0 2px rgba(0,137,123,.15)}
+.screen-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.design-notes{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:16px}
+.design-notes h4{font-size:.86rem;margin-bottom:6px;color:var(--teal)}
+.design-notes ul{padding-right:18px;font-size:.8rem;color:var(--ink-soft);line-height:1.9}
+
+/* ROADMAP */
+.roadmap{max-width:820px;margin:0 auto;position:relative}
+.roadmap::before{content:"";position:absolute;right:18px;top:0;bottom:0;width:2px;background:var(--line)}
+.rm{display:flex;gap:20px;margin-bottom:20px;position:relative}
+.rm-dot{width:38px;height:38px;min-width:38px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--violet));display:grid;place-items:center;color:#fff;font-weight:800;z-index:1}
+.rm-c{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:16px 18px;flex:1}
+.rm-c h3{font-size:.95rem;margin-bottom:4px}
+.rm-c .when{font-size:.74rem;color:var(--violet);font-weight:700;margin-bottom:6px}
+.rm-c p{font-size:.83rem;color:var(--ink-soft);margin-bottom:6px}
+.rm-c ul{padding-right:18px}
+.rm-c li{font-size:.8rem;color:var(--ink-soft);margin-bottom:3px}
+
+/* LAB */
+.lab{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:24px;max-width:900px;margin:0 auto}
+.lab-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.lab-tab{padding:8px 16px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--ink-soft);font-family:inherit;font-size:.82rem;cursor:pointer}
+.lab-tab.active{background:var(--teal);color:#fff;border-color:var(--teal)}
+.lab-c{display:none}.lab-c.active{display:block}
+.lab-desc{font-size:.87rem;color:var(--ink-soft);margin-bottom:12px}
+.code{background:var(--paper-raise);border:1px solid var(--line);border-radius:10px;padding:14px;direction:ltr;text-align:left;font-family:ui-monospace,Menlo,monospace;font-size:.8rem;line-height:1.8;white-space:pre-wrap;margin-bottom:14px;position:relative;color:var(--ink)}
+.copy{position:absolute;top:8px;right:8px;font-family:Vazirmatn,sans-serif;font-size:.7rem;padding:3px 10px;border-radius:6px;border:1px solid var(--line);background:var(--white);color:var(--ink-soft);cursor:pointer}
+.lab-tip{background:var(--teal-light);border:1px solid rgba(0,137,123,.25);border-radius:8px;padding:11px 14px;font-size:.82rem;color:var(--teal)}
+
+/* FAQ */
+.faq{max-width:840px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+.fq{background:var(--white);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.fq-q{padding:15px 18px;cursor:pointer;display:flex;justify-content:space-between;gap:10px;font-weight:600;font-size:.9rem}
+.fq-q .ar{color:var(--teal);transition:transform .3s}
+.fq.open .fq-q .ar{transform:rotate(180deg)}
+.fq-a{max-height:0;overflow:hidden;transition:max-height .4s}
+.fq.open .fq-a{max-height:700px}
+.fq-a p{padding:0 18px 16px;font-size:.87rem;color:var(--ink-soft);line-height:2}
+
+/* GLOSSARY + REFS */
+.gl{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:11px}
+.gl div{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+.gl b{display:block;color:var(--teal);font-size:.88rem;margin-bottom:3px}
+.gl span{font-size:.8rem;color:var(--ink-soft);line-height:1.8}
+.refs{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px}
+.ref{background:var(--white);border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.8rem;color:var(--ink-soft);line-height:1.8}
+.ref a{color:var(--teal);font-weight:700;direction:ltr;unicode-bidi:embed}
+.ref-g{font-size:.95rem;font-weight:800;margin:22px 0 10px}
+.ref-g:first-child{margin-top:0}
+
+.footer{background:#14213D;color:#fff;padding:30px 0 18px}
+.footer p{font-size:.8rem;opacity:.75;line-height:1.9}
+.footer-bottom{margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;font-size:.72rem;opacity:.6}
+.btt{position:fixed;bottom:20px;left:20px;z-index:60;width:40px;height:40px;border-radius:10px;border:none;background:var(--teal);color:#fff;cursor:pointer;display:grid;place-items:center;opacity:0;visibility:hidden;transition:all .3s}
+.btt.show{opacity:1;visibility:visible}
+@media print{.nav,.btt,.copy,.chart-ctl,.policy-ctl,.screen-tabs{display:none!important}section{padding:20px 0}}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap">
+    <a class="nav-brand" href="#top"><span class="dot"></span>نقطه پساکوانتومی</a>
+    <div class="nav-links" id="navLinks">
+      <a href="#why">چرا</a>
+      <a href="#science">مبانی علمی</a>
+      <a href="#algos">الگوریتم‌ها</a>
+      <a href="#arch">معماری</a>
+      <a href="#gateways">Gatewayها</a>
+      <a href="#mockup">ماکت</a>
+      <a href="#agility">چابکی</a>
+      <a href="#matrix">ماتریس</a>
+      <a href="#lab">آزمایشگاه</a>
+      <a href="#roadmap">نقشه راه</a>
+      <a href="#faq">سؤالات</a>
+      <a href="#refs">منابع</a>
+      <button class="theme-btn" id="themeBtn" aria-label="تغییر تم"><svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></button>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="منو"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="badge-top">✦ کتابچه راهنمای طراحی و ارزیابی</div>
+      <h1>نقطه پساکوانتومی</h1>
+      <p class="role">مهاجرت پلتفرم دسترسی امن نقطه (SASE-style / ZTNA) به رمزنگاری مقاوم در برابر رایانه کوانتومی</p>
+      <p class="lead">این کتابچه سه کار می‌کند: مبانی علمی تهدید کوانتومی و الگوریتم‌های جایگزین را توضیح می‌دهد، هر کانال رمزنگاری نقطه (کلاینت، IdP، Gatewayها، Connector، صفحه کنترل و اتصال نقطه‌به‌نقطه) را به یک تصمیم مهاجرت نگاشت می‌کند، و روشی آزمون‌پذیر برای اثبات ادعای «پساکوانتومی» می‌دهد.</p>
+      <div class="hero-cta">
+        <a class="btn btn-solid" href="#arch">نقشه رمزنگاری نقطه</a>
+        <a class="btn btn-line" href="#mockup">ماکت تعاملی کلاینت</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="num">۳</div><div class="label">استاندارد نهایی FIPS</div></div>
+        <div class="hero-stat"><div class="num">۹</div><div class="label">کانال رمزنگاری در نقطه</div></div>
+        <div class="hero-stat"><div class="num">۸</div><div class="label">معیار ارزیابی</div></div>
+        <div class="hero-stat"><div class="num">۵</div><div class="label">فاز مهاجرت</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-book">
+        <div class="b-icon">🎯⚛️</div>
+        <div class="b-title">نقطه<br>پساکوانتومی</div>
+        <div class="b-sub">Post-Quantum Migration Guide<br>for the Noghte Access Platform</div>
+        <div class="b-ed">ویرایش آبان ۱۴۰۵<br>هم‌راستا با NIST IR 8547 نهایی</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="stats-bar" style="padding:24px 0">
+  <div class="wrap stats-grid">
+    <div><div class="stat-num">۲۰۳۰</div><div class="stat-label">منسوخ شدن RSA و ECC در NIST</div></div>
+    <div><div class="stat-num">۲۰۳۵</div><div class="stat-label">ممنوعیت الگوریتم‌های آسیب‌پذیر</div></div>
+    <div><div class="stat-num">ML-KEM-768</div><div class="stat-label">پارامتر پیش‌فرض تبادل کلید</div></div>
+    <div><div class="stat-num" style="direction:ltr">X25519MLKEM768</div><div class="stat-label">گروه ترکیبی TLS 1.3 (RFC 10024)</div></div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="wrap two">
+    <div class="prose">
+      <div class="sec-head"><div class="rule"></div><h2>چرا نقطه باید همین حالا پساکوانتومی شود؟</h2></div>
+      <p>نقطه همه مسیرهای دسترسی به ابر را از خود عبور می‌دهد: وب، پایگاه‌داده، SSH، ماشین مجازی، شبکه خصوصی و اتصال بین استقرارها. یعنی <strong>بخش بزرگی از ترافیک حساس سازمان در کانال‌های رمزشده نقطه جریان دارد</strong>. اگر این کانال‌ها با تبادل کلید کلاسیک (ECDH یا RSA) رمز شده باشند، مهاجمی که امروز ترافیک را ضبط کند، می‌تواند پس از ساخته شدن یک رایانه کوانتومی مرتبط با رمزنگاری (CRQC) آن را رمزگشایی کند. این حمله «اکنون ذخیره کن، بعداً رمزگشایی کن» (HNDL) نام دارد.</p>
+      <p>این تهدید برای <strong>محرمانگی</strong> همین امروز وجود دارد، چون ضبط اکنون اتفاق می‌افتد. اما تهدید برای <strong>امضا و احراز هویت</strong> فقط وقتی فعال می‌شود که CRQC واقعاً وجود داشته باشد: امضای جعلی را باید در لحظه ساخت. برای همین ترتیب مهاجرت روشن است: اول تبادل کلید، بعد امضا، و از امضاها اول آن‌هایی که عمر طولانی دارند (ریشه PKI، امضای سیاست و به‌روزرسانی).</p>
+      <p>NIST در گزارش نهایی IR 8547 (۲۷ اکتبر ۲۰۲۶) همه الگوریتم‌های کلید عمومی آسیب‌پذیر را، فارغ از اندازه کلید، پس از ۲۰۳۰ منسوخ و پس از ۲۰۳۵ ممنوع اعلام کرد. این تاریخ‌ها برای دولت آمریکا الزام‌آورند، اما در عمل مبنای خرید و ارزیابی در همه جا شده‌اند. نقطه اگر امروز طراحی را درست کند، این مهاجرت برایش یک تغییر پیکربندی خواهد بود، نه بازنویسی.</p>
+      <div class="note-box"><strong>پیام اصلی:</strong> «پساکوانتومی» یک ویژگی نیست که به محصول اضافه شود؛ یک خاصیت سرتاسری است. اگر حتی یک مسیر (مثلاً Gateway TCP یا اتصال Connector) کلاسیک بماند، همان مسیر نقطه ضعف است. این همان اصل Policy Enforcement Parity در TIC 3.0 است، این بار برای رمزنگاری.</div>
+    </div>
+    <div class="tip-list">
+      <h3 style="font-size:1rem;margin-bottom:4px">🎯 شش اصل طراحی</h3>
+      <div class="tip"><div class="ic">🔀</div><div><h4>ترکیبی (Hybrid) به‌عنوان پیش‌فرض</h4><p>کلاسیک + پساکوانتومی با هم. امنیت دست‌کم برابر قوی‌ترین جزء است؛ اگر ML-KEM شکست، X25519 هنوز هست.</p></div></div>
+      <div class="tip"><div class="ic">🔑</div><div><h4>اول تبادل کلید</h4><p>HNDL فقط محرمانگی را تهدید می‌کند و همین امروز فعال است.</p></div></div>
+      <div class="tip"><div class="ic">⏳</div><div><h4>امضاهای بلندعمر قبل از کوتاه‌عمر</h4><p>ریشه CA، امضای سیاست و میان‌افزار پیش از توکن ۵ دقیقه‌ای.</p></div></div>
+      <div class="tip"><div class="ic">🧩</div><div><h4>چابکی رمزنگاری</h4><p>الگوریتم باید پیکربندی باشد، نه کد. هر انتخاب با شناسه نسخه‌دار و قابل لاگ.</p></div></div>
+      <div class="tip"><div class="ic">⚖️</div><div><h4>برابری در همه مسیرها</h4><p>هفت Gateway، Connector و اتصال نقطه‌به‌نقطه، همه با یک سیاست رمزنگاری.</p></div></div>
+      <div class="tip"><div class="ic">📜</div><div><h4>ادعا فقط با شاهد</h4><p>گروه مذاکره‌شده در هر نشست لاگ شود؛ «پساکوانتومی» یعنی درصد اندازه‌گیری‌شده نشست‌های PQ.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MOSCA -->
+<section class="alt" id="mosca">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>نامعادله Mosca: داده شما در خطر است؟</h2><p>اگر X + Y &gt; Z باشد، داده‌ای که امروز رمز می‌شود پیش از پایان عمر محرمانگی‌اش در معرض رمزگشایی است. X مدت نیاز به محرمانگی، Y زمان مهاجرت، و Z زمان تا CRQC است. Z یک برآورد نامطمئن است؛ مقادیر را برای سناریوهای مختلف تغییر دهید.</p></div>
+    <div class="mosca card" style="padding:24px">
+      <div>
+        <div class="slider-row"><label>X: عمر محرمانگی داده <b id="xv">۱۰ سال</b></label><input type="range" id="xs" min="1" max="30" value="10"><small>مثلاً: لاگ ممیزی ۷ سال، داده مالی ۱۰ سال، اسرار دولتی ۲۵ سال</small></div>
+        <div class="slider-row"><label>Y: زمان مهاجرت کامل نقطه و مشتریان <b id="yv">۴ سال</b></label><input type="range" id="ys" min="1" max="15" value="4"><small>شامل کلاینت‌ها، Gatewayها، PKI، HSM و منابع پشت Connector</small></div>
+        <div class="slider-row"><label>Z: زمان تا رایانه کوانتومی مرتبط با رمزنگاری <b id="zv">۱۰ سال</b></label><input type="range" id="zs" min="3" max="30" value="10"><small>هیچ عدد قطعی وجود ندارد؛ نهادهای استاندارد بازه ۲۰۳۰ تا ۲۰۳۵ را مبنای برنامه‌ریزی گرفته‌اند</small></div>
+      </div>
+      <div class="mosca-out" id="moscaOut">
+        <div style="font-size:.8rem;color:var(--ink-soft)">X + Y در برابر Z</div>
+        <div class="mosca-bar" id="mbar"><div id="mbx" style="background:var(--teal)">X</div><div id="mby" style="background:var(--violet)">Y</div><span class="mosca-z" id="mbz"></span></div>
+        <div style="display:flex;justify-content:space-between;font-size:.7rem;color:var(--ink-soft);direction:ltr"><span>0</span><span>Z = خط قرمز</span><span>45y</span></div>
+        <div class="verdict" id="verdict"></div>
+        <div style="font-size:.82rem;color:var(--ink-soft)" id="vdesc"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCIENCE -->
+<section id="science">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>مبانی علمی در ۱۰ مفهوم</h2><p>آنچه یک معمار یا ارزیاب باید از فیزیک و ریاضیات این موضوع بداند، بدون اغراق و بدون ساده‌سازی گمراه‌کننده.</p></div>
+    <div class="grid-cards">
+      <div class="card"><div class="num-big">۱</div><h3>الگوریتم Shor و پایان RSA و ECC</h3><p>Shor (۱۹۹۴) تجزیه اعداد صحیح و لگاریتم گسسته را روی رایانه کوانتومی در زمان چندجمله‌ای حل می‌کند. RSA، Diffie-Hellman، ECDH، ECDSA و EdDSA همه بر همین دو مسئله بنا شده‌اند. افزایش اندازه کلید فقط هزینه را خطی بالا می‌برد و راه‌حل نیست.</p><div class="ex">RSA-2048, P-256, X25519, Ed25519 → broken by Shor</div></div>
+      <div class="card"><div class="num-big">۲</div><h3>الگوریتم Grover و رمزهای متقارن</h3><p>Grover جستجوی کورکورانه را از N به ریشه N کاهش می‌دهد؛ به‌طور نظری امنیت کلید متقارن را نصف می‌کند. اما Grover به‌سختی موازی می‌شود و هزینه عملی بسیار بالایی دارد. NIST، AES-128/192/256 و SHA-2/SHA-3 را همچنان تأییدشده می‌داند. AES-256 حاشیه اطمینان بیشتری دارد.</p><div class="ex">AES-256-GCM, ChaCha20-Poly1305 → keep</div></div>
+      <div class="card"><div class="num-big">۳</div><h3>HNDL: اکنون ذخیره، بعداً رمزگشایی</h3><p>تهدید محرمانگی امروز است، نه روز ساخت CRQC. هر نشست TLS، SSH یا VPN که امروز با ECDH ضبط شود، در آینده قابل رمزگشایی است. امنیت پیشرو (Forward Secrecy) کلاسیک در برابر این تهدید کمکی نمی‌کند.</p><div class="ex">pcap (2026) + CRQC (20xx) = plaintext</div></div>
+      <div class="card"><div class="num-big">۴</div><h3>مشبکه‌ها و مسئله Module-LWE</h3><p>ML-KEM و ML-DSA بر سختی یادگیری با خطا (LWE) روی ماژول‌ها بنا شده‌اند: یافتن s از A·s + e وقتی e خطای کوچک است. هیچ الگوریتم کوانتومی شناخته‌شده‌ای آن را به‌طور کارا حل نمی‌کند. این مسئله به مسائل بدترین‌حالت مشبکه کاهش‌پذیر است.</p><div class="ex">b = A·s + e  (mod q),  q = 3329 in ML-KEM</div></div>
+      <div class="card"><div class="num-big">۵</div><h3>KEM در برابر Diffie-Hellman</h3><p>ML-KEM یک سازوکار کپسوله‌سازی کلید است، نه تبادل متقارن: یک طرف کلید عمومی می‌فرستد، طرف دیگر راز مشترک را کپسوله می‌کند. در TLS 1.3 این در قالب key_share جا می‌شود، اما پروتکل‌هایی مثل WireGuard که DH ایستا دارند، نمی‌توانند مستقیم KEM را جایگزین کنند.</p><div class="ex">(ek, dk) ← KeyGen; (K, c) ← Encaps(ek); K ← Decaps(dk, c)</div></div>
+      <div class="card"><div class="num-big">۶</div><h3>امضای مبتنی بر هش</h3><p>SLH-DSA (SPHINCS+) فقط به امنیت تابع هش تکیه دارد؛ محافظه‌کارانه‌ترین فرض موجود. هزینه‌اش امضای بزرگ (۸ تا ۵۰ کیلوبایت) و امضاکردن کند است. برای ریشه اعتماد و امضای میان‌افزار مناسب است، نه برای هر دست‌دهی.</p><div class="ex">SLH-DSA-SHA2-128s: pk 32 B, sig 7 856 B</div></div>
+      <div class="card"><div class="num-big">۷</div><h3>ترکیب (Hybrid) و ترکیب‌کننده کلید</h3><p>در حالت ترکیبی، راز مشترک کلاسیک و پساکوانتومی با یک KDF تأییدشده ترکیب می‌شوند. اگر یکی شکست بخورد، دیگری از راز محافظت می‌کند. NIST در SP 800-227 و IR 8547 این ساختار را صریحاً پذیرفته است.</p><div class="ex">ss = KDF( ss_MLKEM ‖ ss_X25519 )</div></div>
+      <div class="card"><div class="num-big">۸</div><h3>سطوح امنیتی NIST</h3><p>سطح ۱ معادل AES-128، سطح ۳ معادل AES-192 و سطح ۵ معادل AES-256 است. ML-KEM-768 در سطح ۳ قرار دارد و NIST آن را پارامتر پیش‌فرض تبادل کلید می‌داند. ML-KEM-1024 (سطح ۵) برای الزامات CNSA 2.0.</p><div class="ex">L1 ≈ AES-128 · L3 ≈ AES-192 · L5 ≈ AES-256</div></div>
+      <div class="card"><div class="num-big">۹</div><h3>اندازه، نه سرعت، هزینه اصلی است</h3><p>ML-KEM از نظر CPU از X25519 کندتر نیست و گاهی سریع‌تر است. هزینه واقعی اندازه است: کلید عمومی ۱۱۸۴ بایت و متن رمز ۱۰۸۸ بایت. ClientHello از یک بسته فراتر می‌رود، که میان‌افزارهای ناسازگار (Middlebox) را می‌شکند. امضای ML-DSA هم چند کیلوبایت است و زنجیره گواهی و JWT را بزرگ می‌کند.</p><div class="ex">ClientHello ~ 1.2 KB → ~ 2.4 KB (+X25519MLKEM768)</div></div>
+      <div class="card"><div class="num-big">۱۰</div><h3>QKD جایگزین نیست</h3><p>توزیع کلید کوانتومی سخت‌افزار و فیبر اختصاصی می‌خواهد، احراز هویت را حل نمی‌کند و خودش به امضای کلاسیک یا پساکوانتومی نیاز دارد. نهادهای امنیتی مانند NSA و NCSC آن را برای عموم کاربردها توصیه نمی‌کنند. راه عملی برای نقطه، PQC نرم‌افزاری است.</p><div class="ex">PQC (software) ≫ QKD (hardware) for ZTNA</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ALGORITHMS -->
+<section class="alt" id="algos">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>الگوریتم‌ها و وضعیت استانداردها</h2><p>وضعیت تا آبان ۱۴۰۵ (نوامبر ۲۰۲۶). اندازه‌ها بر حسب بایت و از متن استانداردها هستند.</p></div>
+    <div class="tw">
+      <table class="t">
+        <thead><tr><th>الگوریتم</th><th>کاربرد</th><th>استاندارد</th><th>وضعیت</th><th>کلید عمومی</th><th>امضا / متن رمز</th><th>جایگاه در نقطه</th></tr></thead>
+        <tbody>
+          <tr><td>ML-KEM-768</td><td>تبادل کلید</td><td class="ltr">FIPS 203</td><td><span class="pill p-ok">نهایی (اوت ۲۰۲۴)</span></td><td class="ltr">1184</td><td class="ltr">ct 1088</td><td>پیش‌فرض همه کانال‌ها، در قالب ترکیبی</td></tr>
+          <tr><td>ML-KEM-1024</td><td>تبادل کلید</td><td class="ltr">FIPS 203</td><td><span class="pill p-ok">نهایی</span></td><td class="ltr">1568</td><td class="ltr">ct 1568</td><td>مشتریان با الزام CNSA 2.0 یا سطح ۵</td></tr>
+          <tr><td>ML-DSA-65</td><td>امضا</td><td class="ltr">FIPS 204 · RFC 9964 (JOSE)</td><td><span class="pill p-ok">نهایی</span></td><td class="ltr">1952</td><td class="ltr">sig 3309</td><td>گواهی mTLS، امضای سیاست، JWT در آینده</td></tr>
+          <tr><td>ML-DSA-44</td><td>امضا</td><td class="ltr">FIPS 204</td><td><span class="pill p-ok">نهایی</span></td><td class="ltr">1312</td><td class="ltr">sig 2420</td><td>گواهی برگ کوتاه‌عمر در صورت محدودیت پهنای باند</td></tr>
+          <tr><td>SLH-DSA-128s</td><td>امضا (هش)</td><td class="ltr">FIPS 205</td><td><span class="pill p-ok">نهایی</span></td><td class="ltr">32</td><td class="ltr">sig 7856</td><td>ریشه CA، امضای میان‌افزار و بسته نصب</td></tr>
+          <tr><td>FN-DSA (Falcon)</td><td>امضا</td><td class="ltr">FIPS 206</td><td><span class="pill p-warn">پیش‌نویس؛ نهایی ۲۰۲۶–۲۰۲۷</span></td><td class="ltr">≈ 897</td><td class="ltr">sig ≈ 666</td><td>فقط آزمایشگاه؛ پس از نهایی شدن برای گواهی‌ها</td></tr>
+          <tr><td>HQC</td><td>تبادل کلید (کد)</td><td class="ltr">NIST (انتخاب مارس ۲۰۲۵)</td><td><span class="pill p-warn">در حال استانداردسازی</span></td><td class="ltr">≈ 2249</td><td class="ltr">ct ≈ 4433</td><td>پشتیبان تنوع ریاضی در برابر شکست مشبکه</td></tr>
+          <tr><td>X25519MLKEM768</td><td>گروه ترکیبی TLS</td><td class="ltr">RFC 10024 (اوت ۲۰۲۶)</td><td><span class="pill p-ok">RFC</span></td><td class="ltr">1216</td><td class="ltr">1120</td><td>HTTPS، Trojan، Connector، IdP، API کنترل</td></tr>
+          <tr><td>mlkem768x25519-sha256</td><td>تبادل کلید SSH</td><td class="ltr">OpenSSH ≥ 9.9 (پیش‌فرض از 10.0)</td><td><span class="pill p-ok">مستقر</span></td><td class="ltr">—</td><td class="ltr">—</td><td>SSH Gateway، هر دو سو</td></tr>
+          <tr><td>X25519 / ECDSA / Ed25519 / RSA</td><td>کلاسیک</td><td class="ltr">FIPS 186-5 · SP 800-56A/B</td><td><span class="pill p-bad">منسوخ پس از ۲۰۳۰ · ممنوع پس از ۲۰۳۵</span></td><td class="ltr">32–512</td><td class="ltr">64–512</td><td>فقط به‌عنوان جزء ترکیبی</td></tr>
+          <tr><td>AES-256-GCM · SHA-384</td><td>متقارن و هش</td><td class="ltr">FIPS 197 · 180-4</td><td><span class="pill p-ok">تأییدشده</span></td><td class="ltr">—</td><td class="ltr">—</td><td>بدون تغییر</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="diag" style="margin-top:18px">
+      <h3>مقایسه تعاملی اندازه‌ها</h3>
+      <p>هزینه اصلی PQC در شبکه، اندازه است. یک حالت را انتخاب کنید (مقیاس لگاریتمی نیست؛ طول‌ها خطی‌اند).</p>
+      <div class="chart-ctl" id="chartCtl">
+        <button class="chip active" data-set="kex">تبادل کلید (هر دو جهت)</button>
+        <button class="chip" data-set="sig">امضا</button>
+        <button class="chip" data-set="chain">زنجیره گواهی ۳ سطحی</button>
+      </div>
+      <div class="bars" id="bars"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCH -->
+<section id="arch">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>نقشه رمزنگاری نقطه</h2><p>هر پیکان یک کانال رمزنگاری است و هر کانال یک تصمیم مهاجرت دارد. نقطه یک PEP نیست، بلکه پلتفرمی با چند نقش است: IdP، صفحه کنترل (PDP/PAP)، Gatewayها و Connector (PEPها)، و لاگ.</p></div>
+    <div class="diag">
+      <h3>معماری نقطه با برچسب رمزنگاری هر کانال</h3>
+      <p>بنفش: تبادل کلید (اولویت ۱، تهدید HNDL). طلایی: امضای بلندعمر (اولویت ۲). فیروزه‌ای: امضای کوتاه‌عمر و احراز هویت (اولویت ۳).</p>
+      <svg viewBox="0 0 1000 560" role="img" aria-label="معماری رمزنگاری نقطه">
+        <defs>
+          <marker id="av" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--violet)"/></marker>
+          <marker id="ag" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--gold)"/></marker>
+          <marker id="at" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--teal)"/></marker>
+        </defs>
+        <!-- client -->
+        <rect class="sb-t" x="820" y="200" width="160" height="120" rx="12"/>
+        <text class="st" x="900" y="232" text-anchor="middle">کلاینت نقطه</text>
+        <text class="ss" x="900" y="252" text-anchor="middle">Android · Windows · macOS</text>
+        <text class="sm" x="900" y="274" text-anchor="middle">Go core / Conscrypt</text>
+        <text class="ss" x="900" y="296" text-anchor="middle">انبار کلید سخت‌افزاری</text>
+        <!-- IdP -->
+        <rect class="sb" x="560" y="20" width="200" height="90" rx="12"/>
+        <text class="st" x="660" y="50" text-anchor="middle">IdP (Authentik / Keycloak)</text>
+        <text class="ss" x="660" y="70" text-anchor="middle">OIDC · MFA · امضای توکن</text>
+        <text class="sm" x="660" y="92" text-anchor="middle">JWT: ES256 → ML-DSA-65</text>
+        <!-- Control plane -->
+        <rect class="sb-v" x="300" y="20" width="220" height="90" rx="12"/>
+        <text class="st" x="410" y="50" text-anchor="middle">صفحه کنترل (PDP/PAP)</text>
+        <text class="ss" x="410" y="70" text-anchor="middle">RBAC · سیاست · CA داخلی</text>
+        <text class="sm" x="410" y="92" text-anchor="middle">policy bundle: ML-DSA sig</text>
+        <!-- audit -->
+        <rect class="sb" x="20" y="20" width="220" height="90" rx="12"/>
+        <text class="st" x="130" y="50" text-anchor="middle">لاگ و ممیزی</text>
+        <text class="ss" x="130" y="70" text-anchor="middle">زنجیره هش + امضای دوره‌ای</text>
+        <text class="sm" x="130" y="92" text-anchor="middle">SHA-384 chain · SLH-DSA</text>
+        <!-- gateways -->
+        <rect class="sb-t" x="300" y="200" width="440" height="120" rx="12"/>
+        <text class="st" x="520" y="226" text-anchor="middle">صفحه دسترسی: Gatewayها (PEP)</text>
+        <rect class="sb" x="314" y="240" width="56" height="64" rx="8"/><text class="ss" x="342" y="268" text-anchor="middle">HTTPS</text><text class="smv" x="342" y="290" text-anchor="middle">TLS</text>
+        <rect class="sb" x="374" y="240" width="56" height="64" rx="8"/><text class="ss" x="402" y="268" text-anchor="middle">TCP</text><text class="smv" x="402" y="290" text-anchor="middle">TLS</text>
+        <rect class="sb" x="434" y="240" width="56" height="64" rx="8"/><text class="ss" x="462" y="268" text-anchor="middle">SSH</text><text class="smv" x="462" y="290" text-anchor="middle">mlkem</text>
+        <rect class="sb" x="494" y="240" width="56" height="64" rx="8"/><text class="ss" x="522" y="268" text-anchor="middle">SPICE</text><text class="smv" x="522" y="290" text-anchor="middle">TLS</text>
+        <rect class="sb" x="554" y="240" width="56" height="64" rx="8"/><text class="ss" x="582" y="268" text-anchor="middle">Trojan</text><text class="smv" x="582" y="290" text-anchor="middle">TLS</text>
+        <rect class="sb-r" x="614" y="240" width="56" height="64" rx="8"/><text class="ss" x="642" y="262" text-anchor="middle">WG</text><text class="smv" x="642" y="280" text-anchor="middle">+PSK</text><text class="ss" x="642" y="296" text-anchor="middle">!</text>
+        <rect class="sb" x="674" y="240" width="56" height="64" rx="8"/><text class="ss" x="702" y="268" text-anchor="middle">Conn.</text><text class="smv" x="702" y="290" text-anchor="middle">mTLS</text>
+        <!-- connector -->
+        <rect class="sb" x="20" y="200" width="220" height="120" rx="12"/>
+        <text class="st" x="130" y="232" text-anchor="middle">Connector در استقرار مشتری</text>
+        <text class="ss" x="130" y="254" text-anchor="middle">اتصال خروجی · mTLS</text>
+        <text class="sm" x="130" y="276" text-anchor="middle">X25519MLKEM768</text>
+        <text class="sm" x="130" y="296" text-anchor="middle">cert: ECDSA → ML-DSA</text>
+        <!-- resources -->
+        <rect class="sb" x="20" y="410" width="300" height="120" rx="12"/>
+        <text class="st" x="170" y="440" text-anchor="middle">منابع (DB، API، VM، K8s)</text>
+        <text class="ss" x="170" y="462" text-anchor="middle">پروتکل بومی منبع؛ اغلب کلاسیک</text>
+        <text class="ss" x="170" y="484" text-anchor="middle">← مرز «آخرین مایل»: خارج از کنترل نقطه</text>
+        <text class="sm" x="170" y="508" text-anchor="middle">PG TLS · RDP · Redis …</text>
+        <!-- noghte b -->
+        <rect class="sb-v" x="400" y="410" width="300" height="120" rx="12"/>
+        <text class="st" x="550" y="440" text-anchor="middle">نقطه B (استقرار ابری دیگر)</text>
+        <text class="ss" x="550" y="462" text-anchor="middle">اتصال نقطه‌به‌نقطه (Interconnect)</text>
+        <text class="sm" x="550" y="484" text-anchor="middle">mTLS X25519MLKEM768 + ML-DSA</text>
+        <text class="ss" x="550" y="506" text-anchor="middle">سیاست امضاشده و قابل تأیید متقابل</text>
+        <!-- update -->
+        <rect class="sb-g" x="780" y="410" width="200" height="120" rx="12"/>
+        <text class="st" x="880" y="440" text-anchor="middle">زنجیره به‌روزرسانی</text>
+        <text class="ss" x="880" y="462" text-anchor="middle">APK، باینری Gateway</text>
+        <text class="sm" x="880" y="484" text-anchor="middle">SLH-DSA / ML-DSA</text>
+        <text class="ss" x="880" y="506" text-anchor="middle">+ امضای کلاسیک (دوگانه)</text>
+        <!-- arrows -->
+        <path class="slv" d="M820,240 L742,240" marker-end="url(#av)"/>
+        <text class="smv" x="781" y="232" text-anchor="middle">①</text>
+        <path class="slv" d="M860,200 L740,112" marker-end="url(#av)"/>
+        <text class="smv" x="810" y="150" text-anchor="middle">②</text>
+        <path class="sl" d="M760,80 L800,80 L880,195" marker-end="url(#at)"/>
+        <text class="ss" x="838" y="118" text-anchor="middle">③ JWT</text>
+        <path class="slg" d="M410,112 L470,196" marker-end="url(#ag)"/>
+        <text class="ss" x="470" y="160" text-anchor="middle">④ سیاست امضاشده</text>
+        <path class="slv" d="M300,265 L242,265" marker-end="url(#av)"/>
+        <text class="smv" x="271" y="257" text-anchor="middle">⑤</text>
+        <path class="sl" d="M130,322 L130,406" marker-end="url(#at)"/>
+        <text class="ss" x="150" y="366">⑥ آخرین مایل</text>
+        <path class="slv" d="M550,322 L550,406" marker-end="url(#av)"/>
+        <text class="smv" x="566" y="366">⑦</text>
+        <path class="slg" d="M880,408 L880,322" marker-end="url(#ag)"/>
+        <text class="ss" x="900" y="366">⑧</text>
+        <path class="slg" d="M300,65 L242,65" marker-end="url(#ag)"/>
+        <text class="ss" x="271" y="57" text-anchor="middle">⑨</text>
+      </svg>
+      <div class="diag-legend"><span class="lg2">تبادل کلید (HNDL)</span><span class="lg3">امضای بلندعمر</span><span class="lg1">احراز هویت کوتاه‌عمر / خارج از کنترل</span></div>
+    </div>
+
+    <div class="tw">
+      <table class="t">
+        <thead><tr><th>#</th><th>کانال</th><th>رمزنگاری فعلی (فرض)</th><th>هدف پساکوانتومی</th><th>تهدید</th><th>اولویت</th></tr></thead>
+        <tbody>
+          <tr><td>①</td><td>کلاینت ← Gateway</td><td class="ltr">TLS 1.3 X25519 / SSH curve25519 / WG Noise</td><td class="ltr">X25519MLKEM768 · mlkem768x25519 · WG+PQ-PSK</td><td>HNDL روی همه ترافیک کاربر</td><td><span class="pill p-bad">۱ — فوری</span></td></tr>
+          <tr><td>②</td><td>کلاینت ← IdP (ورود OIDC)</td><td class="ltr">TLS 1.3 X25519</td><td class="ltr">X25519MLKEM768 روی Reverse Proxy</td><td>HNDL روی رمز عبور، کد OTP و توکن تازه‌سازی</td><td><span class="pill p-bad">۱</span></td></tr>
+          <tr><td>③</td><td>توکن دسترسی (JWT/OIDC)</td><td class="ltr">RS256 / ES256</td><td class="ltr">ML-DSA-65 (RFC 9964)</td><td>جعل توکن، فقط پس از CRQC؛ عمر چند دقیقه</td><td><span class="pill p-info">۳ — وابسته به IdP</span></td></tr>
+          <tr><td>④</td><td>صفحه کنترل ← PEPها (بسته سیاست)</td><td class="ltr">mTLS + ECDSA sig</td><td class="ltr">ML-DSA-65 + Ed25519 (ترکیبی)</td><td>جعل سیاست = دور زدن همه مرزها</td><td><span class="pill p-warn">۲</span></td></tr>
+          <tr><td>⑤</td><td>Gateway ↔ Connector</td><td class="ltr">mTLS X25519, ECDSA certs</td><td class="ltr">X25519MLKEM768 · گواهی ML-DSA از CA داخلی</td><td>HNDL روی ترافیک منابع خصوصی</td><td><span class="pill p-bad">۱</span></td></tr>
+          <tr><td>⑥</td><td>Connector ← منبع (آخرین مایل)</td><td>پروتکل بومی منبع</td><td>درون شبکه مشتری؛ یا TLS ترکیبی اگر منبع پشتیبانی کند</td><td>خارج از مرز نقطه؛ باید در گزارش صریح باشد</td><td><span class="pill p-info">شفاف‌سازی</span></td></tr>
+          <tr><td>⑦</td><td>نقطه A ↔ نقطه B</td><td class="ltr">mTLS / WireGuard</td><td class="ltr">X25519MLKEM768 + گواهی ML-DSA</td><td>HNDL روی ترافیک بین‌ابری، بلندترین عمر داده</td><td><span class="pill p-bad">۱</span></td></tr>
+          <tr><td>⑧</td><td>امضای به‌روزرسانی (APK، Gateway)</td><td class="ltr">RSA / ECDSA</td><td class="ltr">دوگانه: کلاسیک + SLH-DSA یا ML-DSA</td><td>تزریق کد مخرب؛ کلید چندساله</td><td><span class="pill p-warn">۲</span></td></tr>
+          <tr><td>⑨</td><td>لاگ ممیزی</td><td>بدون امضا یا HMAC</td><td class="ltr">زنجیره SHA-384 + امضای دوره‌ای SLH-DSA</td><td>انکار یا دستکاری شواهد در آینده</td><td><span class="pill p-warn">۲</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="diag" style="margin-top:18px">
+      <h3>دست‌دهی ترکیبی TLS 1.3 با X25519MLKEM768</h3>
+      <p>کلاینت دو key_share می‌فرستد: یکی ترکیبی و یکی X25519 تنها برای سازگاری. سرور اگر گروه ترکیبی را بشناسد، آن را برمی‌گزیند. راز نهایی از ترکیب هر دو ساخته می‌شود.</p>
+      <svg viewBox="0 0 900 300" role="img" aria-label="دست‌دهی ترکیبی TLS">
+        <defs><marker id="at2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--violet)"/></marker></defs>
+        <rect class="sb-t" x="760" y="14" width="126" height="44" rx="10"/><text class="st" x="823" y="42" text-anchor="middle">کلاینت نقطه</text>
+        <rect class="sb-v" x="14" y="14" width="126" height="44" rx="10"/><text class="st" x="77" y="42" text-anchor="middle">Gateway</text>
+        <line x1="823" y1="58" x2="823" y2="290" stroke="var(--line)" stroke-width="2"/>
+        <line x1="77" y1="58" x2="77" y2="290" stroke="var(--line)" stroke-width="2"/>
+        <path class="slv" d="M820,90 L80,90" marker-end="url(#at2)"/>
+        <text class="sm" x="450" y="80" text-anchor="middle" direction="ltr">ClientHello · key_share: X25519MLKEM768 (ek 1184 + 32) , X25519 (32)</text>
+        <path class="slv" d="M80,150 L820,150" marker-end="url(#at2)"/>
+        <text class="sm" x="450" y="140" text-anchor="middle" direction="ltr">ServerHello · key_share: X25519MLKEM768 (ct 1088 + 32)</text>
+        <text class="sm" x="450" y="170" text-anchor="middle" direction="ltr">{EncryptedExtensions, Certificate, CertificateVerify, Finished}</text>
+        <rect class="sb-g" x="250" y="196" width="400" height="56" rx="10"/>
+        <text class="sm" x="450" y="218" text-anchor="middle" direction="ltr">ss = MLKEM.Decaps(dk, ct) ‖ X25519(a, B)</text>
+        <text class="ss" x="450" y="240" text-anchor="middle">→ HKDF در key schedule استاندارد TLS 1.3</text>
+        <text class="ss" x="450" y="280" text-anchor="middle">احراز هویت سرور (CertificateVerify) هنوز کلاسیک است؛ این مرحله ۲ مهاجرت است.</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- GATEWAYS -->
+<section class="alt" id="gateways">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>وضعیت هر Gateway: کار، دشواری، مسیر</h2><p>برابری رمزنگاری بین مسیرها شرط ادعای «نقطه پساکوانتومی» است. سخت‌ترین مسیر سقف ادعای شما را تعیین می‌کند.</p></div>
+    <div class="tw">
+      <table class="t">
+        <thead><tr><th>Gateway</th><th>پروتکل لبه</th><th>مسیر پساکوانتومی</th><th>پشتیبانی موجود</th><th>دشواری</th><th>نکته ارزیابی</th></tr></thead>
+        <tbody>
+          <tr><td>HTTPS</td><td>TLS 1.3</td><td class="ltr">X25519MLKEM768</td><td>Go 1.24+ پیش‌فرض؛ OpenSSL 3.5+؛ BoringSSL</td><td><span class="pill p-ok">کم</span></td><td>گروه مذاکره‌شده را در هر نشست لاگ کنید</td></tr>
+          <tr><td>TCP (DB، سرویس)</td><td>TLS تونل</td><td class="ltr">X25519MLKEM768</td><td>مثل HTTPS؛ کلاینت نقطه دو سر تونل را کنترل می‌کند</td><td><span class="pill p-ok">کم</span></td><td>«PQ اجباری» برای این Gateway ساده‌ترین است</td></tr>
+          <tr><td>SSH</td><td>SSH-2</td><td class="ltr">mlkem768x25519-sha256</td><td>OpenSSH ≥ 9.9؛ پیش‌فرض از 10.0؛ Go x/crypto/ssh</td><td><span class="pill p-ok">کم</span></td><td>کلید میزبان هنوز Ed25519 است؛ امضای PQ در SSH هنوز استاندارد نشده</td></tr>
+          <tr><td>SPICE</td><td>TLS</td><td class="ltr">X25519MLKEM768</td><td>بسته به کتابخانه TLS سرور SPICE و Gateway</td><td><span class="pill p-warn">متوسط</span></td><td>اگر Gateway TLS را خاتمه می‌دهد، سمت کاربر قابل کنترل است</td></tr>
+          <tr><td>Trojan</td><td>TLS (پنهان‌سازی)</td><td class="ltr">X25519MLKEM768</td><td>بسته به پیاده‌سازی (Go یا uTLS)</td><td><span class="pill p-warn">متوسط</span></td><td>اثر انگشت ClientHello تغییر می‌کند؛ با هدف پنهان‌سازی آزمون شود</td></tr>
+          <tr><td>WireGuard / VPN</td><td>Noise IKpsk2</td><td>PSK پساکوانتومی از کانال TLS ترکیبی یا Rosenpass</td><td>هسته WireGuard الگوریتم PQ ندارد؛ فقط درگاه PSK</td><td><span class="pill p-bad">زیاد</span></td><td>بدون PSK، این Gateway کلاسیک است؛ چرخش PSK ضروری</td></tr>
+          <tr><td>Connector</td><td>mTLS خروجی</td><td class="ltr">X25519MLKEM768 + گواهی ML-DSA</td><td>هر دو سر در کنترل نقطه است</td><td><span class="pill p-ok">کم</span></td><td>مهم‌ترین کانال برای ادعای «همه ابر داخل نقطه»</td></tr>
+          <tr><td>IPsec (در نمودار)</td><td>IKEv2</td><td class="ltr">RFC 9370 (Multiple Key Exchanges) + ML-KEM</td><td>strongSwan 6 و بالاتر</td><td><span class="pill p-warn">متوسط</span></td><td>نسخه و پیکربندی سمت مشتری را مستند کنید</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note-box"><strong>WireGuard، مسئله ویژه:</strong> WireGuard عمداً چابکی پروتکل ندارد، پس نمی‌توان ML-KEM را مستقیم در آن گذاشت. راه پذیرفته‌شده این است که یک کلید متقارن ۳۲ بایتی (PSK) از طریق کانالی پساکوانتومی (TLS ترکیبی کلاینت نقطه با صفحه کنترل، یا Rosenpass) ساخته و هر چند دقیقه چرخانده شود. چون رمز متقارن در برابر کوانتوم مقاوم است، PSK دست‌دهی را محافظت می‌کند. این را در محصول به‌عنوان «WireGuard + PQ-PSK» نام ببرید، نه «WireGuard پساکوانتومی».</div>
+  </div>
+</section>
+
+<!-- MOCKUP -->
+<section id="mockup">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>ماکت تعاملی کلاینت اندروید</h2><p>همان طراحی پنج‌صفحه‌ای نقطه، با لایه پساکوانتومی: وضعیت دست‌دهی، نشان رمزنگاری هر منبع، سیاست PQ، لاگ با علت رد و گروه مذاکره‌شده، و صفحه جدید «موجودی رمزنگاری». سیاست را عوض کنید و روی کارت‌ها و لاگ‌ها بزنید.</p></div>
+    <div class="mock-wrap">
+      <div class="phone">
+        <div class="screen" id="screen"></div>
+      </div>
+      <div class="mock-side">
+        <h3>سیاست رمزنگاری سازمان</h3>
+        <div class="policy-ctl" id="policyCtl">
+          <button data-p="off">کلاسیک مجاز<small>هیچ الزامی نیست؛ وضعیت فعلی بیشتر محصولات</small></button>
+          <button data-p="prefer" class="active">ترکیبی ترجیحی<small>اگر طرف مقابل پشتیبانی کند PQ، وگرنه کلاسیک با هشدار</small></button>
+          <button data-p="require">ترکیبی اجباری<small>اتصال بدون تبادل کلید PQ رد می‌شود (fail-closed)</small></button>
+        </div>
+        <h3>رفتن به صفحه</h3>
+        <div class="screen-tabs" id="screenTabs">
+          <button class="chip" data-s="login">ورود</button>
+          <button class="chip active" data-s="list">منابع</button>
+          <button class="chip" data-s="detail">جزئیات</button>
+          <button class="chip" data-s="logs">لاگ‌ها</button>
+          <button class="chip" data-s="inv">موجودی رمزنگاری</button>
+        </div>
+        <div class="design-notes">
+          <h4>تصمیم‌های طراحی ماکت</h4>
+          <ul>
+            <li>نشان رمزنگاری روی هر کارت، از همان گروهی می‌آید که Gateway در آخرین نشست مذاکره کرده؛ ادعا نیست، اندازه‌گیری است.</li>
+            <li>در حالت «اجباری»، منبعی که مسیرش PQ نیست غیرفعال می‌شود و علت آن (نه فقط «رد شد») نمایش داده می‌شود.</li>
+            <li>لاگ‌ها فیلدهای <code>kex</code>، <code>sig</code>، <code>gateway</code>، <code>rule_id</code> و <code>reason</code> دارند؛ همان فیلدهایی که SIEM و ممیزی لازم دارند.</li>
+            <li>«آخرین مایل» (Connector تا منبع) جداگانه نشان داده می‌شود تا کاربر و ممیز فکر نکنند کل مسیر PQ است.</li>
+            <li>صفحه موجودی رمزنگاری (CBOM) نسخه کاربرمحور گزارشی است که مدیر امنیت در کنسول می‌بیند.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AGILITY -->
+<section class="alt" id="agility">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>چابکی رمزنگاری: معماری که با الگوریتم بعدی هم کار کند</h2><p>FN-DSA و HQC هنوز در راه‌اند و ممکن است یک الگوریتم مشبکه روزی ضعیف شود. نقطه باید بدون انتشار نسخه جدید بتواند الگوریتم عوض کند.</p></div>
+    <div class="grid-cards">
+      <div class="card"><h3>🧾 موجودی رمزنگاری (CBOM)</h3><p>هر کلید، گواهی، الگوریتم و کتابخانه با مالک، عمر و محل استفاده ثبت شود. قالب CycloneDX CBOM. بدون موجودی، مهاجرت حدس است.</p><div class="ex">cbom: {component, algo, keySize, expires, owner}</div></div>
+      <div class="card"><h3>🎛️ پروفایل رمزنگاری نسخه‌دار</h3><p>فهرست گروه‌ها و امضاهای مجاز یک «پروفایل» با شناسه است (مثلاً <code>pq-hybrid-2026.1</code>) که صفحه کنترل امضا و به همه PEPها و کلاینت‌ها توزیع می‌کند.</p><div class="ex">profile: pq-hybrid-2026.1
+kex: [X25519MLKEM768, SecP256r1MLKEM768]
+sig: [ML-DSA-65+Ed25519, ECDSA-P256]</div></div>
+      <div class="card"><h3>🛡️ جلوگیری از تنزل (Downgrade)</h3><p>در حالت اجباری، Gateway نباید با X25519 تنها کنار بیاید. در TLS 1.3 مهاجم نمی‌تواند گروه را پنهانی عوض کند، اما سرور با پیکربندی نادرست می‌تواند. آزمون: کلاینتی که فقط X25519 دارد باید رد شود.</p></div>
+      <div class="card"><h3>📏 سنجه پوشش PQ</h3><p>درصد نشست‌هایی که تبادل کلید PQ داشته‌اند، به تفکیک Gateway، سازمان و نسخه کلاینت. این عدد شاهد ادعای بازاریابی است و باید در داشبورد مدیریت باشد.</p><div class="ex">pq_session_ratio{gateway="ssh"} 0.97</div></div>
+      <div class="card"><h3>🏛️ CA داخلی دوگانه</h3><p>CA داخلی Connector و نقطه‌به‌نقطه دو ریشه موازی نگه دارد: کلاسیک و ML-DSA (یا گواهی composite). چون هر دو سر در کنترل نقطه است، این اولین جایی است که امضای PQ عملی است.</p></div>
+      <div class="card"><h3>🔐 HSM و انبار کلید</h3><p>پشتیبانی HSM از ML-DSA وابسته به سازنده است و استاندارد PKCS#11 3.2 تازه آن را پوشش می‌دهد. در اندروید، انبار کلید سخت‌افزاری هنوز کلید PQ نمی‌سازد؛ کلید PQ دستگاه را با کلید سخت‌افزاری کلاسیک «بپیچید».</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- MATRIX -->
+<section id="matrix">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>ماتریس ارزیابی وزنی «نقطه پساکوانتومی»</h2><p>به همان روش کتابچه DNS: امتیاز ۰ تا ۵ فقط با شاهد؛ معیار بی‌شاهد صفر می‌گیرد. وزن‌ها پیشنهادی‌اند.</p></div>
+    <div class="tw">
+      <table class="t">
+        <thead><tr><th>معیار</th><th>وزن</th><th>پرسش علمی</th><th>شاهد قابل قبول</th><th>ابزار</th><th>پرچم قرمز</th></tr></thead>
+        <tbody>
+          <tr><td>پوشش تبادل کلید PQ</td><td class="weight">۲۵</td><td>چند درصد نشست‌ها در همه Gatewayها و Connector با KEM ترکیبی برقرار می‌شوند؟</td><td>لاگ گروه مذاکره‌شده؛ ضبط بسته از هر مسیر</td><td>tshark، openssl s_client، ssh -vv</td><td class="p-bad" style="color:var(--red)">ادعای PQ بدون تفکیک Gateway؛ WireGuard بدون PSK</td></tr>
+          <tr><td>صحت پیاده‌سازی</td><td class="weight">۱۵</td><td>کتابخانه تأییدشده است؟ آزمون KAT و ACVP؟ زمان ثابت؟</td><td>نام و نسخه کتابخانه؛ نتایج بردار آزمون؛ گواهی CMVP در صورت وجود</td><td>بردارهای NIST ACVP، Wycheproof</td><td style="color:var(--red)">پیاده‌سازی خودنوشته ML-KEM</td></tr>
+          <tr><td>مقاومت در برابر تنزل</td><td class="weight">۱۵</td><td>در حالت اجباری، اتصال کلاسیک رد می‌شود؟</td><td>آزمون با کلاینت فقط-X25519</td><td>openssl -groups X25519</td><td style="color:var(--red)">بازگشت بی‌صدا به کلاسیک</td></tr>
+          <tr><td>امضاهای بلندعمر</td><td class="weight">۱۵</td><td>سیاست، به‌روزرسانی و CA داخلی برنامه ML-DSA یا SLH-DSA دارند؟</td><td>گواهی نمونه؛ امضای دوگانه بسته</td><td>openssl x509 -text</td><td style="color:var(--red)">کلید امضای میان‌افزار RSA با عمر ۱۰ ساله</td></tr>
+          <tr><td>چابکی رمزنگاری</td><td class="weight">۱۰</td><td>تغییر الگوریتم بدون انتشار نسخه ممکن است؟</td><td>دموی تغییر پروفایل از کنسول و مشاهده در لاگ</td><td>کنسول مدیریت</td><td style="color:var(--red)">الگوریتم سخت‌کد در کلاینت</td></tr>
+          <tr><td>کارایی و سازگاری</td><td class="weight">۱۰</td><td>تأخیر دست‌دهی و نرخ شکست با Middleboxها؟</td><td>p50/p99 دست‌دهی کلاسیک در برابر ترکیبی؛ نرخ خطا در شبکه‌های واقعی</td><td>آزمون بار، اندازه‌گیری میدانی</td><td style="color:var(--red)">بدون داده از شبکه‌های واقعی مشتری</td></tr>
+          <tr><td>شفافیت مرز</td><td class="weight">۵</td><td>آخرین مایل و منابع کلاسیک صریحاً گزارش می‌شوند؟</td><td>صفحه موجودی؛ گزارش CBOM</td><td>بررسی مستند</td><td style="color:var(--red)">ادعای «سرتاسری» با منابع کلاسیک پشت Connector</td></tr>
+          <tr><td>نقشه راه و انطباق</td><td class="weight">۵</td><td>با IR 8547 و الزامات ملی هم‌راستاست؟</td><td>سند نقشه راه با تاریخ</td><td>بررسی مدارک</td><td style="color:var(--red)">بدون تاریخ برای امضاها</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note-box"><strong>نگاشت ادعا به فرضیه:</strong> ادعای «نقطه پساکوانتومی است» آزمون‌پذیر نیست. فرضیه آزمون‌پذیر این است: «در حالت ترکیبی اجباری، ۱۰۰٪ نشست‌های کلاینت‌به‌Gateway و Gateway‌به‌Connector در هر هفت مسیر با یک KEM تأییدشده NIST (ML-KEM) ترکیب‌شده با ECDH برقرار می‌شوند و هر تلاش کلاسیک با کد علت ثبت و رد می‌شود.»</div>
+  </div>
+</section>
+
+<!-- LAB -->
+<section class="alt" id="lab">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>آزمایشگاه: وارسی ادعاها</h2><p>فرمان‌ها برای راستی‌آزمایی هر مسیر. نشانی <code>gw.noghte.example</code> را با Gateway مورد آزمون جایگزین کنید.</p></div>
+    <div class="lab">
+      <div class="lab-tabs">
+        <button class="lab-tab active" data-t="l1">TLS ترکیبی</button>
+        <button class="lab-tab" data-t="l2">SSH</button>
+        <button class="lab-tab" data-t="l3">تنزل</button>
+        <button class="lab-tab" data-t="l4">ضبط بسته</button>
+        <button class="lab-tab" data-t="l5">پیکربندی Go</button>
+        <button class="lab-tab" data-t="l6">WireGuard PSK</button>
+      </div>
+      <div class="lab-c active" id="l1">
+        <div class="lab-desc">با OpenSSL 3.5 یا بالاتر، فقط گروه ترکیبی را پیشنهاد دهید. اگر اتصال برقرار شد، Gateway آن را پشتیبانی می‌کند.</div>
+        <div class="code"><button class="copy">کپی</button>openssl version   # >= 3.5
+openssl s_client -connect gw.noghte.example:443 \
+  -groups X25519MLKEM768 -tls1_3 -brief &lt;/dev/null
+# انتظار: Negotiated TLS1.3 group: X25519MLKEM768
+
+# همه گروه‌های پشتیبانی‌شده محلی
+openssl list -kem-algorithms</div>
+        <div class="lab-tip">💡 این آزمون را برای هر Gateway که TLS دارد (HTTPS، TCP، SPICE، Trojan، Connector، IdP) تکرار و نتیجه را در جدول ثبت کنید. یک Gateway کلاسیک کافی است تا ادعای سرتاسری نقض شود.</div>
+      </div>
+      <div class="lab-c" id="l2">
+        <div class="lab-desc">در OpenSSH 10.1 به بعد، کلاینت اگر تبادل کلید PQ نباشد هشدار می‌دهد.</div>
+        <div class="code"><button class="copy">کپی</button>ssh -vv user@ssh.gw.noghte.example 2&gt;&amp;1 | grep "kex: algorithm"
+# انتظار: kex: algorithm: mlkem768x25519-sha256
+
+# سمت Gateway: فقط PQ (sshd_config.d/99-pq.conf)
+KexAlgorithms mlkem768x25519-sha256,sntrup761x25519-sha512@openssh.com
+LogLevel VERBOSE</div>
+        <div class="lab-tip">💡 اگر SSH Gateway با Go نوشته شده، نسخه golang.org/x/crypto/ssh را بررسی کنید؛ پشتیبانی ML-KEM در نسخه‌های جدید آن اضافه شده است.</div>
+      </div>
+      <div class="lab-c" id="l3">
+        <div class="lab-desc">در حالت «ترکیبی اجباری»، کلاینتی که فقط الگوریتم کلاسیک دارد باید رد شود و دلیل در لاگ ثبت شود.</div>
+        <div class="code"><button class="copy">کپی</button># باید شکست بخورد (handshake failure / insufficient_security)
+openssl s_client -connect gw.noghte.example:443 -groups X25519 -tls1_3
+
+# SSH: فقط تبادل کلاسیک
+ssh -o KexAlgorithms=curve25519-sha256 user@ssh.gw.noghte.example
+# انتظار: no matching key exchange method found
+
+# سپس در لاگ نقطه:
+# {"gateway":"https","kex":"X25519","decision":"deny","reason":"PQ_KEX_REQUIRED","rule_id":"crypto.pq.require"}</div>
+        <div class="lab-tip">💡 بدون این آزمون، «اجباری» فقط یک تیک در کنسول است. این مهم‌ترین آزمون ادعای پساکوانتومی است.</div>
+      </div>
+      <div class="lab-c" id="l4">
+        <div class="lab-desc">شاهد مستقل از لاگ خود محصول: گروه مذاکره‌شده را از بسته‌ها استخراج کنید. شناسه X25519MLKEM768 برابر 4588 (0x11EC) است.</div>
+        <div class="code"><button class="copy">کپی</button>tshark -i any -f "tcp port 443" -Y "tls.handshake.type == 2" \
+  -T fields -e ip.src -e tls.handshake.extensions_key_share_group
+# 4588 = X25519MLKEM768 · 4587 = SecP256r1MLKEM768 · 4589 = SecP384r1MLKEM1024
+# 29 = x25519 (کلاسیک)
+
+# درصد نشست‌های PQ در یک فایل ضبط
+tshark -r cap.pcap -Y "tls.handshake.type == 2" \
+  -T fields -e tls.handshake.extensions_key_share_group | sort | uniq -c</div>
+        <div class="lab-tip">💡 نسبت ۴۵۸۸ به کل ServerHelloها همان «سنجه پوشش PQ» است و باید با عدد داشبورد نقطه برابر باشد.</div>
+      </div>
+      <div class="lab-c" id="l5">
+        <div class="lab-desc">اگر Gatewayها با Go ساخته شوند، Go 1.24 به بعد X25519MLKEM768 را به‌طور پیش‌فرض دارد و Go 1.26 گروه‌های SecP256r1MLKEM768 و SecP384r1MLKEM1024 را اضافه کرده است. برای حالت اجباری، فهرست را صریح کنید.</div>
+        <div class="code"><button class="copy">کپی</button>// حالت ترکیبی اجباری در Gateway
+cfg := &amp;tls.Config{
+    MinVersion:       tls.VersionTLS13,
+    CurvePreferences: []tls.CurveID{tls.X25519MLKEM768, tls.SecP256r1MLKEM768},
+}
+// لاگ گروه مذاکره‌شده (Go 1.25+: ConnectionState.CurveID)
+st := conn.ConnectionState()
+log.Info("tls", "kex", st.CurveID.String(), "gateway", "https")
+
+// هشدار: GODEBUG=tlsmlkem=0 پیش‌فرض PQ را خاموش می‌کند؛ در تولید ممنوع شود</div>
+        <div class="lab-tip">💡 برای کلاینت اندروید، کنترل کامل TLS با هسته Go (gomobile) یا بسته‌کردن Conscrypt به‌روز ممکن است. به پشتیبانی TLS خود سیستم‌عامل روی نسخه‌های قدیمی اندروید تکیه نکنید و روی دستگاه‌های هدف آزمون کنید.</div>
+      </div>
+      <div class="lab-c" id="l6">
+        <div class="lab-desc">PSK پساکوانتومی برای WireGuard: کلید از کانال TLS ترکیبی مشتق، در WireGuard تزریق و مرتب چرخانده می‌شود.</div>
+        <div class="code"><button class="copy">کپی</button># کلاینت نقطه پس از دست‌دهی TLS ترکیبی با صفحه کنترل:
+#   psk = TLS-Exporter("noghte-wg-psk", context=peer_id, len=32)
+wg set wg0 peer &lt;GATEWAY_PUBKEY&gt; preshared-key &lt;(echo "$PSK_B64")
+
+# بررسی
+wg show wg0 preshared-keys
+
+# جایگزین متن‌باز: Rosenpass (ML-KEM + Classic McEliece) که PSK را هر دو دقیقه نو می‌کند</div>
+        <div class="lab-tip">💡 PSK ثابت و دستی برای همه کاربران پساکوانتومی محسوب نمی‌شود؛ PSK باید یکتا برای هر جفت و کوتاه‌عمر باشد.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>نقشه راه مهاجرت در پنج فاز</h2><p>هم‌راستا با NIST IR 8547 نهایی: اول تبادل کلید، سپس امضا. تاریخ‌ها پیشنهادی‌اند.</p></div>
+    <div class="roadmap">
+      <div class="rm"><div class="rm-dot">۰</div><div class="rm-c"><div class="when">فوری · ۱ تا ۳ ماه</div><h3>موجودی و خط مبنا</h3><p>تا ندانید کجا چه الگوریتمی هست، نمی‌توانید مهاجرت کنید.</p><ul><li>CBOM همه اجزا: کلاینت‌ها، Gatewayها، Connector، IdP، CA، HSM</li><li>افزودن فیلد <code>kex</code> و <code>sig</code> به لاگ هر نشست</li><li>اندازه‌گیری درصد فعلی نشست‌های PQ (احتمالاً بالای صفر، چون Go و OpenSSH پیش‌فرض دارند)</li></ul></div></div>
+      <div class="rm"><div class="rm-dot">۱</div><div class="rm-c"><div class="when">۱۴۰۵–۱۴۰۶ · ۳ تا ۹ ماه</div><h3>تبادل کلید ترکیبی در همه کانال‌ها</h3><p>بیشترین کاهش ریسک با کمترین هزینه.</p><ul><li>X25519MLKEM768 روی HTTPS، TCP، SPICE، Trojan، Connector و IdP</li><li>mlkem768x25519-sha256 روی SSH Gateway</li><li>WireGuard + PQ-PSK چرخشی</li><li>اتصال نقطه‌به‌نقطه با TLS ترکیبی</li><li>سیاست «ترکیبی ترجیحی» پیش‌فرض و «اجباری» برای مشتریان حساس</li></ul></div></div>
+      <div class="rm"><div class="rm-dot">۲</div><div class="rm-c"><div class="when">۱۴۰۶–۱۴۰۷</div><h3>امضاهای بلندعمر و PKI داخلی</h3><p>جاهایی که هر دو سر در کنترل نقطه است.</p><ul><li>CA داخلی دوگانه (کلاسیک + ML-DSA یا composite) برای Connector و Interconnect</li><li>امضای دوگانه بسته سیاست، APK و باینری Gateway (SLH-DSA یا ML-DSA)</li><li>زنجیره هش و امضای دوره‌ای لاگ ممیزی</li></ul></div></div>
+      <div class="rm"><div class="rm-dot">۳</div><div class="rm-c"><div class="when">۱۴۰۷–۱۴۰۸ · وابسته به اکوسیستم</div><h3>هویت و توکن پساکوانتومی</h3><p>وابسته به IdP: پشتیبانی Keycloak در حال توسعه است؛ وضعیت Authentik باید بررسی شود.</p><ul><li>JWT با ML-DSA-65 (RFC 9964) پس از پشتیبانی IdP و کتابخانه‌های کلاینت</li><li>گواهی سرور عمومی PQ وقتی CAهای عمومی و مرورگرها آماده شوند</li><li>Passkey و WebAuthn پساکوانتومی: احتمالاً ۲۰۲۷ به بعد</li></ul></div></div>
+      <div class="rm"><div class="rm-dot">۴</div><div class="rm-c"><div class="when">تا ۲۰۳۰ (۱۴۰۹) و ۲۰۳۵ (۱۴۱۴)</div><h3>حذف کلاسیک تنها</h3><p>پس از ۲۰۳۰ الگوریتم‌های کلاسیک منسوخ‌اند و پس از ۲۰۳۵ ممنوع.</p><ul><li>«ترکیبی اجباری» پیش‌فرض همه مستاجران</li><li>ارزیابی حالت فقط-PQ (مثلاً ML-KEM-1024 تنها) برای مشتریان CNSA 2.0</li><li>خروج FN-DSA و HQC از آزمایشگاه به تولید در صورت نیاز</li></ul></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="alt" id="faq">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>پرسش‌های پرتکرار</h2></div>
+    <div class="faq">
+      <div class="fq"><div class="fq-q"><span>آیا می‌توانیم بگوییم «نقطه کاملاً پساکوانتومی است»؟</span><span class="ar">▼</span></div><div class="fq-a"><p>تا وقتی امضاها (گواهی سرور، JWT، کلید میزبان SSH) کلاسیک‌اند، نه. عبارت دقیق امروز این است: «نقطه از تبادل کلید ترکیبی پساکوانتومی در همه مسیرهای دسترسی پشتیبانی می‌کند و آن را قابل اجبار می‌کند». این ادعا در برابر HNDL معنادار و آزمون‌پذیر است. ادعای کامل بعد از فازهای ۲ و ۳ ممکن می‌شود.</p></div></div>
+      <div class="fq"><div class="fq-q"><span>چرا ترکیبی؟ ML-KEM به‌تنهایی کافی نیست؟</span><span class="ar">▼</span></div><div class="fq-a"><p>ML-KEM تازه است و پیاده‌سازی‌ها هنوز در معرض باگ و حملات کانال جانبی‌اند. ترکیب با X25519 تضمین می‌کند که امنیت از امروز کمتر نمی‌شود. NIST حالت ترکیبی را صریحاً پذیرفته و طبق اظهار یکی از مسئولان NIST در دوره نظرخواهی، ممنوعیت ۲۰۳۵ قرار نیست شامل حالت‌های ترکیبی دارای جزء PQ تأییدشده شود.</p></div></div>
+      <div class="fq"><div class="fq-q"><span>آیا AES و رمز متقارن هم باید عوض شوند؟</span><span class="ar">▼</span></div><div class="fq-a"><p>نه. NIST، AES-128/192/256 و SHA-2/SHA-3 را همچنان تأییدشده می‌داند. برای حاشیه اطمینان بیشتر می‌توانید AES-256-GCM را ترجیح دهید، اما این بخش مهاجرت نیست.</p></div></div>
+      <div class="fq"><div class="fq-q"><span>چرا امضای توکن (JWT) اولویت پایین دارد؟</span><span class="ar">▼</span></div><div class="fq-a"><p>جعل امضا فقط با CRQC در زمان حمله ممکن است و توکن دسترسی معمولاً چند دقیقه عمر دارد. اما توکن تازه‌سازی، متادیتای فدراسیون و امضای سیاست عمر طولانی دارند. همچنین امضای ML-DSA-65 حدود ۳٫۳ کیلوبایت است و JWT را از محدودیت هدر و کوکی بزرگ‌تر می‌کند. تا پشتیبانی IdP آماده نشده، تبادل کلید PQ روی کانال انتقال توکن از خود توکن مهم‌تر است.</p></div></div>
+      <div class="fq"><div class="fq-q"><span>آیا پساکوانتومی بودن نقطه به DNS ربط دارد؟</span><span class="ar">▼</span></div><div class="fq-a"><p>کم. DNSSEC امضای کلاسیک دارد و مهاجرت PQ آن هنوز در مرحله پژوهش است. برای نقطه کافی است حل نام منابع خصوصی از طریق کانال‌های رمزشده خود نقطه (Connector با TLS ترکیبی) انجام شود، نه DNS آشکار.</p></div></div>
+      <div class="fq"><div class="fq-q"><span>آخرین مایل، یعنی Connector تا منبع، چه می‌شود؟</span><span class="ar">▼</span></div><div class="fq-a"><p>این مسیر درون شبکه مشتری است و پروتکل آن را منبع تعیین می‌کند (مثلاً TLS پایگاه‌داده یا RDP). نقطه نمی‌تواند آن را پساکوانتومی کند، اما می‌تواند آن را اندازه بگیرد و نشان دهد، و Connector را تا حد ممکن نزدیک منبع مستقر کند. صداقت درباره این مرز، اعتبار ادعای بقیه مسیر را بالا می‌برد.</p></div></div>
+      <div class="fq"><div class="fq-q"><span>کارایی چقدر افت می‌کند؟</span><span class="ar">▼</span></div><div class="fq-a"><p>از نظر CPU تقریباً هیچ؛ ML-KEM سریع است. هزینه اصلی حدود ۲٫۲ کیلوبایت بایت اضافه در هر دست‌دهی TLS است که ClientHello را به بیش از یک بسته می‌برد. برخی فایروال‌ها و Middleboxهای قدیمی این را تحمل نمی‌کنند. این را باید در شبکه‌های واقعی مشتری اندازه گرفت، به‌ویژه برای Trojan که در شبکه‌های پرفیلتر کار می‌کند.</p></div></div>
+      <div class="fq"><div class="fq-q"><span>QKD یا «رمزنگاری کوانتومی» چطور؟</span><span class="ar">▼</span></div><div class="fq-a"><p>QKD سخت‌افزار اختصاصی، فاصله محدود و کانال احراز هویت‌شده جداگانه لازم دارد و با مدل نرم‌افزاری و ابری نقطه سازگار نیست. واژه «امنیت کوانتومی» را در بازاریابی نقطه به کار نبرید؛ «پساکوانتومی» یا «مقاوم در برابر کوانتوم» دقیق است.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- GLOSSARY -->
+<section id="glossary">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>واژه‌نامه</h2></div>
+    <div class="gl" id="gl"></div>
+  </div>
+</section>
+
+<!-- REFS -->
+<section class="alt" id="refs">
+  <div class="wrap">
+    <div class="sec-head"><div class="rule"></div><h2>منابع و استانداردها</h2><p>برای ارجاع در سند معماری و گزارش ارزیابی. وضعیت‌ها تا نوامبر ۲۰۲۶ بررسی شده‌اند.</p></div>
+    <div class="ref-g">استانداردهای NIST</div>
+    <div class="refs">
+      <div class="ref"><a href="https://csrc.nist.gov/pubs/fips/203/final" target="_blank" rel="noopener">FIPS 203</a> — ML-KEM، استاندارد کپسوله‌سازی کلید مبتنی بر مشبکه ماژول (اوت ۲۰۲۴).</div>
+      <div class="ref"><a href="https://csrc.nist.gov/pubs/fips/204/final" target="_blank" rel="noopener">FIPS 204</a> — ML-DSA، امضای دیجیتال مبتنی بر مشبکه ماژول (اوت ۲۰۲۴).</div>
+      <div class="ref"><a href="https://csrc.nist.gov/pubs/fips/205/final" target="_blank" rel="noopener">FIPS 205</a> — SLH-DSA، امضای بی‌حالت مبتنی بر هش (اوت ۲۰۲۴).</div>
+      <div class="ref"><a href="https://csrc.nist.gov/pubs/ir/8547/final" target="_blank" rel="noopener">NIST IR 8547</a> — گذار به استانداردهای پساکوانتومی؛ نسخه نهایی ۲۷ اکتبر ۲۰۲۶؛ منسوخ پس از ۲۰۳۰، ممنوع پس از ۲۰۳۵.</div>
+      <div class="ref">FIPS 206 (FN-DSA) — پیش‌نویس؛ نسخه نهایی اواخر ۲۰۲۶ یا اوایل ۲۰۲۷ انتظار می‌رود.</div>
+      <div class="ref">NIST SP 800-227 — توصیه‌ها برای KEMها و ترکیب رازهای مشترک.</div>
+    </div>
+    <div class="ref-g">پروتکل‌ها</div>
+    <div class="refs">
+      <div class="ref"><a href="https://www.rfc-editor.org/rfc/rfc10024" target="_blank" rel="noopener">RFC 10024</a> — گروه‌های ترکیبی TLS 1.3: X25519MLKEM768، SecP256r1MLKEM768، SecP384r1MLKEM1024 (اوت ۲۰۲۶).</div>
+      <div class="ref"><a href="https://www.openssh.org/pq.html" target="_blank" rel="noopener">OpenSSH Post-Quantum</a> — mlkem768x25519-sha256 از 9.9، پیش‌فرض از 10.0؛ هشدار برای تبادل غیر PQ از 10.1.</div>
+      <div class="ref">RFC 9964 — ML-DSA در JOSE و COSE (JWT و JWS پساکوانتومی)، مه ۲۰۲۶.</div>
+      <div class="ref">RFC 9370 — تبادل کلید چندگانه در IKEv2 برای IPsec ترکیبی.</div>
+      <div class="ref"><a href="https://tailscale.com/kb/1460/post-quantum-cryptography" target="_blank" rel="noopener">Tailscale: PQC and WireGuard</a> — چرا ML-KEM مستقیم در WireGuard نمی‌نشیند و نقش PSK.</div>
+      <div class="ref"><a href="https://rosenpass.eu/" target="_blank" rel="noopener">Rosenpass</a> — تبادل کلید پساکوانتومی که PSK وایرگارد را مرتب نو می‌کند.</div>
+    </div>
+    <div class="ref-g">پیاده‌سازی</div>
+    <div class="refs">
+      <div class="ref"><a href="https://words.filippo.io/2025-state/" target="_blank" rel="noopener">Go Cryptography 2025</a> — crypto/mlkem و X25519MLKEM768 پیش‌فرض در crypto/tls از Go 1.24.</div>
+      <div class="ref"><a href="https://openjdk.org/jeps/527" target="_blank" rel="noopener">JEP 527</a> — TLS 1.3 ترکیبی در JDK 27؛ مرتبط با Keycloak و سرویس‌های جاوایی.</div>
+      <div class="ref"><a href="https://support.apple.com/en-gb/122756" target="_blank" rel="noopener">Apple: quantum-secure TLS</a> — iOS و macOS 26 به‌طور پیش‌فرض X25519MLKEM768 را پیشنهاد می‌دهند.</div>
+      <div class="ref">Keycloak PQC readiness (issue 43690) — بارگذاری کلید ML-DSA هدف 26.8 و آمادگی کامل هدف 27.0.</div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <p><b>نقطه پساکوانتومی</b> — کتابچه راهنمای طراحی و ارزیابی. این سند راهنمای معماری است و جای آزمون مستقل، ممیزی رمزنگاری و الزامات ملی (از جمله آزمون‌های آفتا) را نمی‌گیرد. وضعیت پشتیبانی کتابخانه‌ها سریع تغییر می‌کند؛ پیش از هر تصمیم، نسخه‌های هدف را دوباره بررسی کنید.</p>
+    <div class="footer-bottom"><span>ویرایش آبان ۱۴۰۵</span><span>Noghte · Post-Quantum Guide</span></div>
+  </div>
+</footer>
+<button class="btt" id="btt" aria-label="بازگشت به بالا">▲</button>
+
+<script>
+const fa = n => String(n).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+
+/* ---------- MOSCA ---------- */
+(function(){
+  const xs=document.getElementById('xs'), ys=document.getElementById('ys'), zs=document.getElementById('zs');
+  function upd(){
+    const x=+xs.value, y=+ys.value, z=+zs.value, max=45;
+    document.getElementById('xv').textContent=fa(x)+' سال';
+    document.getElementById('yv').textContent=fa(y)+' سال';
+    document.getElementById('zv').textContent=fa(z)+' سال';
+    document.getElementById('mbx').style.width=(x/max*100)+'%';
+    document.getElementById('mby').style.width=(y/max*100)+'%';
+    document.getElementById('mbz').style.left=(z/max*100)+'%';
+    const out=document.getElementById('moscaOut'), v=document.getElementById('verdict'), d=document.getElementById('vdesc');
+    const gap = x+y-z;
+    if(gap>0){ out.style.borderColor='var(--red)'; v.style.color='var(--red)'; v.textContent='در خطر: X + Y > Z';
+      d.textContent='داده‌ای که امروز ضبط شود، تا '+fa(gap)+' سال پیش از پایان عمر محرمانگی‌اش قابل رمزگشایی است. تبادل کلید PQ فوری است.'; }
+    else if(gap>-3){ out.style.borderColor='var(--gold)'; v.style.color='var(--gold)'; v.textContent='مرزی: حاشیه کمتر از ۳ سال';
+      d.textContent='هر تأخیر در مهاجرت یا پیشرفت سریع‌تر سخت‌افزار کوانتومی شما را به منطقه خطر می‌برد.'; }
+    else { out.style.borderColor='var(--green)'; v.style.color='var(--green)'; v.textContent='فعلاً امن: X + Y < Z';
+      d.textContent='حاشیه '+fa(-gap)+' سال دارید؛ اما Z نامطمئن‌ترین عدد این معادله است.'; }
+  }
+  [xs,ys,zs].forEach(e=>e.addEventListener('input',upd)); upd();
+})();
+
+/* ---------- SIZE CHART ---------- */
+const sets={
+  kex:[["X25519",64,"teal"],["P-256 ECDH",130,"teal"],["ML-KEM-512",1568,"violet"],["ML-KEM-768",2272,"violet"],["X25519MLKEM768",2336,"violet"],["ML-KEM-1024",3136,"violet"],["HQC-128 (≈)",6682,"gold"]],
+  sig:[["Ed25519",64,"teal"],["ECDSA P-256",72,"teal"],["RSA-2048",256,"teal"],["FN-DSA-512 (≈)",666,"gold"],["ML-DSA-44",2420,"violet"],["ML-DSA-65",3309,"violet"],["ML-DSA-87",4627,"violet"],["SLH-DSA-128s",7856,"gold"]],
+  chain:[["ECDSA P-256",3*(64+72),"teal"],["RSA-2048",3*(256+256),"teal"],["ML-DSA-44",3*(1312+2420),"violet"],["ML-DSA-65",3*(1952+3309),"violet"],["ML-DSA-87",3*(2592+4627),"violet"]]
+};
+function drawBars(k){
+  const d=sets[k], max=Math.max(...d.map(r=>r[1]));
+  document.getElementById('bars').innerHTML=d.map(r=>`<div class="bar-row"><div class="nm">${r[0]}</div><div class="bar-track"><div class="bar-fill" style="width:0;background:var(--${r[2]})" data-w="${Math.max(r[1]/max*100,0.8)}"></div></div><div class="val">${r[1].toLocaleString('en')} B</div></div>`).join('');
+  requestAnimationFrame(()=>document.querySelectorAll('#bars .bar-fill').forEach(b=>b.style.width=b.dataset.w+'%'));
+}
+document.getElementById('chartCtl').addEventListener('click',e=>{
+  const b=e.target.closest('.chip'); if(!b) return;
+  document.querySelectorAll('#chartCtl .chip').forEach(c=>c.classList.remove('active')); b.classList.add('active'); drawBars(b.dataset.set);
+});
+drawBars('kex');
+
+/* ---------- MOCKUP ---------- */
+const resources=[
+  {id:"fin",name:"Financial API",type:"REST API · HTTPS Gateway",icon:"🔗",bg:"#E3F2FD",gw:"HTTPS",kex:"X25519MLKEM768",sig:"ECDSA-P256",pq:"hybrid",last:"TLS 1.3 · PG upstream: TLS (کلاسیک)",perm:"خواندن",ops:["GET /api/v1/transactions","GET /api/v1/accounts","GET /api/v1/reports"]},
+  {id:"db",name:"Analytics DB",type:"PostgreSQL · TCP Gateway",icon:"🗄️",bg:"#FFF3E0",gw:"TCP",kex:"X25519MLKEM768",sig:"ML-DSA-65+Ed25519",pq:"pq",last:"Connector ← PG: TLS 1.2 کلاسیک",perm:"فقط خواندن",ops:["SELECT روی schema analytics"]},
+  {id:"ssh",name:"ML Training Server",type:"SSH Gateway",icon:"⚡",bg:"#F3E5F5",gw:"SSH",kex:"mlkem768x25519-sha256",sig:"ssh-ed25519",pq:"hybrid",last:"Gateway ← میزبان: OpenSSH 10.2",perm:"اجرای Job",ops:["shell (role: ml-engineer)","scp /data/models"]},
+  {id:"vpn",name:"Office Network",type:"WireGuard Gateway",icon:"🔒",bg:"#ECEFF1",gw:"WireGuard",kex:"Noise X25519 (بدون PSK)",sig:"—",pq:"classic",last:"شبکه 10.20.0.0/16",perm:"شبکه",ops:["10.20.0.0/16 : 443, 3389"]},
+  {id:"legacy",name:"Legacy ERP",type:"HTTPS Gateway · سرور قدیمی",icon:"🏛️",bg:"#FFEBEE",gw:"HTTPS",kex:"X25519",sig:"RSA-2048",pq:"classic",last:"Connector ← ERP: TLS 1.2 RSA",perm:"خواندن",ops:["GET /erp/*"]}
+];
+let policy="prefer", cur="list", sel="fin";
+function state(r){
+  if(r.pq==="classic"){
+    if(policy==="require") return {cls:"blocked",badge:'<span class="mb mb-no">مسدود: PQ لازم است</span>',ok:false};
+    if(policy==="prefer") return {cls:"weak",badge:'<span class="mb mb-cl">کلاسیک ⚠</span>',ok:true};
+    return {cls:"",badge:'<span class="mb mb-cl">کلاسیک</span>',ok:true};
+  }
+  if(r.pq==="pq") return {cls:"",badge:'<span class="mb mb-pq">⚛ PQ کامل (KEX+امضا)</span>',ok:true};
+  return {cls:"",badge:'<span class="mb mb-hy">⚛ ترکیبی (KEX)</span>',ok:true};
+}
+const sbar='<div class="sbar"><span>۹:۴۱</span><span>📶 🔋</span></div>';
+function nav(on){return `<div class="bnav">${[["list","📋","منابع"],["logs","📊","لاگ‌ها"],["inv","⚛","رمزنگاری"]].map(n=>`<div class="bn ${on===n[0]?'on':''}" data-go="${n[0]}"><span class="i">${n[1]}</span><span>${n[2]}</span></div>`).join('')}</div>`;}
+const polName={off:"کلاسیک مجاز",prefer:"ترکیبی ترجیحی",require:"ترکیبی اجباری"};
+function render(){
+  const s=document.getElementById('screen'); let h=sbar;
+  if(cur==="login"){
+    h+=`<div class="login"><div class="logo">🎯</div><h1>نقطه</h1><div class="sub">دسترسی امن و پساکوانتومی به منابع</div>
+    <button class="lbtn" data-go="list">🔐 ورود با نقطه</button>
+    <div class="hs-box"><div style="font-weight:700;color:#212121;margin-bottom:4px">اتصال به IdP</div>
+    <div class="row"><span>پروتکل</span><b>TLS 1.3</b></div>
+    <div class="row"><span>تبادل کلید</span><b style="color:#5B34D6">X25519MLKEM768 ⚛</b></div>
+    <div class="row"><span>گواهی سرور</span><b>ECDSA P-256</b></div>
+    <div class="row"><span>توکن</span><b>ES256 (JWT)</b></div>
+    <div class="row"><span>سیاست سازمان</span><b>${polName[policy]}</b></div></div>
+    <div style="font-size:.68rem;color:#616161;margin-top:14px">نسخه ۱.۱.۰ · پروفایل رمزنگاری pq-hybrid-2026.1</div></div>`;
+  }
+  else if(cur==="list"){
+    h+=`<div class="abar"><h2>منابع من</h2><span class="pq-chip">⚛ ${polName[policy]}</span></div><div class="cnt">`;
+    if(policy==="require") h+=`<div class="warn">سیاست سازمان: فقط اتصال با تبادل کلید پساکوانتومی. ${fa(resources.filter(r=>r.pq==="classic").length)} منبع در دسترس نیست.</div>`;
+    h+=resources.map(r=>{const st=state(r);return `<div class="rc ${st.cls}" data-res="${r.id}"><div class="rh"><div class="ri" style="background:${r.bg}">${r.icon}</div><div class="rt"><h3>${r.name}</h3><div class="ty">${r.type}</div></div></div><div class="rf">${st.badge}<button class="abtn" data-res="${r.id}" ${st.ok?'':'disabled'}>${st.ok?'دسترسی':'مسدود'}</button></div></div>`}).join('');
+    h+=`</div>`+nav("list");
+  }
+  else if(cur==="detail"){
+    const r=resources.find(x=>x.id===sel), st=state(r);
+    h+=`<div class="abar"><span class="back" data-go="list">→</span><h2>جزئیات منبع</h2></div><div class="cnt">
+    <div class="dh"><div style="font-size:1.5rem">${r.icon}</div><h1>${r.name}</h1><div class="ty">${r.type}</div><div style="margin-top:6px">${st.badge}</div></div>`;
+    if(!st.ok) h+=`<div class="err"><b>دسترسی مسدود است.</b><br>علت: <span class="mono">PQ_KEX_REQUIRED</span> · قانون <span class="mono">crypto.pq.require</span><br>این منبع هنوز تبادل کلید پساکوانتومی ندارد. با مدیر امنیت تماس بگیرید.</div>`;
+    else if(r.pq==="classic") h+=`<div class="warn">این اتصال کلاسیک است و در برابر «اکنون ذخیره، بعداً رمزگشایی» محافظت نمی‌شود.${r.gw==="WireGuard"?' PSK پساکوانتومی برای این Gateway فعال نیست.':''}</div>`;
+    h+=`<div class="ds"><h3>رمزنگاری مسیر (آخرین نشست)</h3>
+      <div class="kv"><span>Gateway</span><b>${r.gw}</b></div>
+      <div class="kv"><span>تبادل کلید</span><b style="color:${r.pq==='classic'?'#E65100':'#5B34D6'}">${r.kex}</b></div>
+      <div class="kv"><span>امضا / گواهی</span><b>${r.sig}</b></div>
+      <div class="kv"><span>آخرین مایل</span><b style="font-family:Vazirmatn;direction:rtl">${r.last}</b></div></div>
+    <div class="ds"><h3>عملیات مجاز (${r.perm})</h3>${r.ops.map(o=>`<div class="kv"><span>✓</span><b>${o}</b></div>`).join('')}</div>
+    <button class="big-btn" ${st.ok?'':'disabled'}>${st.ok?'🚀 اتصال':'⛔ مسدود با سیاست'}</button></div>`;
+  }
+  else if(cur==="logs"){
+    const logs=[
+      {ok:"ok",a:"دسترسی به Financial API",m:"GET /api/v1/transactions",t:"۱۰:۳۰",f:{gateway:"https",kex:"X25519MLKEM768",sig:"ECDSA-P256",decision:"allow",rule_id:"res.fin.viewer"}},
+      {ok:"ok",a:"نشست SSH",m:"ssh ml-train-01",t:"۱۰:۱۲",f:{gateway:"ssh",kex:"mlkem768x25519-sha256",hostkey:"ssh-ed25519",decision:"allow",rule_id:"res.ml.engineer"}},
+      ...(policy==="require"?[{ok:"no",a:"اتصال رد شد",m:"Legacy ERP",t:"۰۹:۵۵",f:{gateway:"https",kex:"X25519",decision:"deny",reason:"PQ_KEX_REQUIRED",rule_id:"crypto.pq.require"}}]
+        :[{ok:"w",a:"اتصال کلاسیک (هشدار)",m:"Legacy ERP",t:"۰۹:۵۵",f:{gateway:"https",kex:"X25519",decision:"allow",reason:"PQ_UNAVAILABLE_FALLBACK",rule_id:"crypto.pq.prefer"}}]),
+      {ok:"no",a:"دسترسی رد شد",m:"DELETE /api/v1/transactions/123",t:"۰۹:۵۰",f:{gateway:"https",kex:"X25519MLKEM768",decision:"deny",reason:"ROLE_MISSING:finance-admin",rule_id:"res.fin.viewer"}},
+      {ok:"ok",a:"ورود به سیستم",m:"OIDC Login · MFA",t:"۰۹:۰۰",f:{gateway:"idp",kex:"X25519MLKEM768",token_alg:"ES256",decision:"allow",rule_id:"auth.mfa"}}
+    ];
+    h+=`<div class="abar"><h2>لاگ دسترسی‌ها</h2><span class="pq-chip">روی هر مورد بزنید</span></div><div class="cnt">`+
+    logs.map(l=>`<div class="li"><div class="li-top"><span class="dot d-${l.ok}"></span><span class="ac">${l.a}</span><span class="tm">${l.t}</span></div><div class="mt">${l.m}</div><div class="ext">${Object.entries(l.f).map(([k,v])=>`<div class="kv"><span class="mono">${k}</span><b style="color:${k==='kex'?(v.includes('MLKEM')||v.includes('mlkem')?'#5B34D6':'#E65100'):(k==='reason'?'#C62828':'#212121')}">${v}</b></div>`).join('')}</div></div>`).join('')+`</div>`+nav("logs");
+  }
+  else if(cur==="inv"){
+    const pq=resources.filter(r=>r.pq!=="classic").length, cl=resources.length-pq;
+    h+=`<div class="abar"><h2>موجودی رمزنگاری</h2><span class="pq-chip">CBOM</span></div><div class="cnt">
+    <div class="inv-sum"><div><b style="color:#5B34D6">${fa(Math.round(pq/resources.length*100))}٪</b><span>مسیر PQ</span></div><div><b style="color:#E65100">${fa(cl)}</b><span>مسیر کلاسیک</span></div><div><b style="color:#00897B">${fa(1)}</b><span>امضای PQ</span></div></div>
+    <div class="ds"><h3>این دستگاه</h3>
+      <div class="kv"><span>هسته TLS کلاینت</span><b>Go 1.26 (gomobile)</b></div>
+      <div class="kv"><span>گروه‌های پیشنهادی</span><b>X25519MLKEM768, X25519</b></div>
+      <div class="kv"><span>کلید دستگاه</span><b>P-256 (StrongBox)</b></div>
+      <div class="kv"><span>گواهی mTLS دستگاه</span><b>ECDSA · ۳۰ روز</b></div>
+      <div class="kv"><span>پروفایل</span><b>pq-hybrid-2026.1</b></div></div>
+    <div class="ds"><h3>مسیرها</h3>${resources.map(r=>`<div class="kv"><span>${r.name}</span><b style="color:${r.pq==='classic'?'#E65100':'#5B34D6'}">${r.pq==='classic'?'کلاسیک':(r.pq==='pq'?'PQ کامل':'ترکیبی')}</b></div>`).join('')}</div>
+    <div class="ds"><h3>کارهای باقی‌مانده</h3>
+      <div class="kv"><span>WireGuard: PSK پساکوانتومی</span><b style="color:#C62828">غیرفعال</b></div>
+      <div class="kv"><span>Legacy ERP: Connector با TLS ترکیبی</span><b style="color:#C62828">نیاز به ارتقا</b></div>
+      <div class="kv"><span>امضای توکن IdP</span><b style="color:#E65100">ES256 · منتظر IdP</b></div></div></div>`+nav("inv");
+  }
+  s.innerHTML=h;
+  document.querySelectorAll('#screenTabs .chip').forEach(c=>c.classList.toggle('active',c.dataset.s===cur));
+}
+document.getElementById('screen').addEventListener('click',e=>{
+  const li=e.target.closest('.li'); if(li){li.classList.toggle('open');return;}
+  const g=e.target.closest('[data-go]'); if(g){cur=g.dataset.go;render();return;}
+  const r=e.target.closest('[data-res]'); if(r){sel=r.dataset.res;cur="detail";render();}
+});
+document.getElementById('screenTabs').addEventListener('click',e=>{const b=e.target.closest('.chip'); if(!b)return; cur=b.dataset.s; render();});
+document.getElementById('policyCtl').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; policy=b.dataset.p; document.querySelectorAll('#policyCtl button').forEach(x=>x.classList.toggle('active',x===b)); render();});
+render();
+
+/* ---------- GLOSSARY ---------- */
+const glossary=[
+["CRQC","رایانه کوانتومی مرتبط با رمزنگاری؛ ماشینی که بتواند Shor را روی کلیدهای واقعی اجرا کند."],
+["HNDL","Harvest Now, Decrypt Later؛ ضبط ترافیک امروز برای رمزگشایی در آینده."],
+["PQC","رمزنگاری پساکوانتومی؛ الگوریتم‌های کلاسیک (نرم‌افزاری) مقاوم در برابر رایانه کوانتومی."],
+["KEM","سازوکار کپسوله‌سازی کلید؛ جایگزین Diffie-Hellman در دنیای پساکوانتومی."],
+["ML-KEM","استاندارد KEM مبتنی بر مشبکه ماژول (Kyber سابق)، FIPS 203."],
+["ML-DSA","استاندارد امضای مبتنی بر مشبکه ماژول (Dilithium سابق)، FIPS 204."],
+["SLH-DSA","امضای بی‌حالت مبتنی بر هش (SPHINCS+ سابق)، FIPS 205."],
+["FN-DSA","امضای مبتنی بر مشبکه NTRU (Falcon سابق)، FIPS 206 در دست تدوین."],
+["Hybrid / ترکیبی","ترکیب یک الگوریتم کلاسیک و یک پساکوانتومی به‌طوری که شکستن هر دو لازم باشد."],
+["Composite","گواهی یا امضایی که دو کلید و دو امضا (کلاسیک و PQ) را در یک شیء نگه می‌دارد."],
+["X25519MLKEM768","گروه ترکیبی TLS 1.3 (کد 0x11EC) که X25519 و ML-KEM-768 را ترکیب می‌کند."],
+["Crypto-Agility","توانایی تغییر الگوریتم بدون بازنویسی نرم‌افزار."],
+["CBOM","فهرست مواد رمزنگاری؛ موجودی کلیدها، الگوریتم‌ها و کتابخانه‌ها."],
+["Mosca","نامعادله X + Y > Z برای سنجش فوریت مهاجرت."],
+["Downgrade","وادار کردن طرفین به الگوریتم ضعیف‌تر؛ در حالت اجباری باید ناممکن باشد."],
+["PQ-PSK","کلید متقارن پیش‌اشتراکی که از کانال پساکوانتومی ساخته و در WireGuard تزریق می‌شود."],
+["Last Mile / آخرین مایل","مسیر Connector تا منبع که پروتکلش را منبع تعیین می‌کند."],
+["CNSA 2.0","مجموعه الگوریتم‌های NSA برای سامانه‌های امنیت ملی آمریکا؛ ML-KEM-1024 و ML-DSA-87."]
+];
+document.getElementById('gl').innerHTML=glossary.map(g=>`<div><b>${g[0]}</b><span>${g[1]}</span></div>`).join('');
+
+/* ---------- LAB / FAQ / COPY ---------- */
+document.querySelectorAll('.lab-tab').forEach(t=>t.addEventListener('click',()=>{
+  document.querySelectorAll('.lab-tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
+  document.querySelectorAll('.lab-c').forEach(c=>c.classList.remove('active')); document.getElementById(t.dataset.t).classList.add('active');
+}));
+document.querySelectorAll('.fq-q').forEach(q=>q.addEventListener('click',()=>{const it=q.parentElement,o=it.classList.contains('open');document.querySelectorAll('.fq').forEach(i=>i.classList.remove('open'));if(!o)it.classList.add('open');}));
+document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{
+  const txt=[...b.parentElement.childNodes].filter(n=>n!==b).map(n=>n.textContent).join('').trim();
+  try{await navigator.clipboard.writeText(txt);b.textContent='کپی شد ✓';}catch(e){b.textContent='کپی ممکن نشد';}
+  setTimeout(()=>b.textContent='کپی',1500);
+}));
+
+/* ---------- NAV / THEME ---------- */
+document.getElementById('navToggle').addEventListener('click',()=>document.getElementById('navLinks').classList.toggle('open'));
+document.querySelectorAll('#navLinks a').forEach(a=>a.addEventListener('click',()=>document.getElementById('navLinks').classList.remove('open')));
+window.addEventListener('scroll',()=>document.getElementById('btt').classList.toggle('show',scrollY>300));
+document.getElementById('btt').addEventListener('click',()=>scrollTo({top:0,behavior:'smooth'}));
+(function(){
+  const icon=document.getElementById('themeIcon'); let saved=null; try{saved=localStorage.getItem('noghte-pq-theme');}catch(e){}
+  function set(d){document.documentElement.setAttribute('data-theme',d?'dark':'light');try{localStorage.setItem('noghte-pq-theme',d?'dark':'light');}catch(e){}
+    icon.innerHTML=d?'<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>':'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';}
+  set(saved==='dark'||(!saved&&matchMedia('(prefers-color-scheme: dark)').matches));
+  document.getElementById('themeBtn').addEventListener('click',()=>set(document.documentElement.getAttribute('data-theme')!=='dark'));
+})();
+</script>
+</body>
+</html>

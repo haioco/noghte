@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نقطه | نقطه اتصال ابری پساکوانتومی</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #1e3c72;
+            --primary-light: #2a5298;
+            --accent: #667eea;
+            --accent-glow: #764ba2;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-dark: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 20px 60px rgba(102, 126, 234, 0.3);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #ffffff;
+            color: var(--dark);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            padding: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .logo .dot {
+            width: 12px;
+            height: 12px;
+            background: var(--gradient);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+            font-size: 0.95em;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1em;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-large {
+            padding: 16px 40px;
+            font-size: 1.1em;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            background: var(--gradient-dark);
+            color: white;
+            padding: 160px 0 100px;
+            position: relative;
+            overflow: hidden;
+            margin-top: 70px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.3) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .hero .container {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .hero-content h1 {
+            font-size: 3em;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+
+        .hero-content h1 .highlight {
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-content p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            line-height: 2;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* ===== HERO VISUAL ===== */
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .dot-visual {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+
+        .dot-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: var(--gradient);
+            border-radius: 50%;
+            box-shadow: 0 0 60px rgba(102, 126, 234, 0.8);
+            animation: pulse-center 3s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+        }
+
+        @keyframes pulse-center {
+            0%, 100% { box-shadow: 0 0 60px rgba(102, 126, 234, 0.8); }
+            50% { box-shadow: 0 0 100px rgba(102, 126, 234, 1); }
+        }
+
+        .orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: rotate 20s linear infinite;
+        }
+
+        .orbit-1 { width: 150px; height: 150px; animation-duration: 15s; }
+        .orbit-2 { width: 220px; height: 220px; animation-duration: 25s; animation-direction: reverse; }
+        .orbit-3 { width: 290px; height: 290px; animation-duration: 35s; }
+
+        @keyframes rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .orbit-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #ffd700;
+            border-radius: 50%;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px #ffd700;
+        }
+
+        /* ===== SECTION STYLES ===== */
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-alt {
+            background: var(--light);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.2em;
+            color: var(--primary);
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        .section-title p {
+            color: var(--gray);
+            font-size: 1.1em;
+            max-width: 700px;
+            margin: 20px auto 0;
+        }
+
+        /* ===== VALUE PROPOSITION ===== */
+        .value-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .value-card {
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border-top: 4px solid transparent;
+        }
+
+        .value-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-top-color: var(--accent);
+        }
+
+        .value-icon {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .value-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .value-card p {
+            color: var(--gray);
+            line-height: 1.9;
+        }
+
+        /* ===== FEATURES ===== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            border-right: 4px solid var(--accent);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .feature-card h4 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card p {
+            color: var(--gray);
+            font-size: 0.95em;
+        }
+
+        .feature-tag {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--accent);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* ===== ARCHITECTURE VISUAL ===== */
+        .arch-visual {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .arch-layer {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            border-right: 5px solid var(--accent);
+            transition: all 0.3s;
+        }
+
+        .arch-layer:hover {
+            transform: translateX(-5px);
+        }
+
+        .arch-layer h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .arch-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .arch-tag {
+            background: var(--light);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: var(--dark);
+            border: 1px solid #e2e8f0;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* ===== ROADMAP ===== */
+        .roadmap-timeline {
+            position: relative;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        .roadmap-timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 50%;
+            transform: translateX(50%);
+            width: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-left: 50%;
+            position: relative;
+            margin-bottom: 40px;
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-left: 0;
+            padding-right: 50%;
+        }
+
+        .timeline-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            width: 80%;
+            position: relative;
+            border-top: 4px solid var(--accent);
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            text-align: left;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            text-align: right;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            top: 30px;
+            right: -50%;
+            transform: translateX(50%);
+            width: 20px;
+            height: 20px;
+            background: var(--gradient);
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.6);
+            z-index: 2;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            right: auto;
+            left: -50%;
+            transform: translateX(-50%);
+        }
+
+        .timeline-phase {
+            display: inline-block;
+            background: var(--gradient);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .timeline-content h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .timeline-content ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .timeline-content li {
+            padding: 5px 0;
+            padding-right: 25px;
+            position: relative;
+            color: var(--gray);
+            font-size: 0.95em;
+        }
+
+        .timeline-content li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+            position: absolute;
+            right: 0;
+        }
+
+        /* ===== KPI SECTION ===== */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+        }
+
+        .kpi-card {
+            background: var(--gradient-dark);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .kpi-card:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .kpi-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .kpi-label {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+
+        /* ===== CTA SECTION ===== */
+        .cta-section {
+            background: var(--gradient-dark);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 20px,
+                rgba(255, 255, 255, 0.03) 20px,
+                rgba(255, 255, 255, 0.03) 40px
+            );
+            animation: slide 30s linear infinite;
+        }
+
+        @keyframes slide {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+
+        .cta-section .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section h2 {
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-white {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-white:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 50px 0 20px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h4 {
+            color: #ffd700;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col li {
+            margin-bottom: 10px;
+            opacity: 0.8;
+            font-size: 0.95em;
+        }
+
+        .footer-col a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .footer-col a:hover {
+            opacity: 1;
+            color: #ffd700;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+            text-align: center;
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 968px) {
+            .hero .container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-content h1 {
+                font-size: 2.2em;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                order: -1;
+            }
+
+            .dot-visual {
+                width: 200px;
+                height: 200px;
+            }
+
+            .dot-center {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5em;
+            }
+
+            .orbit-1 { width: 100px; height: 100px; }
+            .orbit-2 { width: 150px; height: 150px; }
+            .orbit-3 { width: 200px; height: 200px; }
+
+            .nav-links {
+                display: none;
+            }
+
+            .roadmap-timeline::before {
+                right: 20px;
+                transform: none;
+            }
+
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                justify-content: flex-start;
+                padding-left: 60px;
+                padding-right: 0;
+            }
+
+            .timeline-content {
+                width: 100%;
+                text-align: right !important;
+            }
+
+            .timeline-dot,
+            .timeline-item:nth-child(even) .timeline-dot {
+                right: auto;
+                left: 10px;
+                transform: none;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero {
+                padding: 120px 0 60px;
+            }
+
+            .hero-content h1 {
+                font-size: 1.8em;
+            }
+
+            .section-title h2 {
+                font-size: 1.6em;
+            }
+
+            .btn-large {
+                padding: 14px 25px;
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <span class="dot"></span>
+                نقطه
+            </div>
+            <ul class="nav-links">
+                <li><a href="#why">چرا نقطه؟</a></li>
+                <li><a href="#features">ویژگی‌ها</a></li>
+                <li><a href="#architecture">معماری</a></li>
+                <li><a href="#roadmap">نقشه راه</a></li>
+                <li><a href="#contact">تماس</a></li>
+            </ul>
+            <a href="#contact" class="btn btn-primary">دریافت دمو</a>
+        </div>
+    </nav>
+
+    <!-- ===== HERO SECTION ===== -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <span class="hero-badge">🔐 مطابق با استانداردهای NIST و FIPS 140-3</span>
+                <h1>نقطه اتصال ابری <span class="highlight">پساکوانتومی</span></h1>
+                <p>
+                    راهکار جامع SASE با رمزنگاری پساکوانتومی (PQC) برای حفاظت از داده‌ها در برابر تهدیدات رایانه‌های کوانتومی آینده. 
+                    دسترسی امن، سریع و مقاوم در برابر آینده.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#contact" class="btn btn-primary btn-large">شروع همکاری</a>
+                    <a href="#architecture" class="btn btn-outline btn-large" style="color: white; border-color: white;">مشاهده معماری</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="dot-visual">
+                    <div class="orbit orbit-1"><div class="orbit-dot"></div></div>
+                    <div class="orbit orbit-2"><div class="orbit-dot"></div></div>
+                    <div class="orbit orbit-3"><div class="orbit-dot"></div></div>
+                    <div class="dot-center">🔒</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== VALUE PROPOSITION ===== -->
+    <section class="section" id="why">
+        <div class="container">
+            <div class="section-title">
+                <h2>چرا نقطه اتصال ابری پساکوانتومی؟</h2>
+                <p>امروز امنیت شبکه‌های سنتی در برابر تهدیدات کوانتومی آینده آسیب‌پذیر است. نقطه، با رمزنگاری پساکوانتومی، این شکاف را پر می‌کند.</p>
+            </div>
+            <div class="value-grid">
+                <div class="value-card">
+                    <span class="value-icon">⚛️</span>
+                    <h3>مقاوم در برابر کوانتوم</h3>
+                    <p>استفاده از الگوریتم‌های استاندارد NIST مانند ML-KEM (Kyber)، ML-DSA (Dilithium) و SLH-DSA (SPHINCS+) برای مقاومت در برابر حملات رایانه‌های کوانتومی.</p>
+                </div>
+                <div class="value-card">
+                    <span class="value-icon">🌐</span>
+                    <h3>معماری SASE یکپارچه</h3>
+                    <p>ترکیب امنیت شبکه (SSE) و شبکه‌سازی WAN (SD-WAN) در یک پلتفرم ابری. دسترسی امن از هر نقطه، بدون نیاز به تجهیزات پیچیده.</p>
+                </div>
+                <div class="value-card">
+                    <span class="value-icon">🛡️</span>
+                    <h3>حالت Hybrid دو لایه</h3>
+                    <p>ترکیب الگوریتم‌های کلاسیک و پساکوانتومی برای سازگاری کامل با زیرساخت‌های موجود و امنیت دوچندان در برابر تهدیدات فعلی و آینده.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FEATURES ===== -->
+    <section class="section section-alt" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>ویژگی‌های کلیدی</h2>
+                <p>همه آنچه برای یک دسترسی امن، سریع و آینده‌نگر نیاز دارید.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h4>🔑 مدیریت کلید PQC</h4>
+                    <p>صدور، توزیع و مدیریت گواهی‌های دیجیتال مبتنی بر الگوریتم‌های پساکوانتومی با استفاده از HashiCorp Vault.</p>
+                    <span class="feature-tag">FIPS 203-207</span>
+                </div>
+                <div class="feature-card">
+                    <h4>🚇 تونل‌سازی Hybrid</h4>
+                    <p>تونل‌های WireGuard و IKEv2 با رمزنگاری ترکیبی کلاسیک + PQC برای ارتباطی امن و پرسرعت.</p>
+                    <span class="feature-tag">WireGuard + PQC</span>
+                </div>
+                <div class="feature-card">
+                    <h4>🧠 موتور سیاست‌گذاری (OPA)</h4>
+                    <p>کنترل دسترسی دینامیک و Policy-as-Code با Open Policy Agent برای اعمال سیاست‌های امنیتی به صورت بلادرنگ.</p>
+                    <span class="feature-tag">Policy-as-Code</span>
+                </div>
+                <div class="feature-card">
+                    <h4>🕵️ ZTNA Gateway</h4>
+                    <p>دسترسی مبتنی بر هویت با ریزبخش‌بندی (Micro-segmentation) و احراز هویت چندعاملی (MFA).</p>
+                    <span class="feature-tag">Zero Trust</span>
+                </div>
+                <div class="feature-card">
+                    <h4>🔍 SWG و FWaaS</h4>
+                    <p>فیلترینگ URL، اسکن بدافزار، بازرسی HTTPS و فایروال لایه ۷ آگاه از برنامه با eBPF.</p>
+                    <span class="feature-tag">L7 Inspection</span>
+                </div>
+                <div class="feature-card">
+                    <h4>📊 مانیتورینگ و SIEM</h4>
+                    <p>پایش بلادرنگ ترافیک، تحلیل تهدیدات و گزارش‌دهی جامع با Prometheus، Grafana و ELK Stack.</p>
+                    <span class="feature-tag">Real-time</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ARCHITECTURE ===== -->
+    <section class="section" id="architecture">
+        <div class="container">
+            <div class="section-title">
+                <h2>معماری سطح بالا</h2>
+                <p>یک نگاه به لایه‌های مختلف معماری HaioSASE-PQC</p>
+            </div>
+            <div class="arch-visual">
+                <div class="arch-layer">
+                    <h4>☁️ Cloud Control Plane</h4>
+                    <div class="arch-tags">
+                        <span class="arch-tag">Identity & Auth (ZTNA)</span>
+                        <span class="arch-tag">Policy Engine (OPA)</span>
+                        <span class="arch-tag">Centralized Dashboard</span>
+                        <span class="arch-tag">Certificate Authority (PQC)</span>
+                    </div>
+                </div>
+                <div class="arch-layer">
+                    <h4>🛡️ Security Edge (SSE)</h4>
+                    <div class="arch-tags">
+                        <span class="arch-tag">FWaaS (L7)</span>
+                        <span class="arch-tag">SWG (Proxy)</span>
+                        <span class="arch-tag">CASB</span>
+                        <span class="arch-tag">ZTNA Gateway</span>
+                        <span class="arch-tag">DLP Engine</span>
+                    </div>
+                </div>
+                <div class="arch-layer">
+                    <h4>🌐 Network Layer (SD-WAN)</h4>
+                    <div class="arch-tags">
+                        <span class="arch-tag">WireGuard + PQC Hybrid</span>
+                        <span class="arch-tag">Traffic Optimization</span>
+                        <span class="arch-tag">Load Balancer (HAProxy)</span>
+                        <span class="arch-tag">Distributed PoPs</span>
+                    </div>
+                </div>
+                <div class="arch-layer">
+                    <h4>💾 HaioBypass Core (Enhanced)</h4>
+                    <div class="arch-tags">
+                        <span class="arch-tag">User Management (RBAC)</span>
+                        <span class="arch-tag">Billing & Wallet</span>
+                        <span class="arch-tag">Config Provisioning</span>
+                        <span class="arch-tag">Traffic Sync (Celery)</span>
+                        <span class="arch-tag">Device Management</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== ROADMAP ===== -->
+    <section class="section section-alt" id="roadmap">
+        <div class="container">
+            <div class="section-title">
+                <h2>نقشه راه اجرایی</h2>
+                <p>پروژه در ۴ فاز اصلی و طی ۱۲ ماه به بهره‌برداری کامل می‌رسد.</p>
+            </div>
+            <div class="roadmap-timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-phase">فاز ۱ | ماه ۱-۳</span>
+                        <h4>پایه‌گذاری (Foundation)</h4>
+                        <ul>
+                            <li>یکپارچه‌سازی کتابخانه‌های PQC (liboqs)</li>
+                            <li>پیاده‌سازی Hybrid TLS 1.3</li>
+                            <li>استقرار Identity Provider (Keycloak)</li>
+                            <li>پیاده‌سازی ZTNA پایه</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-phase">فاز ۲ | ماه ۴-۶</span>
+                        <h4>لبه امنیتی (Security Edge)</h4>
+                        <ul>
+                            <li>استقرار SWG با فیلترینگ URL</li>
+                            <li>پیاده‌سازی FWaaS با بازرسی L7</li>
+                            <li>یکپارچه‌سازی OPA برای اجرای سیاست</li>
+                            <li>افزودن اسکن بدافزار (ICAP)</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-phase">فاز ۳ | ماه ۷-۹</span>
+                        <h4>ویژگی‌های پیشرفته</h4>
+                        <ul>
+                            <li>CASB برای نظارت بر SaaS</li>
+                            <li>پیاده‌سازی موتور DLP</li>
+                            <li>تحلیل و گزارش‌دهی پیشرفته</li>
+                            <li>استقرار لبه چندمنطقه‌ای</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <span class="timeline-phase">فاز ۴ | ماه ۱۰-۱۲</span>
+                        <h4>آماده‌سازی تولید</h4>
+                        <ul>
+                            <li>بهینه‌سازی عملکرد</li>
+                            <li>حسابرسی امنیتی و تست نفوذ</li>
+                            <li>دریافت گواهینامه FIPS 140-3</li>
+                            <li>راه‌اندازی Disaster Recovery و HA</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== KPI SECTION ===== -->
+    <section class="section">
+        <div class="container">
+            <div class="section-title">
+                <h2>شاخص‌های کلیدی عملکرد</h2>
+                <p>اعدادی که اعتماد سازمان‌ها را جلب می‌کند.</p>
+            </div>
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <span class="kpi-number">&lt; 500ms</span>
+                    <span class="kpi-label">زمان برقراری تونل</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-number">&gt; 10 Gbps</span>
+                    <span class="kpi-label">توان عبوری هر گره لبه</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-number">&lt; 20ms</span>
+                    <span class="kpi-label">تأخیر کاربر تا لبه</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-number">99.99%</span>
+                    <span class="kpi-label">دسترس‌پذیری (Uptime)</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-number">&gt; 99.5%</span>
+                    <span class="kpi-label">نرخ مسدودسازی تهدید</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-number">&lt; 0.1%</span>
+                    <span class="kpi-label">نرخ هشدار اشتباه</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== CTA SECTION ===== -->
+    <section class="cta-section" id="contact">
+        <div class="container">
+            <h2>آماده‌اید امنیت آینده را تجربه کنید؟</h2>
+            <p>برای دریافت دموی اختصاصی، مشاوره فنی یا همکاری در پروژه‌های سازمانی، همین حالا با ما تماس بگیرید.</p>
+            <div class="cta-buttons">
+                <a href="mailto:info@noghte.ir" class="btn btn-white btn-large">📧 درخواست دمو</a>
+                <a href="#" class="btn btn-outline btn-large" style="color: white; border-color: white;">📞 تماس با ما</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>نقطه</h4>
+                    <ul>
+                        <li>نقطه اتصال ابری پساکوانتومی</li>
+                        <li>راهکار SASE با رمزنگاری PQC</li>
+                        <li>مقاوم در برابر آینده</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>لینک‌های سریع</h4>
+                    <ul>
+                        <li><a href="#why">چرا نقطه؟</a></li>
+                        <li><a href="#features">ویژگی‌ها</a></li>
+                        <li><a href="#architecture">معماری</a></li>
+                        <li><a href="#roadmap">نقشه راه</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>تماس با ما</h4>
+                    <ul>
+                        <li>📧 info@noghte.ir</li>
+                        <li>📞 ۰۲۱-۱۲۳۴۵۶۷۸</li>
+                        <li>📍 تهران، ایران</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>استانداردها</h4>
+                    <ul>
+                        <li>FIPS 203-207</li>
+                        <li>FIPS 140-3</li>
+                        <li>NIST PQC</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© ۱۴۰۵ نقطه | تمامی حقوق محفوظ است.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

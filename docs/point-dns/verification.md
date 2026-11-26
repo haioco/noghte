@@ -1,0 +1,140 @@
+# نقطه — سند تأیید و شواهد
+
+آخرین به‌روزرسانی: ۲۶ نوامبر ۲۰۲۶
+
+## ۱) آزمون‌ها و بررسی‌های ایستا (افزونهٔ point_dns)
+
+| بررسی | نتیجه |
+|---|---|
+| `odoo --test-tags /point_dns` | ۰ خطا، ۰ شکست از ۲۲ آزمون (`test_point.py` ۱۰ + `test_pdns.py` ۱۲) |
+| `ruff check` | پاس |
+| `python3 -m compileall` | پاس |
+
+## ۲) محیط آزمون محلی (Docker)
+
+ایمیج‌های `odoo:19` و `postgres:16-alpine` به‌صورت محلی موجودند:
+
+```bash
+docker network create pointnet
+docker run -d --name point-pg --network pointnet \
+  -e POSTGRES_USER=odoo -e POSTGRES_PASSWORD=odoo -e POSTGRES_DB=postgres \
+  postgres:16-alpine
+KEY=$(python3 -c "import base64,os;print(base64.urlsafe_b64encode(os.urandom(32)).decode())")
+echo "$KEY" > /tmp/opencode/fernet
+
+# نصب (env لازم است؛ entrypoint به --db_host توجه نمی‌کند)
+docker run --rm --network pointnet -e HOST=point-pg -e USER=odoo -e PASSWORD=odoo \
+  -e CLOUD_SECRET_MANAGER_FERNET_KEY="$KEY" \
+  -v "<پوشهٔ clouda>/Bodoo/extra-addons:/mnt/extra-addons:ro" \
+  odoo:19 odoo -d pointdb -i point_dns \
+  --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+  --without-demo=all --stop-after-init --log-level=warn
+
+# سرویس
+docker run -d --name point-odoo-srv --network pointnet -p 8069:8069 \
+  -e HOST=point-pg -e USER=odoo -e PASSWORD=odoo \
+  -e CLOUD_SECRET_MANAGER_FERNET_KEY="$KEY" \
+  -v "<پوشهٔ clouda>/Bodoo/extra-addons:/mnt/extra-addons:ro" \
+  odoo:19 odoo -d pointdb \
+  --addons-path=/usr/lib/python3/dist-packages/odoo/addons,/mnt/extra-addons \
+  --db-filter='^pointdb$'
+```
+
+نکته‌های محیط:
+
+* کلید fernet باید بین نصب و سرویس **یکی** باشد (`/tmp/opencode/fernet`).
+* پس از تغییر کد: `docker run ... -u point_dns` برای ارتقا و
+  `docker restart point-odoo-srv` برای سرویس.
+* `burna_layout` مسیرهای JSON-RPC را برای کاربر ناشناس بسته است؛ ورود با فرم
+  انجام می‌شود:
+
+```bash
+curl -s -c /tmp/opencode/cj.txt "http://localhost:8069/web/login?db=pointdb" > page.html
+CSRF=$(grep -oP '<input[^>]*name="csrf_token"[^>]*' page.html | grep -oP '(?<=value=")\K[^"]*')
+curl -s -b /tmp/opencode/cj.txt -c /tmp/opencode/cj.txt \
+  -d "db=pointdb&login=admin&password=admin&csrf_token=$CSRF&redirect=/point" \
+  "http://localhost:8069/web/login"
+```
+
+* نوشتن از `odoo shell` باید `env.cr.commit()` داشته باشد.
+* CSRF در QWeb به‌ترتیب رندر می‌شود و `value` آخر است؛ الگوی
+  `(?<=name="csrf_token" value=")` **کار نمی‌کند**.
+
+## ۳) صفحه‌ها و جریان‌های تأییدشده (پنل)
+
+* همهٔ صفحه‌ها ۲۰۰: `/point`، `/point/zones`، `/point/zones/new`، شش تب جزئیات
+  ناحیه (رکوردها/NS/DNSSEC/آمار/تاریخچه/تنظیمات)، `/point/zones/<id>/import`،
+  `/point/zones/<id>/templates`، `/templates/github-pages`،
+  `/point/settings/{team,tokens,security}`، `/point/staff`.
+* ساخت ناحیه با پروفایل وب، ذخیرهٔ اتمیک پیش‌نویس رکوردها، واردسازی BIND
+  (پیش‌نمایش + ثبت)، تأیید NS → فعال، چرخهٔ DNSSEC (awaiting_ds → active)،
+  تعلیق/رفع تعلیق کارکنان، ساخت توکن (نمایش یک‌بار مقدار خام)، دعوت عضو.
+* قالب GitHub Pages: پیش‌نمایش، اعمال (۴ A + ۴ AAAA + CNAME)، اعمال دوم
+  بدون تغییر (idempotent).
+* REST API (`/api/point/v1` با Bearer): healthz، `/me`، zones/PUT/DELETE، stats؛
+  توکن اشتباه ۴۰۱ با `application/problem+json`؛ جداسازی مستأجرها تأیید شد.
+* خروجی BIND درست: `$ORIGIN` با نقطهٔ آخر، TXT کوتیشن‌شده، MX/CNAME نرمال‌شده.
+
+## ۴) سرویس زندهٔ noghte-dns-01 (۹۴.۱۸۲.۱۷۲.۹۶)
+
+سخت‌سازی با `deploy/point-dns/harden.sh` اعمال شد (PR #3):
+
+* فقط upstream `127.0.0.1:5300`؛ CHAOS و ANY → REFUSED (با مقدار عددی ۳ و ۲۵۵)؛
+  UPDATE → NOTIMP؛ محدودیت‌های نرخ/TCP بدون تغییر.
+* dnsdist 1.8.3: `DNSClass.CH` و `DNSQType.ANY` مقدار nil دارند و
+  `--check-config` با آدرس‌های سمبلیک شکست می‌خورد → عدد لازم است.
+* تأیید زنده: `www.probe A` → ۹۴.۱۸۲.۱۷۲.۹۶؛ google.com/youtube.com → REFUSED؛
+  ANY → REFUSED؛ `id.server CHAOS TXT` → REFUSED؛ SOA و `+dnssec` → NOERROR؛
+  `nsupdate` → NOTIMP.
+* تصحیح ادعای قبلی: سرور هرگز recurse نکرد؛ پاسخ‌های NOERROR بیرونی ناشی از
+  رهگیری مسیر پاسخ روی شبکهٔ محلی workstation بود، نه سرور.
+
+### ارتقا به PowerDNS 5.0 / dnsdist 1.9 (۲۶ نوامبر ۲۰۲۶)
+
+* نسخه‌ها پس از ارتقا: `pdns_server 5.0.10-1pdns.ubuntu24.04`،
+  `dnsdist 1.9.16-1pdns.noble` (قبلاً ۴.۸.۳ / ۱.۸.۳ از بسته‌های اوبونتو).
+* پس از ارتقا: `www.probe A` → ۹۴.۱۸۲.۱۷۲.۹۶ روی UDP و TCP؛ `harden.sh` با
+  خروج ۰ و ۸/۸ OK (REFUSED برای google.com/youtube.com/ANY/CHAOS، NOTIMP برای
+  UPDATE، SOA و `+dnssec` → NOERROR).
+* DNSSEC: RRSIG برای DNSKEY/A/SOA/NS/TXT با alg ۱۳ و keytag ۱۰۲۷۳؛ اعتبارسنجی
+  امضا با `deploy/point-dns/verify-dnssec.py` → «SIGNATURE VALID» و کنترل منفی
+  (rrset دست‌کاری‌شده) → «REJECTED». DS جدید:
+  `10273 13 2 1d67214d619554d800a633dbe8b21692796436b66ef590942fff3f9a2fa5ce71`
+  و `10273 13 4 a2420106459ad2035c3fd420c41c54cfd9ce3b95964d07f045b8893f5765ba5ec45339f20b058be0cd96892f8b232df1`.
+* نقص پیدا‌شده در همان ارتقا و اصلاح‌شده: `control-console` روی ۵.۰ برای
+  نمونهٔ دوم کشنده است («Fatal error in control listener: Guardian exited») →
+  حذف شد و سرویس با `--guardian=no --daemon=no` مثل یونیت رسمی اجرا می‌شود؛
+  `harden.sh` هم چون `nsupdate` در حالت refuse کد خروج ۲ می‌دهد، با
+  `set -euo pipefail` قبل از گزارش UPDATE می‌مرد → `|| true` اضافه شد.
+* روی این VM بسته‌توان `policy-rc.d` دارد؛ پس از `apt upgrade` موتورها با
+  `systemctl restart` دستی بالا می‌آیند (نصب‌کننده خودش restart می‌کند).
+
+یافته‌های باز:
+
+1. پس از ساخت/ساخت مجدد ناحیه، `pdns_control purge` کافی نیست و کش منفی فقط با
+   `systemctl restart pdns` پاک می‌شود (`install.sh` اصلاح شد).
+2. امضاکردن RRSIG روی pdns ۴.۸.۳ + gsql اتفاق نمی‌افتاد: DNSKEY و DS منتشر
+   می‌شدند ولی `PUT /rectify` هیچ RRSIG نمی‌ساخت؛ `/dnssec` روی ۴.۸.۳ → ۴۰۴.
+   **در ۲۶ نوامبر ۲۰۲۶ حل شد**: ریپوهای رسمی PowerDNS پین و موتور به
+   PowerDNS Authoritative **5.0.10** و dnsdist **1.9.16** ارتقا داده شد
+   (`noble-auth-50` / `noble-dnsdist-19` با کلید `FD380FBB`؛ `install.sh` همین
+   پین‌کردن را روی نود تازه انجام می‌دهد — جزئیات در
+   `deploy/point-dns/README.md`). پس از ارتقا `verify-dnssec.py` (dnspython)
+   امضای RRSIG روی DNSKEY و A را تأیید می‌کند و rrset دست‌کاری‌شده رد می‌شود.
+   توجه: `GET /dnssec` روی ۵.۰ هم ۴۰۴ است (endpoint وجود ندارد)؛ وضعیت از
+   `zones[].dnssec` و `cryptokeys` خوانده می‌شود.
+3. API موتور فقط روی `127.0.0.1:8081` داخل VM است و VM NIC خصوصی ندارد →
+   برای اتصال واقعی پنل به شبکهٔ خصوصی/تونل/محدودسازی IP نیاز است (باز).
+
+## ۵) مشکلات شناخته‌شده
+
+* `/console` در همین دیتابیس آزمون ۵۰۰ می‌دهد (`KeyError: 'burna.ticket'`) چون
+  `burna_tickets` نصب نیست؛ قبلی است و به نقطه ربطی ندارد.
+
+## ۶) پیوندها
+
+* تسک برد (سخت‌سازی + اتصال موتور): `01c9705f-550b-40c7-90ff-7360187cbd5b`
+  مسائل haioco/noghte#2
+* تسک برد (مهاجرت مستندات): `91aec73e-3381-4a88-8d1f-f5708f57677b`
+  مسائل haioco/noghte#4
+* PR سخت‌سازی: https://github.com/haioco/noghte/pull/3 (شاخهٔ `fix/point-dns-harden`)
