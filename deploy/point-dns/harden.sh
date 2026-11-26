@@ -85,9 +85,13 @@ report "probe SOA" "$V6" "NOERROR"
 report "probe www +dnssec" "$V7" "NOERROR"
 
 # UPDATE must be NOTIMP (opcode 5).
-UPD=$(dig @127.0.0.1 +opcode=update +noall +comments 2>/dev/null | sed -n 's/.*status: \([A-Z]*\).*/\1/p' | head -1)
+# NOTE: nsupdate exits 2 when the server refuses the update ("update failed:
+# NOTIMP") — i.e. on success of this check. With `set -euo pipefail` that would
+# abort the script before the report, so every pipeline below ends in `|| true`
+# and the assertion is made on the *parsed text*, not on the exit status.
+UPD=$(dig @127.0.0.1 +opcode=update +noall +comments 2>/dev/null | sed -n 's/.*status: \([A-Z]*\).*/\1/p' | head -1 || true)
 if command -v nsupdate >/dev/null 2>&1; then
-  UPD=$(printf 'server 127.0.0.1\nzone %s\nupdate add x.%s 60 A 127.0.0.1\nsend\n' "$PROBE_ZONE" "$PROBE_ZONE" | timeout 10 nsupdate 2>&1 | grep -o 'NOTIMP' | head -1)
+  UPD=$(printf 'server 127.0.0.1\nzone %s\nupdate add x.%s 60 A 127.0.0.1\nsend\n' "$PROBE_ZONE" "$PROBE_ZONE" | timeout 10 nsupdate 2>&1 | grep -o 'NOTIMP' | head -1 || true)
   report "UPDATE (nsupdate)" "${UPD:-<none>}" "NOTIMP"
 else
   report "UPDATE (dig +opcode)" "${UPD:-<unknown>}" "NOTIMP"

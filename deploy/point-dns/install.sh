@@ -16,9 +16,36 @@ log() { echo "[install-point-dns] $*"; }
 if [[ $EUID -ne 0 ]]; then echo "Run as root" >&2; exit 1; fi
 
 export DEBIAN_FRONTEND=noninteractive
-log "Installing packages"
+
+# The handbook specifies PowerDNS Authoritative 5.0 / dnsdist 1.9. Ubuntu 24.04
+# distro packages are 4.8.3 / 1.8.3 (RRSIG signing never happens there), so pin
+# the official versioned repositories before installing. Release signing key
+# 0xFD380FBB (9FAA A557 7E8F CF62 093D 036C 1B0C 6205 FD38 0FBB).
+# shellcheck disable=SC1091
+CODENAME="$(. /etc/os-release && echo "${VERSION_CODENAME:-noble}")"
+if [[ "$CODENAME" != "noble" ]]; then
+  log "WARNING: untested distribution '$CODENAME' — expected noble (24.04); repo suites are <codename>-auth-50 / <codename>-dnsdist-19"
+fi
+log "Installing packages (PowerDNS 5.0 / dnsdist 1.9 repositories)"
+install -d -m 0755 /etc/apt/keyrings
+curl -fsSL https://repo.powerdns.com/FD380FBB-pub.asc -o /etc/apt/keyrings/pdns-repo-pub.asc
+chmod 0644 /etc/apt/keyrings/pdns-repo-pub.asc
+cat > /etc/apt/sources.list.d/pdns.list <<EOF
+deb [signed-by=/etc/apt/keyrings/pdns-repo-pub.asc] http://repo.powerdns.com/ubuntu ${CODENAME}-auth-50 main
+deb [signed-by=/etc/apt/keyrings/pdns-repo-pub.asc] http://repo.powerdns.com/ubuntu ${CODENAME}-dnsdist-19 main
+EOF
+cat > /etc/apt/preferences.d/pdns <<'EOF'
+Package: pdns-*
+Pin: origin repo.powerdns.com
+Pin-Priority: 600
+
+Package: dnsdist*
+Pin: origin repo.powerdns.com
+Pin-Priority: 600
+EOF
 apt-get update -qq
 apt-get install -y -qq postgresql pdns-server pdns-backend-pgsql dnsdist dnsutils curl jq >/dev/null
+log "Installed: $(pdns_server --version 2>/dev/null | head -1) / $(dnsdist --version 2>/dev/null | head -1)"
 
 systemctl enable --now postgresql
 for _ in $(seq 1 30); do
@@ -112,7 +139,6 @@ default-soa-content=ns1.noghte-dns.example hostmaster.noghte-dns.example 0 10800
 
 local-address=127.0.0.1
 local-port=5301
-control-console=/run/pdns-api
 EOF
 chmod 640 "$API_CONF_DIR/pdns.conf"
 chown root:pdns "$API_CONF_DIR/pdns.conf" 2>/dev/null || true
@@ -127,7 +153,10 @@ Wants=postgresql.service
 Type=simple
 User=pdns
 Group=pdns
-ExecStart=/usr/sbin/pdns_server --config-dir=/etc/powerdns-api
+# Note: pdns 5.0 keeps its controlsocket in $RUNTIME_DIRECTORY (socket-dir),
+# so no control-console setting is needed; --guardian=no matches the distro unit
+# (with the guardian on, a second instance's control listener fatals on ECHO).
+ExecStart=/usr/sbin/pdns_server --guardian=no --daemon=no --config-dir=/etc/powerdns-api
 Restart=on-failure
 RestartSec=2
 RuntimeDirectory=pdns-api

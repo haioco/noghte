@@ -89,16 +89,42 @@ curl -s -b /tmp/opencode/cj.txt -c /tmp/opencode/cj.txt \
 * تصحیح ادعای قبلی: سرور هرگز recurse نکرد؛ پاسخ‌های NOERROR بیرونی ناشی از
   رهگیری مسیر پاسخ روی شبکهٔ محلی workstation بود، نه سرور.
 
+### ارتقا به PowerDNS 5.0 / dnsdist 1.9 (۲۶ نوامبر ۲۰۲۶)
+
+* نسخه‌ها پس از ارتقا: `pdns_server 5.0.10-1pdns.ubuntu24.04`،
+  `dnsdist 1.9.16-1pdns.noble` (قبلاً ۴.۸.۳ / ۱.۸.۳ از بسته‌های اوبونتو).
+* پس از ارتقا: `www.probe A` → ۹۴.۱۸۲.۱۷۲.۹۶ روی UDP و TCP؛ `harden.sh` با
+  خروج ۰ و ۸/۸ OK (REFUSED برای google.com/youtube.com/ANY/CHAOS، NOTIMP برای
+  UPDATE، SOA و `+dnssec` → NOERROR).
+* DNSSEC: RRSIG برای DNSKEY/A/SOA/NS/TXT با alg ۱۳ و keytag ۱۰۲۷۳؛ اعتبارسنجی
+  امضا با `deploy/point-dns/verify-dnssec.py` → «SIGNATURE VALID» و کنترل منفی
+  (rrset دست‌کاری‌شده) → «REJECTED». DS جدید:
+  `10273 13 2 1d67214d619554d800a633dbe8b21692796436b66ef590942fff3f9a2fa5ce71`
+  و `10273 13 4 a2420106459ad2035c3fd420c41c54cfd9ce3b95964d07f045b8893f5765ba5ec45339f20b058be0cd96892f8b232df1`.
+* نقص پیدا‌شده در همان ارتقا و اصلاح‌شده: `control-console` روی ۵.۰ برای
+  نمونهٔ دوم کشنده است («Fatal error in control listener: Guardian exited») →
+  حذف شد و سرویس با `--guardian=no --daemon=no` مثل یونیت رسمی اجرا می‌شود؛
+  `harden.sh` هم چون `nsupdate` در حالت refuse کد خروج ۲ می‌دهد، با
+  `set -euo pipefail` قبل از گزارش UPDATE می‌مرد → `|| true` اضافه شد.
+* روی این VM بسته‌توان `policy-rc.d` دارد؛ پس از `apt upgrade` موتورها با
+  `systemctl restart` دستی بالا می‌آیند (نصب‌کننده خودش restart می‌کند).
+
 یافته‌های باز:
 
 1. پس از ساخت/ساخت مجدد ناحیه، `pdns_control purge` کافی نیست و کش منفی فقط با
    `systemctl restart pdns` پاک می‌شود (`install.sh` اصلاح شد).
-2. امضاکردن RRSIG روی pdns ۴.۸.۳ + gsql اتفاق نمی‌افتد: DNSKEY و DS منتشر
-   می‌شوند (keytag ۱۰۲۷۳، alg ۱۳) ولی `PUT /rectify` هیچ RRSIG نمی‌سازد؛
-   `/dnssec` روی ۴.۸.۳ → ۴۰۴. نقشه: قبل از بتا ریپوی PowerDNS 5.0 پین شود و
-   DNSSEC دوباره سنجیده شود.
+2. امضاکردن RRSIG روی pdns ۴.۸.۳ + gsql اتفاق نمی‌افتاد: DNSKEY و DS منتشر
+   می‌شدند ولی `PUT /rectify` هیچ RRSIG نمی‌ساخت؛ `/dnssec` روی ۴.۸.۳ → ۴۰۴.
+   **در ۲۶ نوامبر ۲۰۲۶ حل شد**: ریپوهای رسمی PowerDNS پین و موتور به
+   PowerDNS Authoritative **5.0.10** و dnsdist **1.9.16** ارتقا داده شد
+   (`noble-auth-50` / `noble-dnsdist-19` با کلید `FD380FBB`؛ `install.sh` همین
+   پین‌کردن را روی نود تازه انجام می‌دهد — جزئیات در
+   `deploy/point-dns/README.md`). پس از ارتقا `verify-dnssec.py` (dnspython)
+   امضای RRSIG روی DNSKEY و A را تأیید می‌کند و rrset دست‌کاری‌شده رد می‌شود.
+   توجه: `GET /dnssec` روی ۵.۰ هم ۴۰۴ است (endpoint وجود ندارد)؛ وضعیت از
+   `zones[].dnssec` و `cryptokeys` خوانده می‌شود.
 3. API موتور فقط روی `127.0.0.1:8081` داخل VM است و VM NIC خصوصی ندارد →
-   برای اتصال واقعی پنل به شبکهٔ خصوصی/تونل/محدودسازی IP نیاز است.
+   برای اتصال واقعی پنل به شبکهٔ خصوصی/تونل/محدودسازی IP نیاز است (باز).
 
 ## ۵) مشکلات شناخته‌شده
 
