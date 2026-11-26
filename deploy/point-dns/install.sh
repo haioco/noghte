@@ -191,10 +191,12 @@ fi
 # Rectify so DNSKEY/RRSIG are actually published after key creation.
 curl -fsS -X PUT -H "X-API-Key: $PDNS_API_KEY" "$API/zones/${ZONE}/rectify" >/dev/null || true
 
-# The serving instance may have cached REFUSED answers from before the zone
-# existed. Purge its caches (restart as a fallback) before asserting answers.
-log "Purging serving caches"
-pdns_control --socket-dir=/run/pdns purge 2>/dev/null || systemctl restart pdns
+# The serving instance caches REFUSED answers per zone (negative zone cache);
+# `pdns_control purge` does not clear it. A full restart reloads the zone from
+# the database and is the reliable recovery on an existing database.
+log "Restarting the serving instance to reload zones"
+systemctl restart pdns
+for _ in $(seq 1 20); do systemctl is-active --quiet pdns && break; sleep 1; done
 sleep 1
 ANSWER=$(dig @127.0.0.1 -p 5300 www.${ZONE} A +short | head -n1)
 if [[ "$ANSWER" != "$PUBLIC_IP" ]]; then

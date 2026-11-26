@@ -97,7 +97,7 @@ from the Phase 0 authoritative-only design:
 
 | Finding | Evidence | Fix |
 |---|---|---|
-| Out-of-zone recursion: `google.com`/`youtube.com` answered NOERROR with `qr ra ad`, TTL 418 (cached), and still resolved with `+norecurse` — a validating upstream was in the dnsdist pool. `example.net` and unknown TLDs correctly REFUSED. | `dig @94.182.172.96 google.com A +norecurse` | canonical `dnsdist.conf`: the pool contains only `127.0.0.1:5300`; every upstream but the local serving engine removed |
+| ~~Out-of-zone recursion~~ — **invalid finding.** Externally `google.com`/`youtube.com` answered NOERROR with `qr ra ad` (TTL 418, `+norecurse` ignored), but from **inside the VM** (both loopback and its own public IP) those names return `REFUSED`, and the live dnsdist pool only ever contained `127.0.0.1:5300`. The external answers were produced by response-path interception on the audit network, not by this server. No change made. | `dig @94.182.172.96 google.com A` (external) vs `ssh … 'dig @127.0.0.1 google.com A'` (REFUSED) | none — verified authoritative-only |
 | `id.server CHAOS TXT` → `"noghte-dns-01"` (hostname leak; `version.bind` hidden) | `dig @94.182.172.96 id.server CHAOS TXT +short` | CHAOS class ⇒ REFUSED |
 | ANY not refused/truncated | `dig @94.182.172.96 www.probe.noghte-dns.example ANY` → NOERROR, no `tc` (the `DNSQtype.ANY` constant rule does not match on dnsdist 1.8.3) | ANY ⇒ REFUSED on UDP **and** TCP via numeric `QTypeRule(255)` |
 | (same root cause) external upstream reachable | sinkhole `10.10.34.36` seen for facebook/instagram upstream answers | removed with the pool rewrite |
@@ -108,6 +108,12 @@ Files:
   `@DNSDIST_API_KEY@` are substituted from `/etc/noghte-dns/secrets.env`).
   Syntax-checked under a stubbed dnsdist environment (`luac -p` + stubbed globals
   load clean). `install.sh` now installs this file instead of an inline heredoc.
+  **Applied live on 2026-11-26** (`harden.sh`, all assertions green): ANY → REFUSED,
+  CHAOS → REFUSED, `www.probe` A/TXT unaffected, UPDATE → NOTIMP, `+dnssec` NOERROR.
+  Note: the first config attempt used `DNSClass.CH` / `DNSQType.ANY` constants —
+  both are **nil on dnsdist 1.8.3** (`dnsdist --check-config` fails with
+  "Unable to convert parameter from nil"), so the config uses the numeric
+  `QClassRule(3)` (CHAOS) and `QTypeRule(255)` (ANY) instead.
 - `harden.sh` — the one-shot pass for the **already-installed** VM: backs up the
   live config, writes the canonical one, validates, restarts, then asserts:
   `www.probe` still answers `94.182.172.96`, `google.com`/`youtube.com` →
@@ -123,3 +129,25 @@ it as root:
 scp -r deploy/point-dns root@94.182.172.96:/root/
 ssh root@94.182.172.96 'bash /root/point-dns/harden.sh'
 ```
+
+## Applied live on 2026-11-26 — state and two new findings
+
+`harden.sh` ran on `noghte-dns-01` after installing an SSH key; every assertion
+passed (`www.probe` A `94.182.172.96`, `google.com`/`youtube.com` REFUSED,
+ANY/CHAOS REFUSED, SOA NOERROR, `+dnssec` NOERROR, UPDATE NOTIMP).
+
+Two findings from the zone work that day, both worth knowing before beta:
+
+1. **`pdns_control purge` is not enough after a zone (re)create.** On an existing
+   database, the serving instance keeps answering REFUSED for a recreated zone;
+   only a full `systemctl restart pdns` reloads it. `install.sh` now restarts
+   rather than purging. (Verified: after delete+recreate the zone served
+   REFUSED through dnsdist while `dig @127.0.0.1 -p 5300` answered correctly.)
+2. **RRSIG signing does not happen on distro pdns 4.8.3 + gsql.** The zone has
+   DNSKEY published and DS retrievable through the API (keytag 10273, alg 13),
+   but `rectify` (HTTP 200) never writes RRSIG rows (`records` stays at
+   A/TXT/SOA/NS only), so the zone does not actually validate. Both instances
+   run `gpgsql-dnssec=yes`; this is a bootstrap defect of the distro packages,
+   not configuration. **Pin the PowerDNS 5.0 repositories before beta** (already
+   the plan) and re-verify DNSSEC there; the probe zone has no delegation today,
+   so nothing is broken publicly.
