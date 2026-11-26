@@ -9,10 +9,12 @@
 
 ## مستندات
 
+* `docs/point-handbook_v4.html` — **سند اصلی محصول**: مرجع یکپارچهٔ خانوادهٔ
+  Point (نقشهٔ راه فاز ۰ تا ۵؛ فاز ۰ = Point DNS)
 * `docs/point-dns/` — مستند افزونهٔ Odoo، یکپارچه‌سازی با کلودا، شواهد تأیید
 * `docs/sase/` — مدارک سرمایه‌گذاری/پیشنهاد SASE (کپی؛ اصل در `Funding/NoghteSASE`)
 * `docs/end-user-test-v1.2.5.md` — تست کاربر نهایی اپ اندروید
-* اسناد طراحی در ریشه: `point-v1.1-plan.html`، `point-handbook_v4.html`،
+* سایر اسناد طراحی در ریشه: `point-v1.1-plan.html`،
   `noghte-Point_Reference_Manuals.html`، `PLAN-SASE-FULL.md`،
   `PLAN-SASE-CLIENT-ONLY.md`
 

@@ -16,7 +16,7 @@
 | سند | چیست |
 |---|---|
 | `../point-v1.1-plan.html` | طرح اجرای نسخهٔ ۱ (Persian): مدل داده، API، صفحات پنل، قالب GitHub Pages، عملیات، نقشهٔ ۸ هفتگی |
-| `../point-handbook_v4.html` | دفترچهٔ خانوادهٔ محصول «نقطه»؛ فاز ۰ = Point DNS، فازهای بعد Edge/Resolver/Access/PQ |
+| `../point-handbook_v4.html` | **سند اصلی محصول** — دفترچهٔ خانوادهٔ «نقطه»؛ فاز ۰ = Point DNS، فازهای بعد Edge/Resolver/Access/PQ |
 | `../noghte-Point_Reference_Manuals.html` | راهنماهای مرجع Point |
 
 ## استقرار و عملیات

@@ -2,12 +2,13 @@
 
 | پوشه / سند | محتوا |
 |---|---|
+| [`point-handbook_v4.html`](point-handbook_v4.html) | **سند اصلی محصول** — مرجع یکپارچهٔ خانوادهٔ Point: نقشهٔ راه فاز ۰ تا ۵ (فاز ۰ = Point DNS) |
 | `point-dns/` | مدارک سرویس DNS معتبر «نقطه» (فاز ۰): کپی مستند افزونهٔ Odoo، یکپارچه‌سازی با کلودا، شواهد تأیید |
 | `sase/` | کپی مدارک سرمایه‌گذاری/پیشنهاد محصول SASE نقطه (از `Funding/NoghteSASE`) |
 | `end-user-test-v1.2.5.md` | سند تست کاربر نهایی اپ اندروید |
 | `screenshots/` | تصاویر اپ اندروید |
 
-اسناد طراحی در ریشهٔ ریپو: `point-v1.1-plan.html`، `point-handbook_v4.html`،
+سایر اسناد طراحی در ریشهٔ ریپو: `point-v1.1-plan.html`،
 `noghte-Point_Reference_Manuals.html`، `PLAN-SASE-FULL.md`،
 `PLAN-SASE-CLIENT-ONLY.md`.
 
