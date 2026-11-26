@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>گزارش انطباق پیاده‌سازی SASE — HaioBypass App v1.2.3</title>
+<style>
+  :root {
+    --primary: #0f3460;
+    --accent: #e94560;
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --border: #e0e5f0;
+    --text: #1e293b;
+    --text-light: #64748b;
+    --green: #15803d;
+    --green-bg: #dcfce7;
+    --red: #b91c1c;
+    --red-bg: #fee2e2;
+    --amber: #b45309;
+    --amber-bg: #fef3c7;
+    --blue: #1d4ed8;
+    --blue-bg: #dbeafe;
+    --shadow: 0 2px 10px rgba(15,52,96,0.08);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'Segoe UI', 'Tahoma', 'Vazirmatn', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    padding-bottom: 60px;
+  }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+  /* Header */
+  header {
+    background: linear-gradient(135deg, #0f3460 0%, #1a538a 50%, #0f3460 100%);
+    color: #fff;
+    padding: 48px 0 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -60%; right: -20%;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(233,69,96,0.25), transparent 60%);
+    border-radius: 50%;
+  }
+  header .badge {
+    display: inline-block;
+    background: var(--accent);
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+  }
+  header h1 { font-size: 30px; font-weight: 800; margin-bottom: 8px; }
+  header .subtitle { font-size: 15px; opacity: 0.85; }
+  header .meta { margin-top: 20px; font-size: 13px; opacity: 0.7; display: flex; gap: 24px; flex-wrap: wrap; }
+  header .meta span b { color: #ffd166; }
+
+  /* Score overview */
+  .score-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin: -30px auto 36px;
+    position: relative;
+    z-index: 2;
+  }
+  .score-card {
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 18px;
+    text-align: center;
+    border-top: 4px solid var(--accent);
+  }
+  .score-card .num { font-size: 32px; font-weight: 800; }
+  .score-card .label { font-size: 13px; color: var(--text-light); margin-top: 4px; }
+  .score-card.green { border-top-color: var(--green); }
+  .score-card.red { border-top-color: var(--red); }
+  .score-card.amber { border-top-color: var(--amber); }
+  .score-card.green .num { color: var(--green); }
+  .score-card.red .num { color: var(--red); }
+  .score-card.amber .num { color: var(--amber); }
+
+  /* Sections */
+  section {
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 28px 30px;
+    margin-bottom: 26px;
+  }
+  section h2 {
+    color: var(--primary);
+    font-size: 21px;
+    font-weight: 800;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  section h3 { color: var(--primary); font-size: 17px; margin: 20px 0 10px; }
+  section p { color: var(--text); margin-bottom: 12px; }
+  section ul { padding-right: 22px; margin-bottom: 12px; }
+  section li { margin-bottom: 6px; }
+  code {
+    background: #eef2ff;
+    color: #3730a3;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 12.5px;
+    direction: ltr;
+    display: inline-block;
+    font-family: 'Consolas', monospace;
+  }
+  .ltr { direction: ltr; text-align: left; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+
+  /* Pillar cards */
+  .pillar {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    background: #fafbff;
+    transition: transform 0.2s;
+  }
+  .pillar:hover { transform: translateY(-3px); }
+  .pillar .phead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .pillar .pname { font-weight: 800; font-size: 15px; color: var(--primary); }
+  .pillar .score { font-weight: 800; font-size: 15px; padding: 3px 12px; border-radius: 14px; }
+  .pillar .desc { font-size: 13px; color: var(--text-light); }
+  .pillar .score.full { background: var(--green-bg); color: var(--green); }
+  .pillar .score.partial { background: var(--amber-bg); color: var(--amber); }
+  .pillar .score.none { background: var(--red-bg); color: var(--red); }
+
+  /* Severity badges */
+  .sev { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11.5px; font-weight: 700; vertical-align: middle; }
+  .sev.critical { background: #7f1d1d; color: #fff; }
+  .sev.high { background: var(--red-bg); color: var(--red); }
+  .sev.medium { background: var(--amber-bg); color: var(--amber); }
+  .sev.low { background: #e2e8f0; color: #334155; }
+  .sev.info { background: var(--blue-bg); color: var(--blue); }
+  .sev.good { background: var(--green-bg); color: var(--green); }
+
+  /* Finding cards */
+  .finding {
+    border: 1px solid var(--border);
+    border-right: 5px solid #94a3b8;
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+    background: #fff;
+  }
+  .finding.c-r { border-right-color: #7f1d1d; }
+  .finding.c-h { border-right-color: var(--red); }
+  .finding.c-m { border-right-color: var(--amber); }
+  .finding.c-l { border-right-color: #64748b; }
+  .finding.c-good { border-right-color: var(--green); }
+  .finding .fhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+  .finding .ftitle { font-weight: 800; font-size: 14.5px; }
+  .finding .floc { font-size: 12.5px; color: var(--text-light); direction: ltr; text-align: right; font-family: 'Consolas', monospace; }
+  .finding .fdesc { font-size: 13.5px; color: var(--text); }
+  .finding .frec { font-size: 13px; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+  .finding .frec b { color: var(--green); }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
+  th {
+    background: var(--primary); color: #fff; font-weight: 700;
+    padding: 10px 12px; text-align: right;
+  }
+  td { padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tr:nth-child(even) td { background: #f8fafc; }
+  table .ltr { text-align: left; }
+
+  /* Callout */
+  .callout {
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  .callout.warn { background: var(--amber-bg); border-right: 4px solid var(--amber); }
+  .callout.danger { background: var(--red-bg); border-right: 4px solid var(--red); }
+  .callout.info { background: var(--blue-bg); border-right: 4px solid var(--blue); }
+  .callout.ok { background: var(--green-bg); border-right: 4px solid var(--green); }
+
+  /* Architecture flow */
+  .arch { background: #0b1220; border-radius: 12px; padding: 22px; margin: 16px 0; direction: ltr; }
+  .arch .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; justify-content: center; }
+  .node {
+    background: #1e3a5f; color: #fff; padding: 8px 14px; border-radius: 8px;
+    font-size: 12px; font-weight: 600; text-align: center; border: 1px solid #2e4a7a;
+  }
+  .node.hot { background: var(--accent); border-color: #ff6b8a; }
+  .arrow { color: #6a8dbd; font-weight: 800; font-size: 16px; }
+  .flow-cap { text-align: center; color: #8aa3c4; font-size: 12px; margin-top: 12px; }
+
+  /* Progress bars */
+  .bar-wrap { margin: 6px 0 14px; }
+  .bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px; }
+  .bar { height: 10px; background: #e2e8f0; border-radius: 6px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; }
+
+  .split { columns: 2; column-gap: 28px; }
+  .split > div { break-inside: avoid; }
+
+  footer {
+    text-align: center;
+    color: var(--text-light);
+    font-size: 12.5px;
+    margin-top: 36px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+  a { color: var(--blue); }
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    header h1 { font-size: 22px; }
+    section { padding: 20px 16px; }
+    .score-grid { grid-template-columns: repeat(2, 1fr); }
+    .split { columns: 1; }
+  }
+  .toc { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 8px; padding: 0; list-style: none; }
+  .toc li a { text-decoration: none; display: block; padding: 8px 12px; background: #f1f5f9; border-radius: 8px; font-size: 13.5px; color: var(--primary); }
+  .toc li a:hover { background: var(--blue-bg); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="badge">گزارش انطباق معماری SASE</div>
+    <h1>گزارش ارزیابی پیاده‌سازی SASE</h1>
+    <div class="subtitle">Secure Access Service Edge — بررسی معماری و وضعیت انطباق پروژه HaioBypass</div>
+    <div class="meta">
+      <span>پروژه: <b>HaioBypass App v1.2.3</b></span>
+      <span>Package: <b>com.haio.bypass</b></span>
+      <span>نسخه: <b>1.2.3 (versionCode 6)</b></span>
+      <span>آخرین به‌روزرسانی: <b>1405-06-27</b></span>
+      <span>اسکن: <b>تیر ۱۴۰۵</b></span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- Executive Scores -->
+  <div class="score-grid">
+    <div class="score-card amber">
+      <div class="num">۳۸٪</div>
+      <div class="label">امتیاز کلی انطباق SASE</div>
+    </div>
+    <div class="score-card amber">
+      <div class="num">۱۴</div>
+      <div class="label">از ۲۵ قابلیت SASE</div>
+    </div>
+    <div class="score-card red">
+      <div class="num">۰/۵</div>
+      <div class="label">پیلارهای کاملاً پیاده‌سازی‌شده</div>
+    </div>
+    <div class="score-card red">
+      <div class="num">۴</div>
+      <div class="label">یافته‌های بحرانی (Critical)</div>
+    </div>
+    <div class="score-card green">
+      <div class="num">۸</div>
+      <div class="label">قابلیت‌های پایه شبکه ✓</div>
+    </div>
+  </div>
+
+  <!-- TOC -->
+  <section>
+    <h2>فهرست مطالب</h2>
+    <ol class="toc">
+      <li><a href="#summary">۱. خلاصه مدیریتی</a></li>
+      <li><a href="#arch">۲. معماری فعلی پروژه</a></li>
+      <li><a href="#pillars">۳. ارزیابی پیلارهای SASE</a></li>
+      <li><a href="#matrix">۴. ماتریس انطباق قابلیت‌ها</a></li>
+      <li><a href="#findings">۵. یافته‌های امنیتی بحرانی</a></li>
+      <li><a href="#roadmap">۶. نقشه راه ارتقا به SASE</a></li>
+      <li><a href="#conclusion">۷. جمع‌بندی</a></li>
+    </ol>
+  </section>
+
+  <!-- Executive Summary -->
+  <section id="summary">
+    <h2>۱. خلاصه مدیریتی</h2>
+    <p>
+      پروژه <b>HaioBypass</b> یک برنامه اندروید VPN/پروکسی برای دور زدن محدودیت‌های اینترنتی است
+      که بر پایه سرویس <code>VpnService</code> اندروید، تونل <code>TUN</code>، کتابخانه
+      <code>tun2socks</code>، و هسته <code>Xray-core</code> (پروتکل Trojan) پیاده‌سازی شده است.
+      این برنامه تست مسیر شبکه برای انتخاب شبکه‌ها به‌صورت دامنه‌محور (<i>bypass domains</i>) انجام می‌دهد.
+    </p>
+    <p>
+      از دید پیاده‌سازی <b>SASE</b> — که ترکیبی از قابلیت‌های <span class="ltr">SD-WAN</span>،
+      <span class="ltr">SWG</span>، <span class="ltr">CASB</span>، <span class="ltr">ZTNA</span>،
+      <span class="ltr">FWaaS</span> و <span class="ltr">DLP</span> است — این پروژه
+      <b>یک کلاینت پروکسی‌سازی و تونل شبکه</b> است و در حال حاضر <b>فقط هسته وب (SD-WAN پایه)</b> را
+      فراهم می‌کند. لایه‌های امنیتی ابری (قوی امنیتی) که جوهره SASE هستنند عمدتاً پیاده‌سازی نشده‌اند.
+    </p>
+    <div class="callout warn">
+      <b>جمع‌بندی:</b> HaioBypass را می‌توان به‌عنوان <u>پایه اولیه (Component 1) یک معماری SASE</u> —
+      یعنی <b>Secure Tunnel / Connectpolet</b> — در نظرداشت؛ اما برای ادعای انطباق کامل با SASE نیاز
+      مبرم به افزودن پیلارهای امنیتی SWG، CASB، و ZTNA در لبه مشتری/ابر دارد.
+    </div>
+  </section>
+
+  <!-- Architecture -->
+  <section id="arch">
+    <h2>۲. معماری فعلی پروژه</h2>
+
+    <div class="arch">
+      <div class="flow">
+        <div class="node">VpnService</div>
+        <div class="arrow">→</div>
+        <div class="node">TUN (172.19.0.1/30)</div>
+        <div class="arrow">→</div>
+        <div class="node">FakeDNS (198.18.x.x)</div>
+        <div class="arrow">→</div>
+        <div class="node">tun2socks</div>
+        <div class="arrow">→</div>
+        <div class="node">SOCKS5 (127.0.0.1:10808)</div>
+        <div class="arrow">→</div>
+        <div class="node hot">Xray-core (Trojan/TLS)</div>
+        <div class="arrow">→</div>
+        <div class="node">Remote Proxy (Tahrim/haiocloud)</div>
+      </div>
+      <div class="flow-cap">مسیر خروجی ترافیک: معماری پروکسی تونل سمت کلاینت</div>
+    </div>
+
+    <h3>اجزای اصلی کد</h3>
+    <div class="grid-2">
+      <ul>
+        <li><b>app/</b> — ماژول اندروید (Kotlin + Compose): سرویس VPN، مدیریت Xray/tun2socks، مسیریابی FakeDNS، فیلتر دامنه.</li>
+        <li><b>backend/</b> — بک‌اند Django REST (JWT، پلن‌ها، اشتراک‌ها، پرداخت، سینک ترافیک Celery).</li>
+        <li><b>tun_wrapper/</b> — Go wrapper برای انتقال fd تونل (SCM_RIGHTS) به tun2socks.</li>
+        <li><b>assets/</b> — باینری Xray-core (36MB)، tun2socks (12MB)، tun_wrapper در arm64-v8a.</li>
+      </ul>
+      <ul>
+        <li><b>DomainRouter</b> — تطبیق دامنه (Suffix Index) برای پروکسی/مستقیم.</li>
+        <li><b>FakeIpMap</b> — نگاشت domain ↔ fake-IP (خروجی 198.18.0.0/15).</li>
+        <li><b>XrayConfigGenerator</b> — ساخت JSON پیکربندی (fakedns, trojan outbound, routing).</li>
+        <li><b>ProcessUtils</b> — استخراج pid/fd از فایل‌های /proc (reflection).</li>
+      </ul>
+    </div>
+
+    <div class="callout info">
+      <b>معماری فعلی در یک نگاه SASE:</b> کلاینت از نظر شبکه یک "دروازه امن لبه زیرساخت" محسوب می‌شود که
+      تمام ترافیک دستگاه را از تونل عبور می‌دهد — این همان لایه <b>Connectivity &amp; Edge</b> در گرفمانی
+      SASE است — اما لایه‌های <b>Security Policy Engine</b>) امنیتی) در توازن فایروال نسل بعدی و کنترل هویت
+      در ابر پیاده نشده است.
+    </div>
+  </section>
+
+  <!-- SASE Pillars -->
+  <section id="pillars">
+    <h2>۳. ارزیابی پیلارهای SASE</h2>
+
+    <div class="grid-3">
+      <div class="pillar">
+        <div class="phead">
+          <span class="pname">SD-WAN / Networking</span>
+          <span class="score partial">جزئی / پایه</span>
+        </div>
+        <div class="desc">ارتباط شبکه، تونل AES، مسیریابی دامنه، مدیریت سیاست شبکه.</div>
+      </div>
+      <div class="pillar">
+        <div class="phead">
+          <span class="pname">SWG</span>
+          <span class="score none">پیاده‌سازی نشده</span>
+        </div>
+        <div class="desc">Secure Web Gateway: فیلتر URL، URL Categorization، شناخت بدافزار.</div>
+      </div>
+      <div class="pillar">
+        <div class="phead">
+          <span class="pname">ZTNA</span>
+          <span class="score none">پیاده‌سازی نشده</span>
+        </div>
+        <div class="desc">Zero Trust Network Access: هویت، least-privilege، دستگاه ناشناخته.</div>
+      </div>
+      <div class="pillar">
+        <div class="phead">
+          <span class="pname">CASB</span>
+          <span class="score none">پیاده‌سازی نشده</span>
+        </div>
+        <div class="desc">Cloud Access Security Broker: مانیتورینگ سرویس‌های ابری، Shadow IT.</div>
+      </div>
+      <div class="pillar">
+        <div class="phead">
+          <span class="pname">DLP</span>
+          <span class="score none">پیاده‌سازی نشده</span>
+        </div>
+        <div class="desc">Data Loss Prevention: کشف داده، جلوگیری از خروج اطلاعات حساس.</div>
+      </div>
+      <div class="pillar">
+        <div class="phead">
+          <span class="pname">FWaaS</span>
+          <span class="score none">پیاده‌سازی نشده</span>
+        </div>
+        <div class="desc">Firewall as a Service: IPS/IDS، کنترل پورت مرکزی در ابر.</div>
+      </div>
+      <div class="pillar">
+        <div class="phead">
+          <span class="pname">SSL/TLS Inspection</span>
+          <span class="score none">پیاده‌سازی نشده</span>
+        </div>
+        <div class="desc">بازرسی گواهی، جلوگیری از MITM، SSH/Quic Detection.</div>
+      </div>
+      <div class="pillar">
+        <div class="phead">
+          <span class="pname">Sandboxing / RBI</span>
+          <span class="score none">پیاده‌سازی نشده</span>
+        </div>
+        <div class="desc">Remote Browser Isolation، محیط ایزوله برای اجرای محتواهای ناشناخته.</div>
+      </div>
+      <div class="pillar">
+        <div class="phead">
+          <span class="pname">DNS Security</span>
+          <span class="score partial">جزئی</span>
+        </div>
+        <div class="desc">FakeDNS داخلی و فوروارد به 8.8.8.8؛ بدون فیلتر DNS، بدون DNSSEC، بدون DoH.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Compliance Matrix -->
+  <section id="matrix">
+    <h2>۴. ماتریس انطباق قابلیت‌های SASE</h2>
+    <p>نقاط قوت، نقاط ضعف و شکاف‌های هر پیلار SASE نسبت به کد فعلی:</p>
+
+    <table>
+      <tr>
+        <th>پیلار SASE</th>
+        <th>قابلیت مورد نیاز</th>
+        <th>وضعیت در کد</th>
+        <th>ردیابی</th>
+        <th>خلاء / اقدام لازم</th>
+      </tr>
+      <tr>
+        <td rowspan="5"><b>SD-WAN</b></td>
+        <td>Secure Tunnel (TUN/پروکسی)</td>
+        <td><span class="sev good">پیاده‌سازی شده</span></td>
+        <td class="ltr">VpnService, tun2socks, Xray</td>
+        <td>—</td>
+      </tr>
+      <tr>
+        <td>مسیریابی قابل تنظیم بر اساس دامنه</td>
+        <td><span class="sev good">پیاده‌سازی شده</span></td>
+        <td class="ltr">DomainRouter / FakeIpMap</td>
+        <td>عدم پشتیبانی از معیارهای IP/پورت/کاربر</td>
+      </tr>
+      <tr>
+        <td>ترافیک تحمل‌پذیر و چند مسیر (Multi-path)</td>
+        <td><span class="sev low">پایه</span></td>
+        <td class="ltr">Watchdog (XrayManager)</td>
+        <td>فقط Failover؛ بدون Multi-WAN، بدون Load Balance</td>
+      </tr>
+      <tr>
+        <td>پروفایل‌های سیاست بر اساس نوع کلاینت</td>
+        <td><span class="sev info">غیرفعال</span></td>
+        <td class="ltr">Subscription (backend)</td>
+        <td>بدون تقسیم‌بندی هویتی در مسیریابی</td>
+      </tr>
+      <tr>
+        <td>آمار ترافیک و گزارش مصرف</td>
+        <td><span class="sev good">پیاده‌سازی شده</span></td>
+        <td class="ltr">TrafficInfoCard + sync Celery</td>
+        <td>گزارش دقیق پارتیشن‌بندی سرویس‌ها نیست</td>
+      </tr>
+
+      <tr>
+        <td rowspan="5"><b>SWG</b></td>
+        <td>URL Filtering</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>نیاز به فهرست پروتکل/پورت/طبقه‌بندی URL</td>
+      </tr>
+      <tr>
+        <td>Web Reputation / Malware Detection</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>اتصال به سرویس آنتی‌ویروس ابری (VT/Zscaler) — پیشنهاد اضافه</td>
+      </tr>
+      <tr>
+        <td>Content Filtering / Categories</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>بازه‌بندی‌های فیلتر داخلی (bad sites)</td>
+      </tr>
+      <tr>
+        <td>Session Logging &amp; Auditing</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>فقط logcat محلی (ٍLog.e)؛ بدون Audit Trail</td>
+      </tr>
+      <tr>
+        <td>Block Policy Engine</td>
+        <td><span class="sev info">غیرفعال</span></td>
+        <td class="ltr">route=blackhole (Xray)</td>
+        <td>فقط QUIC/UDP blocked؛ بدون سیاست بلوک پویا</td>
+      </tr>
+
+      <tr>
+        <td rowspan="4"><b>CASB</b></td>
+        <td>نمایش و کنترل سرویس‌های ابری (Shadow IT)</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>مستندات لازم جهت اتصال به CASB مانند Netskope/CASB</td>
+      </tr>
+      <tr>
+        <td>API Level Integration برای SaaS</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>FakeRules برای اپ‌های SaaS</td>
+      </tr>
+      <tr>
+        <td>Data Discovery در کلودها</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>Not present</td>
+      </tr>
+      <tr>
+        <td>Compliance Reports</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>Not present</td>
+      </tr>
+
+      <tr>
+        <td rowspan="4"><b>ZTNA</b></td>
+        <td>Authentication (MFA / SSO / Identity)</td>
+        <td><span class="sev partial">جزئی</span></td>
+        <td class="ltr">JWT (backend/accounts)</td>
+        <td>بدون MFA، بدون SSO، فقط JWT ساده</td>
+      </tr>
+      <tr>
+        <td>Device Trust / Device Posture</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td class="ltr">device_id (ANDROID_ID)</td>
+        <td>استفاده از هاردکد device_id، بدون Play Integrity، بدون MDM</td>
+      </tr>
+      <tr>
+        <td>Micro-segmentation / Least Privilege</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>همه ترافیک آزاد؛ بدون سیاست app-level</td>
+      </tr>
+      <tr>
+        <td>Dynamic Policy Based on Context</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>پروفایل ثابت Trojan؛ بدون رفتار محتوا/زمان</td>
+      </tr>
+
+      <tr>
+        <td rowspan="3"><b>DLP</b></td>
+        <td>Data Classification &amp; Monitoring</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>بدون پارسر محتوا، بدون regex/sensitive data</td>
+      </tr>
+      <tr>
+        <td>Data Redaction / Blocking</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>بدون action</td>
+      </tr>
+      <tr>
+        <td>Endpoint DLP (در کلاینت)</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>The FGS is VPN-only</td>
+      </tr>
+
+      <tr>
+        <td rowspan="4"><b>FWaaS</b></td>
+        <td>Stateful Firewall / IPS/IDS</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>ارائه می‌تواند به Next-Gen FW در Cloud اضافه شود</td>
+      </tr>
+      <tr>
+        <td>Port/Protocol Policy Control</td>
+        <td><span class="sev partial">جزئی</span></td>
+        <td class="ltr">routes: QUIC blocked</td>
+        <td>فقط dns-out و blackhole Type؛ بدون سیاست‌بندی</td>
+      </tr>
+      <tr>
+        <td>Centralized Logging (SIEM feed)</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>آزمایشی slstream export</td>
+      </tr>
+      <tr>
+        <td>Global Threat Intel</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>متصل به Tahrim/Haiocloud فقط</td>
+      </tr>
+
+      <tr>
+        <td rowspan="3"><b>SSL/TLS&nbsp;Inspection</b></td>
+        <td>شرط‌آگاهی TLS Client</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td class="ltr">allowInsecureCertificate=1</td>
+        <td>«allowInsecure» در URL سازنده Trojan — بازرسی‌پذیر نیست</td>
+      </tr>
+      <tr>
+        <td>MITM-Protected Transport</td>
+        <td><span class="sev low">پایه</span></td>
+        <td class="ltr">TLS fingerprint=chrome</td>
+        <td>فقط فرضیه TLS؛ بدون تقسیم‌بندی MITM/Check</td>
+      </tr>
+      <tr>
+        <td>Certificate Pinning</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>بدون pin در OkHttp (api client)</td>
+      </tr>
+
+      <tr>
+        <td rowspan="2"><b>DNS Security</b></td>
+        <td>Safe DNS (الگوی حبس / 0.0.0.0 infosec)</td>
+        <td><span class="sev partial">جزئی</span></td>
+        <td class="ltr">DnsInterceptor: خروجی make (raw)</td>
+        <td>خروجیهای باز بدون DNSSEC/DoH</td>
+      </tr>
+      <tr>
+        <td>DNS Level Filtering / Policy</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>فقط client lookup؛ بدون سرور DNS Haio</td>
+      </tr>
+
+      <tr>
+        <td rowspan="2"><b>Sandbox / RBI</b></td>
+        <td>Remote Browser Isolation</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>نیاز به ادغام سرویس RBI</td>
+      </tr>
+      <tr>
+        <td>Malware Sandboxing</td>
+        <td><span class="sev critical">ندارد</span></td>
+        <td>—</td>
+        <td>ارائه WAF/AV در ابر</td>
+      </tr>
+    </table>
+
+    <!-- Score bar -->
+    <h3>نمودار آمادگی پیلارها</h3>
+    <div class="bar-wrap">
+      <div class="bar-label"><span>SD-WAN (تأمین‌کننده شبکه)</span><b>۶۰٪</b></div>
+      <div class="bar"><div class="bar-fill" style="width:60%; background:var(--amber);"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label"><span>SWG (فیلتر وب)</span><b>۱۰٪</b></div>
+      <div class="bar"><div class="bar-fill" style="width:10%; background:var(--red);"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label"><span>CASB (کنترل کلود)</span><b>۰٪</b></div>
+      <div class="bar"><div class="bar-fill" style="width:0%; background:var(--red);"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label"><span>ZTNA (دسترسی صفر-اعتماد)</span><b>۱۵٪</b></div>
+      <div class="bar"><div class="bar-fill" style="width:15%; background:var(--red);"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label"><span>Firewall as a Service</span><b>۱۰٪</b></div>
+      <div class="bar"><div class="bar-fill" style="width:10%; background:var(--red);"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label"><span>DLP</span><b>۰٪</b></div>
+      <div class="bar"><div class="bar-fill" style="width:0%; background:var(--red);"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label"><span>SSL/TLS Inspection</span><b>۱۵٪</b></div>
+      <div class="bar"><div class="bar-fill" style="width:15%; background:var(--red);"></div></div>
+    </div>
+  </section>
+
+  <!-- Security Findings -->
+  <section id="findings">
+    <h2>۵. یافته‌های امنیتی بحرانی</h2>
+    <p>یافته‌های مادی که در پیاده‌سازی SASE باید اصلاح شوند — دسته‌بندی بر اساس شدت:</p>
+
+    <div class="finding c-r">
+      <div class="fhead">
+        <span class="ftitle">کلید امضای Release در مخزن کد + پس‌ورد پیش‌فرض</span>
+        <span class="sev critical">CRITICAL</span>
+      </div>
+      <div class="floc">app/build.gradle.kts:28-35 · haio-release.keystore · .github/workflows/build-apk.yml</div>
+      <div class="fdesc">
+        پایگاه‌های <code>haio-release.keystore</code> (۲.۷KB) و پس‌ورد پیش‌فرض <code>haio2025secure</code> در
+        مخزن قرار دارند. CI شاخه tag نیز بدون تزریق متغیرهای محیطی، همین کلید را استفاده می‌کند. هر فردی که
+        دسترسی به مخزن دارد می‌تواند APK «رسمی» را جعل کند (Supply-Chain Hijack).
+      </div>
+      <div class="frec"><b>اقدام:</b> انتقال کلید به سیستم مدیریت اسرار (Vault/HSM/Firebase App Distribution)، حذف پس‌ورد از کد، چرخش فوری کلید و توزیع مجدد امضا.</div>
+    </div>
+
+    <div class="finding c-r">
+      <div class="fhead">
+        <span class="ftitle">CORS_ALLOW_ALL_ORIGINS — نشت JWT از هر اوریجین وب</span>
+        <span class="sev critical">CRITICAL</span>
+      </div>
+      <div class="floc">backend/config/settings.py:150</div>
+      <div class="fdesc">
+        بک‌اند اجازه دسترسی از هر اوریجین (<code>CORS_ALLOW_ALL_ORIGINS=True</code>) را دارد در حالی‌که
+        authentication با Bearer JWT انجام می‌شود. یک وب‌سایت مخرب می‌تواند توکن کاربر‌ها را بخواند.
+      </div>
+      <div class="frec"><b>اقدام:</b> whitelist اوریجین‌ها، حذف Bearer از پاسخ‌های CORS، افزودن rate-limit روی لاگین و OAuth PKCE.</div>
+    </div>
+
+    <div class="finding c-r">
+      <div class="fhead">
+        <span class="ftitle">کنترل‌پلن Tahrim API بدون TLS (verify=False)</span>
+        <span class="sev critical">CRITICAL</span>
+      </div>
+      <div class="floc">backend/apps/subscriptions/services/anti_sanction.py:32 · .env.example:15-17</div>
+      <div class="fdesc">
+        کلاینت <code>AntiSanctionClient</code> همه درخواست‌ها را با <code>verify=False</code> به
+        <code>http://tahrim.haiocloud.com:5000</code> ارسال می‌کند؛ احراز هویت توسط
+        Bearer Token پیش‌فرض انجام می‌شود. کل صفحه کنترل (ایجاد کاربر Trojan، سهمیه، تمدید) در معرض MITM است.
+      </div>
+      <div class="frec"><b>اقدام:</b> ارتقا به TLS کامل + تفاوت در Certificate Pinning، چرخش توکن، حذف Bearer از کد.</div>
+    </div>
+
+    <div class="finding c-r">
+      <div class="fhead">
+        <span class="ftitle">Activation خودکار بدون احراز هویت مبتنی بر device_id</span>
+        <span class="sev critical">CRITICAL</span>
+      </div>
+      <div class="floc">backend/apps/subscriptions/views.py:187-272</div>
+      <div class="fdesc">
+        <code>SubscriptionAutoActivateView</code> (<code>AllowAny</code>) به ازای هر
+        device_id دلخواه کاربر، حساب رایگان ۵۰MB و کانفیگ Trojan می‌سازد. <code>SubscriptionDeviceDetailView</code>
+        نیز با فقط device_id، پس‌ورد کامل Trojan را برمی‌گرداند → کلاهبرداری نامحدود، سوءاستفاده از سهمیه، افشای اعتبارنامه.
+      </div>
+      <div class="frec"><b>اقدام:</b> اتصال به Play Integrity API + ثبات code verifier، Rate limit، کیپ‌کردن device گران.</div>
+    </div>
+
+    <div class="finding c-h">
+      <div class="fhead">
+        <span class="ftitle">پس‌ورد Trojan و JWT در SharedPreferences بدون رمزنگاری</span>
+        <span class="sev high">HIGH</span>
+      </div>
+      <div class="floc">app/src/main/java/com/haio/bypass/config/ConfigManager.kt · HaioPrefs.kt</div>
+      <div class="fdesc">
+        پیکربندی Trojan (شامل پس‌ورد) و توکن‌های JWT به‌صورت JSON/متن ساده در SharedPreferences ذخیره می‌شوند.
+      </div>
+      <div class="frec"><b>اقدام:</b> استفاده از EncryptedSharedPreferences یا Keystore برای Credential.</div>
+    </div>
+
+    <div class="finding c-h">
+      <div class="fhead">
+        <span class="ftitle">افشای پس‌ورد و Bearer Token در logcat</span>
+        <span class="sev high">HIGH</span>
+      </div>
+      <div class="floc">app/.../proxy/XrayManager.kt (Log.d config) · network/api/ApiClient.kt (HttpLoggingInterceptor Level.BODY)</div>
+      <div class="fdesc">
+        پیکربندی Xray (حاوی پس‌ورد Trojan) به logcat چاپ می‌شود؛ لاگر OkHttp در سطح BODY محتویات و هدر Authorization را در Production ثبت می‌کند.
+      </div>
+      <div class="frec"><b>اقدام:</b> حذف Log پیکربندی، لاگر فقط NONE در Release.</div>
+    </div>
+
+    <div class="finding c-h">
+      <div class="fhead">
+        <span class="ftitle">تنظیم allowInsecureCertificate=1 در کانفیگ Trojan</span>
+        <span class="sev high">HIGH</span>
+      </div>
+      <div class="floc">backend/apps/subscriptions/models.py:66-70</div>
+      <div class="fdesc">
+        URL خروجی <code>trojan_config_url</code> با <code>?allowInsecureCertificate=1&amp;allowInsecure=1</code>
+        ساخته می‌شود — یعنی کلاینت گواهی سرور را در لایه TLS Trojan اعتبارسنجی نمی‌کند (مسیر MITM باز است).
+      </div>
+      <div class="frec"><b>اقدام:</b> حذف این پارامترها، اجباری‌سازی Certificate Validation + PIN سرور.</div>
+    </div>
+
+    <div class="finding c-m">
+      <div class="fhead">
+        <span class="ftitle">BLACKLIST_AFTER_ROTATION بدون app token_blacklist</span>
+        <span class="sev medium">MEDIUM</span>
+      </div>
+      <div class="floc">backend/config/settings.py:142-148</div>
+      <div class="fdesc">
+        <code>ROTATE_REFRESH_TOKENS=True</code> و <code>BLACKLIST_AFTER_ROTATION=True</code> تنظیم شده اما
+        <code>rest_framework_simplejwt.token_blacklist</code> در INSTALLED_APPS نیست → توکن‌های قدیمی هرگز
+        باطل نمی‌شوند (Token Replay).
+      </div>
+      <div class="frec"><b>اقدام:</b> افزودن توکن_blacklist به INSTALLED_APPS + migration.</div>
+    </div>
+
+    <div class="finding c-m">
+      <div class="fhead">
+        <span class="ftitle">بدون R8/رندوم‌سازی در Release + مخزن jitpack</span>
+        <span class="sev medium">MEDIUM</span>
+      </div>
+      <div class="floc">app/build.gradle.kts:42-50 · settings.gradle.kts</div>
+      <div class="fdesc">
+        Release بدون obfuscation (isMinifyEnabled=false) بیلد می‌شود؛ مهندسی معکوس کامل کل معماری ممکن است.
+        مخزن jitpack.io ریسک supply-chain دارد.
+      </div>
+      <div class="frec"><b>اقدام:</b> فعال‌سازی R8 + minify، پاکسازی پیش‌فرض jitpack.</div>
+    </div>
+
+    <div class="finding c-m">
+      <div class="fhead">
+        <span class="ftitle">ضعف سیاست گذرواژه و عدم Rate Limiting در بک‌اند</span>
+        <span class="sev medium">MEDIUM</span>
+      </div>
+      <div class="floc">backend/config/settings.py (AUTH_PASSWORD_VALIDATORS) · apps/accounts</div>
+      <div class="fdesc">
+        فقط MinimumLength(6)؛ لاگین بدون Limited و قفل حساب؛ ثبت‌نام باز عمومی.</div>
+      </div>
+      <div class="frec"><b>اقدام:</b> افزودن Throttling DRF، سیاست گذرواژه قوی، captcha.</div>
+    </div>
+
+    <div class="finding c-m">
+      <div class="fhead">
+        <span class="ftitle">کلیدها و اسرار در docker-compose و مخزن</span>
+        <span class="sev medium">MEDIUM</span>
+      </div>
+      <div class="floc">docker-compose.yml (haio_secret) · .gitignore (db.sqlite3, keystore, .env)</div>
+      <div class="fdesc">
+        پس‌ورد پستگرس hardcode، Redis بدون auth، و db.sqlite3/کلید امضا در مخزن گیت قرار گرفته‌اند.</div>
+      </div>
+      <div class="frec"><b>اقدام:</b> اسرار از .env، رمزنگاری Redis، حذف فایل‌های حساس از git، چرخش اسرار.</div>
+    </div>
+
+    <div class="finding c-l">
+      <div class="fhead">
+        <span class="ftitle">باز بودن Swagger / بدون throttle و Logging SIEM</span>
+        <span class="sev low">LOW</span>
+      </div>
+      <div class="floc">backend/config/urls.py (/api/docs) · settings.py</div>
+      <div class="fdesc">
+        کل سطح API در <code>/api/docs/</code> و <code>/api/schema/</code> برای عموم باز است؛ بدون throttling،
+        بدون audit logging مرکزی.
+      </div>
+      <div class="frec"><b>اقدام:</b> بستن docs در production، افزودن DRF throttling + export به SIEM.</div>
+    </div>
+  </section>
+
+  <!-- Roadmap -->
+  <section id="roadmap">
+    <h2>۶. نقشه راه ارتقا به معماری SASE کامل</h2>
+
+    <h3>فاز ۱ — تثبیت هسته امنیتی (۳۰ روز)</h3>
+    <ul>
+      <li>چرخش کلید امضا، انتقال به اسرار خارج از مخزن، فعال‌سازی R8/minify در Release.</li>
+      <li>حذف <code>CORS_ALLOW_ALL_ORIGINS</code>، فعال‌سازی whitelist.</li>
+      <li>حریم TLS برای Tahrim API، Certificate Pinning، حذف allowInsecure در Trojan.</li>
+      <li>رمزنگاری SharedPreferences (EncryptedSharedPreferences/Keystore)، حذف لاگ‌های BODY/password.</li>
+    </ul>
+
+    <h3>فاز ۲ — لایه امنیتی سمت ابر (۶۰-۹۰ روز)</h3>
+    <div class="grid-2">
+      <ul>
+        <li><b>SWG:</b> فیلتر URL مبتنی بر دسته‌های محتوا (URL Categorization)، اتصال به فید Malware/Threat Intel.</li>
+        <li><b>FWaaS:</b> قرارگیری پشت فایروال نسل بعدی/NGFW منیج‌شده (Stateful + IPS/IDS) در مرکز داده.</li>
+        <li><b>DNS Security:</b> راه‌اندازی DNS سرور امن + DNS Filtering با DNSSEC/DoH/DoT.</li>
+        <li><b>Central Policy Engine:</b> داشبورد مدیریت سیاست بر اساس هویت + دستگاه (CDM/MDM).</li>
+      </ul>
+      <ul>
+        <li><b>ZTNA:</b> یکپارچه‌سازی با IdP (SSO/SAML/OIDC)، MFA دومرحله‌ای، Device Trust (Play Integrity/DeviceCheck).</li>
+        <li><b>CASB:</b> اتصال API به SaaS (Office365، Salesforce...) برای Shadow IT و Data Discovery.</li>
+        <li><b>DLP:</b> نظارت و بلوک محتوای حساس در لبه (Regex/Pattern)، باپسیفیکیشن داده.</li>
+        <li><b>Observing:</b> export لاگ به SIEM و داشبورد گراف ترافیک برای تحلیل.</li>
+      </ul>
+    </div>
+
+    <h3>فاز ۳ — لبه کامل مشتری (۹۰-۱۸۰ روز)</h3>
+    <ul>
+      <li>اضافه کردن قابلیت Multi-WAN / Load Balancing در کلاینت شبکه (SD-WAN واقعی).</li>
+      <li>اضافه کردن Remote Browser Isolation در مسیر وب (RBI).</li>
+      <li>اضافه کردن Sandboxing محتوا برای فایل‌های دانلودی &amp; Attachment Scanning.</li>
+      <li>اضافه کردن Device Posture (SafetyNet/Atestation) داخل کلاینت.</li>
+      <li>Capability برای سیاست‌های Greenfield (per-app VPN، kill switch، split tunnel policy).</li>
+    </ul>
+  </section>
+
+  <!-- Conclusion -->
+  <section id="conclusion">
+    <h2>۷. جمع‌بندی</h2>
+    <p>
+      پروژه <b>HaioBypass</b> زیرساخت شبکه‌ای و پیاده‌سازی تونل امنیت (Secure Tunnel / VpnService + Trojan)
+      را به‌درستی انجام داده و به‌عنوان <b>لایه Connectivity نصفه</b> در یک معماری SASE قابل قبول است.
+      اما بخش اعظم ارزش SASE — که در <b>Security Policy Engine کنترل‌شده در ابر</b>، <b>ZTNA مبتنی بر هویت/دستگاه</b>،
+      <b>SWG/فیلترسازی</b>، <b>CASB</b> و <b>DLP</b> خلاصه می‌شود — در این کد ماژول‌سازی نشده است.
+    </p>
+    <p>
+      نمره آماده‌سازی SASE فعلی <b>۳۸٪</b> است. این عدد نشان می‌دهد که محصول فعلی یک
+      «بیزر VPN معمولی» با مدیریت اشتراک است و هنوز به یک «SASE Agent» با سیاست‌های پویا تبدیل نشده است.
+    </p>
+    <div class="callout ok">
+      <b>توصیه استراتژیک:</b> با حفظ هسته تونل، افزودن لایه‌های سیاست، Identity Service، و گزارش‌گیری مرکزی
+      (Policy + Observability) می‌توان در دو فاز، محصول را به یک نمونه تکامل‌یافته SASE نزدیک کرد —
+      و از برند <b>HaioBypass به HaioSASE</b> ارتقا داد.
+    </div>
+  </section>
+
+  <footer>
+    گزارش خودکار انطباق SASE — HaioBypass App v1.2.3 · تاریخ اسکن: شهریور ۱۴۰۵<br>
+    این گزارش بر اساس تحلیل استاتیک کد (Kotlin / Java / Python / Go / Gradle / Docker) تهیه شده است.
+  </footer>
+
+</div>
+</body>
+</html>

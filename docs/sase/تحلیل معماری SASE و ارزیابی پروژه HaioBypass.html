@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحلیل معماری SASE و ارزیابی پروژه HaioBypass</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700&display=swap');
+        
+        @page {
+            size: A4;
+            margin: 15mm 12mm;
+            background-color: #f8fafc;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Vazirmatn', Tahoma, Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            margin: 0;
+            padding: 0;
+            font-size: 10.5pt;
+            line-height: 1.7;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+            color: #ffffff;
+            padding: 24px 20px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            margin: 0 0 8px 0;
+            font-size: 18pt;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .header p {
+            margin: 0;
+            font-size: 10pt;
+            color: #93c5fd;
+            font-weight: 300;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: #ef4444;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 4px;
+            font-size: 9pt;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .section-title {
+            color: #1e3a8a;
+            font-size: 13pt;
+            font-weight: 700;
+            border-right: 4px solid #2563eb;
+            padding-right: 10px;
+            margin-top: 22px;
+            margin-bottom: 12px;
+            page-break-after: avoid;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .grid-2 {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+            margin-bottom: 12px;
+        }
+
+        .grid-col {
+            display: table-cell;
+            width: 50%;
+            vertical-align: top;
+            padding-left: 8px;
+        }
+
+        .grid-col:last-child {
+            padding-left: 0;
+            padding-right: 8px;
+        }
+
+        ul {
+            margin: 0 0 12px 0;
+            padding-right: 20px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 12px;
+            margin-bottom: 16px;
+            background-color: #ffffff;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        th {
+            background-color: #1e293b;
+            color: #ffffff;
+            text-align: right;
+            padding: 10px 12px;
+            font-size: 9.5pt;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 9.5pt;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .status-yes {
+            color: #166534;
+            background-color: #dcfce7;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 8.5pt;
+            display: inline-block;
+        }
+
+        .status-no {
+            color: #991b1b;
+            background-color: #fee2e2;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 8.5pt;
+            display: inline-block;
+        }
+
+        .roadmap-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .roadmap-list li {
+            position: relative;
+            padding-right: 28px;
+            margin-bottom: 10px;
+        }
+
+        .roadmap-list li::before {
+            content: "✓";
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #2563eb;
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 8pt;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 8.5pt;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <span class="badge">پاسخ فنی / ارزیابی معماری</span>
+        <h1>بررسی معماری SASE در پروژه HaioBypass</h1>
+        <p>تحلیل قابلیت‌ها، جایگاه واقعی سامانه و نقشه راه ارتقا به راهکار Secure Access Service Edge</p>
+    </div>
+
+    <p>
+        <strong>نتیجه ارزیابی:</strong> خیر، این پروژه به‌تنهایی <strong>معماری کامل SASE (Secure Access Service Edge)</strong> را ندارد و نمی‌توان از آن مستقیماً به‌عنوان یک ابزار کامل SASE استفاده کرد. 
+    </p>
+
+    <div class="section-title">۱. معماری SASE چیست؟</div>
+    <div class="card">
+        <p>SASE یک فریم‌ورک جامع ابری است که دو حوزه بزرگ شبکه‌سازی و امنیت ابری را ترکیب می‌کند:</p>
+        <div class="grid-2">
+            <div class="grid-col">
+                <strong style="color: #1e3a8a;">۱. شبکه‌سازی (Network / SD-WAN):</strong>
+                <ul>
+                    <li>مسیریابی هوشمند ترافیک</li>
+                    <li>بهینه‌سازی ترافیک و شبکه WAN</li>
+                    <li>اتصال یکپارچه شعبه‌ها و کاربران راه دور</li>
+                </ul>
+            </div>
+            <div class="grid-col">
+                <strong style="color: #1e3a8a;">۲. امنیت ابری (Security Service Edge - SSE):</strong>
+                <ul>
+                    <li><strong>ZTNA:</strong> احراز هویت بر اساس کمترین سطح دسترسی (Zero Trust)</li>
+                    <li><strong>SWG:</strong> فیلترینگ وب، آنتی‌ویروس و بازرسی HTTP/HTTPS</li>
+                    <li><strong>CASB:</strong> نظارت و کنترل بر برنامه‌های ابری (SaaS)</li>
+                    <li><strong>FWaaS:</strong> دیواره آتش لایه ۷ متمرکز در ابر</li>
+                    <li><strong>DLP:</strong> جلوگیری از نشت داده‌های حساس</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section-title">۲. مقایسه مولفه‌های SASE با قابلیت‌های فعلی پروژه</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 25%;">مولفه SASE</th>
+                <th style="width: 20%;">وضعیت در پروژه</th>
+                <th style="width: 55%;">توضیحات و تحلیل فنی</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Tunneling / Connectivity</strong></td>
+                <td><span class="status-yes">بله (جزئی)</span></td>
+                <td>ارائه کانفیگ Trojan برای هدایت ترافیک به سرورهای Upstream.</td>
+            </tr>
+            <tr>
+                <td><strong>ZTNA (Zero Trust)</strong></td>
+                <td><span class="status-no">خیر</span></td>
+                <td>احراز هویت صرفاً برای اتصال به پروکسی و اعتبارسنجی مالی/حجمی است، نه دسترسی Zero Trust بر اساس برنامه/کاربر.</td>
+            </tr>
+            <tr>
+                <td><strong>SWG (سپر وب / فیلترینگ)</strong></td>
+                <td><span class="status-no">خیر</span></td>
+                <td>آنالیز محتوای وب، اسکن بدافزار یا URL Filtering در لایه بک‌اند وجود ندارد.</td>
+            </tr>
+            <tr>
+                <td><strong>FWaaS / L7 Inspection</strong></td>
+                <td><span class="status-no">خیر</span></td>
+                <td>بازرسی عمیق بسته‌ها (DPI) یا قوانین دیواره آتش لایه ۷ در این سامانه پیاده‌سازی نشده است.</td>
+            </tr>
+            <tr>
+                <td><strong>CASB / DLP</strong></td>
+                <td><span class="status-no">خیر</span></td>
+                <td>نظارت بر سرویس‌های SaaS یا جلوگیری از نشت داده‌ها در آن پیاده‌سازی نشده است.</td>
+            </tr>
+            <tr>
+                <td><strong>Central Governance / Policy</strong></td>
+                <td><span class="status-no">خیر</span></td>
+                <td>پروژه فاقد موتور سیاست‌گذاری امنیتی متمرکز (مانند OPA / Policy-as-Code) است.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">۳. جایگاه واقعی این پروژه چیست؟</div>
+    <div class="card">
+        <p>این سامانه در واقع یک <strong>Proxy Management & Billing Platform</strong> است که وظایف اصلی زیر را بر عهده دارد:</p>
+        <ul>
+            <li>مدیریت کاربران، حساب‌های کاربری و کیف پول (Wallet)</li>
+            <li>صدور و اکتیویشن اتوماتیک کانفیگ‌های Trojan (بر اساس ID دستگاه یا خرید کاربر)</li>
+            <li>همگام‌سازی مصرف حجمی (Traffic Sync) با سرویس Upstream AntiSanction/Tahrim به‌صورت Async توسط Celery</li>
+        </ul>
+    </div>
+
+    <div class="section-title">۴. چطور می‌توان آن را به یک راهکار SASE نزدیک کرد؟</div>
+    <div class="card">
+        <p>اگر هدف شما توسعه این سامانه به سمت معماری SASE است، بک‌اند فعلی می‌تواند نقش <strong>Authentication & Provisioning Core</strong> را ایفا کند، به شرطی که ارتقاهای زیر انجام شود:</p>
+        <ul class="roadmap-list">
+            <li><strong>یکپارچه‌سازی با ZTNA:</strong> صدور دسترسی به پروکسی بر اساس identity کاربر، نوع دستگاه، و App target (به جای فقط تونل کردن کل ترافیک).</li>
+            <li><strong>افزودن موتور Policy Enforcement:</strong> اتصال بک‌اند به یک Policy Engine (مانند Open Policy Agent) جهت اعمال قوانین دسترسی دینامیک.</li>
+            <li><strong>توسعه لایه Security Edge (Upstream Edge Nodes):</strong> افزودن قابلیت‌های FWaaS و SWG (مانند اسکن ترافیک عبوری، مسدودسازی بدافزارها و Domain Filtering) در سرورهای پروکسی/تانل اصلی.</li>
+        </ul>
+    </div>
+
+    <div class="footer">
+        گزارش فنی ارزیابی معماری SASE — تولید شده به‌صورت سند HTML
+    </div>
+
+</body>
+</html>
