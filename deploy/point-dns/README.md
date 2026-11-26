@@ -89,3 +89,37 @@ Flash Max). All three services (`pdns`, `pdns-api`, `dnsdist`) are active.
 - The Go control-plane (`point-api`, `point-worker`) and React panel.
 - Second site / anycast, replication, TLS for the control plane, TOTP/RBAC.
 - Public delegation of the health zone — it exists for authoritative verification only.
+
+## Hardening pass (2026-11-26) — `harden.sh`
+
+An independent audit of the live VM (`dig @94.182.172.96`) found four deviations
+from the Phase 0 authoritative-only design:
+
+| Finding | Evidence | Fix |
+|---|---|---|
+| Out-of-zone recursion: `google.com`/`youtube.com` answered NOERROR with `qr ra ad`, TTL 418 (cached), and still resolved with `+norecurse` — a validating upstream was in the dnsdist pool. `example.net` and unknown TLDs correctly REFUSED. | `dig @94.182.172.96 google.com A +norecurse` | canonical `dnsdist.conf`: the pool contains only `127.0.0.1:5300`; every upstream but the local serving engine removed |
+| `id.server CHAOS TXT` → `"noghte-dns-01"` (hostname leak; `version.bind` hidden) | `dig @94.182.172.96 id.server CHAOS TXT +short` | CHAOS class ⇒ REFUSED |
+| ANY not refused/truncated | `dig @94.182.172.96 www.probe.noghte-dns.example ANY` → NOERROR, no `tc` (the `DNSQtype.ANY` constant rule does not match on dnsdist 1.8.3) | ANY ⇒ REFUSED on UDP **and** TCP via numeric `QTypeRule(255)` |
+| (same root cause) external upstream reachable | sinkhole `10.10.34.36` seen for facebook/instagram upstream answers | removed with the pool rewrite |
+
+Files:
+
+- `dnsdist.conf` — the canonical config (placeholders `@DNSDIST_WEB_PASSWORD@` /
+  `@DNSDIST_API_KEY@` are substituted from `/etc/noghte-dns/secrets.env`).
+  Syntax-checked under a stubbed dnsdist environment (`luac -p` + stubbed globals
+  load clean). `install.sh` now installs this file instead of an inline heredoc.
+- `harden.sh` — the one-shot pass for the **already-installed** VM: backs up the
+  live config, writes the canonical one, validates, restarts, then asserts:
+  `www.probe` still answers `94.182.172.96`, `google.com`/`youtube.com` →
+  REFUSED, ANY → REFUSED, CHAOS → REFUSED, UPDATE → NOTIMP, `+dnssec` → NOERROR
+  (RRSIGs intact). Rolls back on any failure.
+
+Because the VM is not reachable from the workstation that wrote this (the SSH key
+attached to `noghte-dns-01` belongs to a different host, and the panel key-attach
+API returned 400), the pass has **not** been applied to the live node yet. Run
+it as root:
+
+```bash
+scp -r deploy/point-dns root@94.182.172.96:/root/
+ssh root@94.182.172.96 'bash /root/point-dns/harden.sh'
+```

@@ -138,28 +138,18 @@ ProtectSystem=full
 WantedBy=multi-user.target
 EOF
 
-log "Writing dnsdist config (public :53 -> 127.0.0.1:5300)"
-cat > "$DNSDIST_CONF" <<EOF
-setLocal("0.0.0.0:53", { reusePort = true })
-newServer({ address = "127.0.0.1:5300", name = "pdns" })
-setACL({ "0.0.0.0/0", "::/0" })
-
-setPayloadSizeOnSelfGeneratedAnswers(1232)
-addAction(AndRule({QTypeRule(DNSQType.ANY), TCPRule(false)}), TCAction())
-addAction(OpcodeRule(DNSOpcode.Update), RCodeAction(DNSRCode.NOTIMP))
-
-setMaxTCPConnectionsPerClient(20)
-setMaxTCPQueriesPerConnection(100)
-
-local dbr = dynBlockRulesGroup()
-dbr:setQueryRate(300, 10, "Query rate exceeded", 60, DNSAction.Truncate)
-dbr:setRCodeRate(DNSRCode.REFUSED, 100, 10, "Too many REFUSED", 60)
-dbr:setRCodeRate(DNSRCode.NXDOMAIN, 200, 10, "NXDOMAIN flood", 60, DNSAction.Truncate)
-function maintenance() dbr:apply() end
-
-webserver("127.0.0.1:8083")
-setWebserverConfig({ password = "$DNSDIST_WEB_PASSWORD", apiKey = "$DNSDIST_API_KEY", acl = "127.0.0.1/32" })
-EOF
+log "Writing dnsdist config (public :53 -> 127.0.0.1:5300, authoritative-only)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [[ -f "$SCRIPT_DIR/dnsdist.conf" ]]; then
+  # Canonical config from the repository: no external upstream (no recursion),
+  # CHAOS and ANY refused, UPDATE NOTIMP, rate + TCP limits.
+  sed -e "s|@DNSDIST_WEB_PASSWORD@|${DNSDIST_WEB_PASSWORD}|g" \
+      -e "s|@DNSDIST_API_KEY@|${DNSDIST_API_KEY}|g" \
+      "$SCRIPT_DIR/dnsdist.conf" > "$DNSDIST_CONF"
+else
+  echo "dnsdist.conf not found next to install.sh" >&2
+  exit 1
+fi
 chmod 640 "$DNSDIST_CONF"
 
 log "Starting and enabling services"
