@@ -18,6 +18,29 @@
 | `دیتاشیت فنی HaioSASE — سامانه ارتباط امن پساکوانتومی.html` | دیتاشیت فنی |
 | `معماری HaioSASE-PQC - راهکار SASE با رمزنگاری پساکوانتومی.html` | معماری PQC |
 
+## نسخه‌های بازبینی‌شده (منتقل‌شده از ریشهٔ ریپو)
+
+| فایل | چیست |
+|---|---|
+| `noghte-proposal-revised.docx` / `.pdf` | پیشنهاد بازبینی‌شده پس از نظرهای بازبین |
+| `noghte-supplementary-answers.docx` / `.pdf` | سند پاسخ‌ها به پرسش‌های تکمیلی بازبین |
+| `build_proposal.py` | سازندهٔ `noghte-proposal-revised.docx` |
+| `build_supplementary.py` | سازندهٔ `noghte-supplementary-answers.docx` |
+| `docx_helpers.py` | توابع مشترک قالب‌بندی DOCX (RTL، جدول، رنگ) |
+
+اجرا از ریشهٔ ریپو (نهکز به `docs/sase/`):
+
+```bash
+python3 docs/sase/build_proposal.py       # خروجی: docs/sase/noghte-proposal-revised.docx
+python3 docs/sase/build_supplementary.py  # خروجی: docs/sase/noghte-supplementary-answers.docx
+```
+
+نیاز به `python-docx` دارد؛ نشان سند از `docs/noghte-emblem.png` خوانده می‌شود.
+
+نکته: `noghte-proposal-filled.docx` اینجا **کپی از `Funding/NoghteSASE`** است و
+با فایل هم‌نام در ریشهٔ ریپو (نسخهٔ ۳ اکتبر) محتوای متفاوتی دارد؛ هر دو نگه
+داشته شده‌اند.
+
 ## فایل‌های حجیم (کپی نشده — نسخهٔ اصلی در Funding/NoghteSASE/)
 
 * `Sovereign_SASE_Architecture.pptx` (~۱۵ مگابایت)

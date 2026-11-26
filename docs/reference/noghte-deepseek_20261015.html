@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نمونه UI کلاینت نقطه (Noghte) - Android Mockup</title>
+    <style>
+        :root {
+            --noghte-primary: #00897B;
+            --noghte-primary-dark: #00695C;
+            --noghte-secondary: #7F52FF;
+            --bg: #ECEFF1;
+            --surface: #FFFFFF;
+            --surface-variant: #F5F5F5;
+            --text-primary: #212121;
+            --text-secondary: #616161;
+            --success: #2E7D32;
+            --danger: #C62828;
+            --warning: #F9A825;
+            --border: #E0E0E0;
+            --shadow: rgba(0,0,0,0.12);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 30px 20px;
+            direction: rtl;
+        }
+
+        .page-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Phones Container */
+        .phones-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* Phone Frame */
+        .phone {
+            width: 340px;
+            background: #1a1a1a;
+            border-radius: 40px;
+            padding: 12px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .phone::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 25px;
+            background: #1a1a1a;
+            border-radius: 0 0 20px 20px;
+            z-index: 10;
+        }
+
+        .phone-screen {
+            background: var(--surface);
+            border-radius: 30px;
+            overflow: hidden;
+            height: 700px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: var(--noghte-primary);
+            color: white;
+            padding: 12px 20px 8px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* App Bar */
+        .app-bar {
+            background: var(--noghte-primary);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+
+        .app-bar h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .app-bar-icon {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: var(--bg);
+        }
+
+        .content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 2px;
+        }
+
+        /* ====== SCREEN 1: LOGIN ====== */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 40px 25px;
+            background: linear-gradient(180deg, #FFFFFF 0%, #E0F2F1 100%);
+        }
+
+        .logo {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--noghte-primary), var(--noghte-secondary));
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0,137,123,0.3);
+        }
+
+        .login-screen h1 {
+            color: var(--noghte-primary);
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .login-screen .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 50px;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: var(--noghte-primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,137,123,0.3);
+        }
+
+        .login-btn:hover {
+            background: var(--noghte-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,137,123,0.4);
+        }
+
+        .privacy-link {
+            margin-top: 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .login-footer {
+            position: absolute;
+            bottom: 20px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* ====== SCREEN 2: RESOURCE LIST ====== */
+        .search-bar {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            flex: 1;
+            font-size: 0.9rem;
+            background: transparent;
+        }
+
+        .resource-card {
+            background: var(--surface);
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-right: 4px solid var(--noghte-primary);
+        }
+
+        .resource-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .resource-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .resource-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .resource-icon.api { background: #E3F2FD; color: #1976D2; }
+        .resource-icon.web { background: #E8F5E9; color: var(--success); }
+        .resource-icon.db { background: #FFF3E0; color: #F57C00; }
+        .resource-icon.gpu { background: #F3E5F5; color: var(--noghte-secondary); }
+
+        .resource-title {
+            flex: 1;
+        }
+
+        .resource-title h3 {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            margin-bottom: 2px;
+        }
+
+        .resource-title .type {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .resource-description {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .resource-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .badge-green { background: #E8F5E9; color: var(--success); }
+        .badge-blue { background: #E3F2FD; color: #1976D2; }
+        .badge-orange { background: #FFF3E0; color: #F57C00; }
+
+        .access-btn {
+            background: var(--noghte-primary);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* ====== SCREEN 3: RESOURCE DETAIL ====== */
+        .detail-header {
+            background: linear-gradient(135deg, var(--noghte-primary), var(--noghte-primary-dark));
+            color: white;
+            padding: 25px 20px;
+            border-radius: 0 0 24px 24px;
+            margin: -20px -20px 20px;
+        }
+
+        .detail-header-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .detail-header h1 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .detail-header .type {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .detail-section {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .detail-section h3 {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .detail-section p {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .action-list {
+            list-style: none;
+        }
+
+        .action-list li {
+            padding: 8px 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-list li:last-child { border-bottom: none; }
+
+        .action-list li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: bold;
+        }
+
+        .access-large-btn {
+            width: 100%;
+            background: var(--noghte-primary);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(0,137,123,0.3);
+        }
+
+        /* ====== SCREEN 4: LOG DASHBOARD ====== */
+        .log-item {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .log-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .log-status.allowed { background: var(--success); }
+        .log-status.denied { background: var(--danger); }
+
+        .log-content {
+            flex: 1;
+        }
+
+        .log-content .action {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .log-content .meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .log-time {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        /* ====== SCREEN 5: PROFILE ====== */
+        .profile-header {
+            background: linear-gradient(135deg, var(--noghte-primary), var(--noghte-primary-dark));
+            color: white;
+            padding: 30px 20px;
+            border-radius: 0 0 24px 24px;
+            margin: -20px -20px 20px;
+            text-align: center;
+        }
+
+        .avatar {
+            width: 80px;
+            height: 80px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 15px;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+
+        .profile-header h2 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
+        .profile-header .email {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .profile-item {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+
+        .profile-item-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--surface-variant);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .profile-item-content {
+            flex: 1;
+        }
+
+        .profile-item-content .label {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .profile-item-content .value {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .logout-btn {
+            width: 100%;
+            background: #FFEBEE;
+            color: var(--danger);
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: var(--surface);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px 15px;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active {
+            color: var(--noghte-primary);
+            background: #E0F2F1;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+        }
+
+        /* Label */
+        .phone-label {
+            text-align: center;
+            color: white;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* FAB */
+        .fab {
+            position: absolute;
+            bottom: 80px;
+            left: 20px;
+            width: 56px;
+            height: 56px;
+            background: var(--noghte-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0,137,123,0.4);
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .phone {
+                transform: scale(0.9);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>📱 نمونه UI کلاینت نقطه (Noghte)</h1>
+        <p>Android Mockup - Kotlin + Jetpack Compose + Material 3</p>
+    </div>
+
+    <div class="phones-container">
+
+        <!-- ============ SCREEN 1: LOGIN ============ -->
+        <div>
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>۹:۴۱</span>
+                        <div class="status-icons">
+                            <span>📶</span>
+                            <span>🔋</span>
+                        </div>
+                    </div>
+                    <div class="login-screen">
+                        <div class="logo">🎯</div>
+                        <h1>نقطه</h1>
+                        <div class="subtitle">دسترسی امن به منابع</div>
+                        
+                        <button class="login-btn">
+                            <span>🔐</span>
+                            ورود با نقطه
+                        </button>
+                        
+                        <div class="privacy-link">حریم خصوصی و شرایط استفاده</div>
+                        
+                        <div class="login-footer">
+                            نسخه ۱.۰.۰ | Noghte Security
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="phone-label">۱. صفحه ورود (Login)</div>
+        </div>
+
+        <!-- ============ SCREEN 2: RESOURCE LIST ============ -->
+        <div>
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>۹:۴۱</span>
+                        <div class="status-icons">
+                            <span>📶</span>
+                            <span>🔋</span>
+                        </div>
+                    </div>
+                    <div class="app-bar">
+                        <h2>منابع من</h2>
+                        <span class="app-bar-icon">🔔</span>
+                    </div>
+                    <div class="content">
+                        <div class="search-bar">
+                            <span>🔍</span>
+                            <input type="text" placeholder="جستجوی منبع..." />
+                        </div>
+
+                        <!-- Resource 1: API -->
+                        <div class="resource-card">
+                            <div class="resource-header">
+                                <div class="resource-icon api">🔗</div>
+                                <div class="resource-title">
+                                    <h3>Financial API</h3>
+                                    <div class="type">REST API</div>
+                                </div>
+                            </div>
+                            <div class="resource-description">
+                                دسترسی به API مالی برای گزارش‌گیری و تراکنش‌ها
+                            </div>
+                            <div class="resource-footer">
+                                <span class="badge badge-blue">خواندن</span>
+                                <button class="access-btn">دسترسی</button>
+                            </div>
+                        </div>
+
+                        <!-- Resource 2: Web App -->
+                        <div class="resource-card">
+                            <div class="resource-header">
+                                <div class="resource-icon web">🌐</div>
+                                <div class="resource-title">
+                                    <h3>Admin Panel</h3>
+                                    <div class="type">Web Application</div>
+                                </div>
+                            </div>
+                            <div class="resource-description">
+                                پنل مدیریت سیستم برای کاربران با نقش ادمین
+                            </div>
+                            <div class="resource-footer">
+                                <span class="badge badge-green">دسترسی کامل</span>
+                                <button class="access-btn">دسترسی</button>
+                            </div>
+                        </div>
+
+                        <!-- Resource 3: Database -->
+                        <div class="resource-card">
+                            <div class="resource-header">
+                                <div class="resource-icon db">🗄️</div>
+                                <div class="resource-title">
+                                    <h3>Analytics DB</h3>
+                                    <div class="type">Database</div>
+                                </div>
+                            </div>
+                            <div class="resource-description">
+                                دیتابیس تحلیلی برای کوئری‌های گزارش‌گیری
+                            </div>
+                            <div class="resource-footer">
+                                <span class="badge badge-orange">فقط خواندن</span>
+                                <button class="access-btn">دسترسی</button>
+                            </div>
+                        </div>
+
+                        <!-- Resource 4: GPU Server -->
+                        <div class="resource-card">
+                            <div class="resource-header">
+                                <div class="resource-icon gpu">⚡</div>
+                                <div class="resource-title">
+                                    <h3>ML Training Server</h3>
+                                    <div class="type">GPU Cluster</div>
+                                </div>
+                            </div>
+                            <div class="resource-description">
+                                سرور آموزش مدل‌های یادگیری ماشین با GPU
+                            </div>
+                            <div class="resource-footer">
+                                <span class="badge badge-blue">اجرای Job</span>
+                                <button class="access-btn">دسترسی</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bottom-nav">
+                        <div class="nav-item active">
+                            <span class="nav-icon">📋</span>
+                            <span>منابع</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">📊</span>
+                            <span>لاگ‌ها</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">👤</span>
+                            <span>پروفایل</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="phone-label">۲. لیست منابع (Resource List)</div>
+        </div>
+
+        <!-- ============ SCREEN 3: RESOURCE DETAIL ============ -->
+        <div>
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>۹:۴۱</span>
+                        <div class="status-icons">
+                            <span>📶</span>
+                            <span>🔋</span>
+                        </div>
+                    </div>
+                    <div class="app-bar">
+                        <span class="app-bar-icon">←</span>
+                        <h2>جزئیات منبع</h2>
+                    </div>
+                    <div class="content">
+                        <div class="detail-header">
+                            <div class="detail-header-icon">🔗</div>
+                            <h1>Financial API</h1>
+                            <div class="type">REST API • v1.2.0</div>
+                        </div>
+
+                        <div class="detail-section">
+                            <h3>توضیحات</h3>
+                            <p>دسترسی به API مالی برای گزارش‌گیری و تراکنش‌ها. این API امکان دریافت گزارش‌های مالی، مشاهده تراکنش‌ها و مدیریت حساب‌ها را فراهم می‌کند.</p>
+                        </div>
+
+                        <div class="detail-section">
+                            <h3>عملیات مجاز</h3>
+                            <ul class="action-list">
+                                <li>GET /api/v1/transactions</li>
+                                <li>GET /api/v1/accounts</li>
+                                <li>GET /api/v1/reports</li>
+                            </ul>
+                        </div>
+
+                        <div class="detail-section">
+                            <h3>اطلاعات دسترسی</h3>
+                            <p style="font-size: 0.85rem;">
+                                <strong>نقش مورد نیاز:</strong> <span class="badge badge-blue">viewer</span><br>
+                                <strong>آخرین دسترسی:</strong> ۱۴۰۳/۰۵/۱۴ - ۱۰:۳۰<br>
+                                <strong>وضعیت:</strong> <span class="badge badge-green">فعال</span>
+                            </p>
+                        </div>
+
+                        <button class="access-large-btn">
+                            🚀 درخواست دسترسی
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="phone-label">۳. جزئیات منبع (Resource Detail)</div>
+        </div>
+
+        <!-- ============ SCREEN 4: LOG DASHBOARD ============ -->
+        <div>
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>۹:۴۱</span>
+                        <div class="status-icons">
+                            <span>📶</span>
+                            <span>🔋</span>
+                        </div>
+                    </div>
+                    <div class="app-bar">
+                        <h2>لاگ دسترسی‌ها</h2>
+                        <span class="app-bar-icon">🔽</span>
+                    </div>
+                    <div class="content">
+                        <div class="log-item">
+                            <div class="log-status allowed"></div>
+                            <div class="log-content">
+                                <div class="action">دسترسی به Financial API</div>
+                                <div class="meta">GET /api/v1/transactions</div>
+                            </div>
+                            <div class="log-time">۱۰:۳۰</div>
+                        </div>
+
+                        <div class="log-item">
+                            <div class="log-status allowed"></div>
+                            <div class="log-content">
+                                <div class="action">دسترسی به Admin Panel</div>
+                                <div class="meta">GET /admin/dashboard</div>
+                            </div>
+                            <div class="log-time">۱۰:۱۵</div>
+                        </div>
+
+                        <div class="log-item">
+                            <div class="log-status denied"></div>
+                            <div class="log-content">
+                                <div class="action">دسترسی رد شد</div>
+                                <div class="meta">DELETE /api/v1/transactions/123</div>
+                            </div>
+                            <div class="log-time">۰۹:۵۰</div>
+                        </div>
+
+                        <div class="log-item">
+                            <div class="log-status allowed"></div>
+                            <div class="log-content">
+                                <div class="action">اجرای Job روی GPU</div>
+                                <div class="meta">POST /api/v1/jobs/train</div>
+                            </div>
+                            <div class="log-time">۰۹:۳۰</div>
+                        </div>
+
+                        <div class="log-item">
+                            <div class="log-status allowed"></div>
+                            <div class="log-content">
+                                <div class="action">ورود به سیستم</div>
+                                <div class="meta">OIDC Login - Keycloak</div>
+                            </div>
+                            <div class="log-time">۰۹:۰۰</div>
+                        </div>
+
+                        <div class="log-item">
+                            <div class="log-status denied"></div>
+                            <div class="log-content">
+                                <div class="action">دسترسی رد شد</div>
+                                <div class="meta">POST /api/v1/admin/users</div>
+                            </div>
+                            <div class="log-time">دیروز</div>
+                        </div>
+                    </div>
+                    <div class="bottom-nav">
+                        <div class="nav-item">
+                            <span class="nav-icon">📋</span>
+                            <span>منابع</span>
+                        </div>
+                        <div class="nav-item active">
+                            <span class="nav-icon">📊</span>
+                            <span>لاگ‌ها</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">👤</span>
+                            <span>پروفایل</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="phone-label">۴. لاگ دسترسی‌ها (Log Dashboard)</div>
+        </div>
+
+        <!-- ============ SCREEN 5: PROFILE ============ -->
+        <div>
+            <div class="phone">
+                <div class="phone-screen">
+                    <div class="status-bar">
+                        <span>۹:۴۱</span>
+                        <div class="status-icons">
+                            <span>📶</span>
+                            <span>🔋</span>
+                        </div>
+                    </div>
+                    <div class="app-bar">
+                        <h2>پروفایل</h2>
+                        <span class="app-bar-icon">⚙️</span>
+                    </div>
+                    <div class="content">
+                        <div class="profile-header">
+                            <div class="avatar">👤</div>
+                            <h2>علی محمدی</h2>
+                            <div class="email">ali.mohammadi@company.com</div>
+                        </div>
+
+                        <div class="profile-item">
+                            <div class="profile-item-icon">🆔</div>
+                            <div class="profile-item-content">
+                                <div class="label">شناسه کاربری</div>
+                                <div class="value">usr_8f3a2b1c</div>
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <div class="profile-item-icon">🎭</div>
+                            <div class="profile-item-content">
+                                <div class="label">نقش‌ها</div>
+                                <div class="value">viewer, analyst</div>
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <div class="profile-item-icon">🏢</div>
+                            <div class="profile-item-content">
+                                <div class="label">سازمان</div>
+                                <div class="value">شرکت نمونه</div>
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <div class="profile-item-icon">🔐</div>
+                            <div class="profile-item-content">
+                                <div class="label">احراز هویت دو مرحله‌ای</div>
+                                <div class="value" style="color: var(--success);">فعال ✓</div>
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <div class="profile-item-icon">🌐</div>
+                            <div class="profile-item-content">
+                                <div class="label">زبان</div>
+                                <div class="value">فارسی</div>
+                            </div>
+                        </div>
+
+                        <div class="profile-item">
+                            <div class="profile-item-icon">🌙</div>
+                            <div class="profile-item-content">
+                                <div class="label">حالت تاریک</div>
+                                <div class="value">خودکار</div>
+                            </div>
+                        </div>
+
+                        <button class="logout-btn">
+                            <span>🚪</span>
+                            خروج از حساب
+                        </button>
+                    </div>
+                    <div class="bottom-nav">
+                        <div class="nav-item">
+                            <span class="nav-icon">📋</span>
+                            <span>منابع</span>
+                        </div>
+                        <div class="nav-item">
+                            <span class="nav-icon">📊</span>
+                            <span>لاگ‌ها</span>
+                        </div>
+                        <div class="nav-item active">
+                            <span class="nav-icon">👤</span>
+                            <span>پروفایل</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="phone-label">۵. پروفایل (Profile)</div>
+        </div>
+
+    </div>
+
+    <!-- Footer Info -->
+    <div style="text-align: center; color: white; margin-top: 40px; font-size: 0.85rem; opacity: 0.8;">
+        <p>🎨 این Mockup بر اساس Material 3 و Jetpack Compose طراحی شده است.</p>
+        <p>رنگ اصلی: <code style="background: rgba(255,255,255,0.2); color: white; padding: 2px 8px; border-radius: 4px;">#00897B</code> | رنگ ثانویه: <code style="background: rgba(255,255,255,0.2); color: white; padding: 2px 8px; border-radius: 4px;">#7F52FF</code></p>
+    </div>
+</body>
+</html>

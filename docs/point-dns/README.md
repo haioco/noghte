@@ -11,13 +11,13 @@
 | `odoo-integration.md` | محل کد، وضعیت گیت کلودا، تغییرات زیرمنوی `burna_layout`، بلوکر دسترسی به PowerDNS |
 | `verification.md` | شواهد تأیید: آزمون‌ها، محیط Docker، جریان‌های پنل، تأیید زندهٔ سرور |
 
-## اسناد طراحی (ریشهٔ ریپو)
+## اسناد طراحی
 
 | سند | چیست |
 |---|---|
-| `../point-v1.1-plan.html` | طرح اجرای نسخهٔ ۱ (Persian): مدل داده، API، صفحات پنل، قالب GitHub Pages، عملیات، نقشهٔ ۸ هفتگی |
-| `../point-handbook_v4.html` | **سند اصلی محصول** — دفترچهٔ خانوادهٔ «نقطه»؛ فاز ۰ = Point DNS، فازهای بعد Edge/Resolver/Access/PQ |
-| `../noghte-Point_Reference_Manuals.html` | راهنماهای مرجع Point |
+| [`point-v1.1-plan.html`](point-v1.1-plan.html) | طرح اجرای نسخهٔ ۱ (Persian): مدل داده، API، صفحات پنل، قالب GitHub Pages، عملیات، نقشهٔ ۸ هفتگی |
+| [`../point-handbook_v4.html`](../point-handbook_v4.html) | **سند اصلی محصول** — دفترچهٔ خانوادهٔ «نقطه»؛ فاز ۰ = Point DNS، فازهای بعد Edge/Resolver/Access/PQ |
+| [`../reference/noghte-Point_Reference_Manuals.html`](../reference/noghte-Point_Reference_Manuals.html) | راهنماهای مرجع Point |
 
 ## استقرار و عملیات
 
